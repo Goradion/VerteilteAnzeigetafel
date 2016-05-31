@@ -16,7 +16,7 @@ public class VerteilteSysteme {
      */
     public static void main(String[] args) {
         // TODO code application logic here
-        int a; //tolle variable
+        int a; //tolle variable //ja ich weiss
     }
     
 }
