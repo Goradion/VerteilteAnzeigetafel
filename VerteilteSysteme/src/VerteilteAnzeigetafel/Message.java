@@ -5,7 +5,7 @@
  */
 package VerteilteAnzeigetafel;
 
-import java.io.Serializable;
+import java.io.Serializable; // importiert Libarys
 import java.sql.Time;
 
 /**
