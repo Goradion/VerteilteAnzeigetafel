@@ -13,7 +13,6 @@ import java.sql.Time;
  * @author am
  */
 public class Message implements Serializable {
-    // Koennen/sollen diese Attribute
     private int messageID;
     private int userID; // wer hat diese Nachricht erstellt
     private int abtNr; // von welcher Abteilung kommt die Nachricht

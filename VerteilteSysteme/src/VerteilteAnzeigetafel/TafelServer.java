@@ -9,8 +9,8 @@ package VerteilteAnzeigetafel;
  *
  * @author am
  */
-public class VerteilteSysteme {
-
+public class TafelServer {
+	private Anzeigetafel anzeigetafel;
     /**
      * @param args the command line arguments
      */
