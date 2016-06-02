@@ -14,7 +14,7 @@ import java.sql.Time;
  */
 public class Message implements Serializable {
     private int messageID;
-    private int userID; // UserID die einzigartig ist
+    private int userID; // 
     private int abtNr; // von welcher Abteilung kommt die Nachricht
     private String inhalt;
     boolean oeffentlich;
