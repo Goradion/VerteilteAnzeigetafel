@@ -10,7 +10,27 @@ public class Anzeigetafel {
     private ArrayList localMessages;
     private ArrayList globalMessages;
     private AbstractSet userIDs;
-
+    
+    public boolean isUser(){
+        return false;
+    }
+    
+    public boolean isCoordinator(){
+        return false;
+    }
+    
+    public void modifyMessage(int messageID, String inhalt){
+        
+    }
+    
+    public void deleteMessage(int messageID){
+        
+    }
+    
+    public void createMessage(){
+        
+    }
+    
     public int getAbteilungsID() {
         return abteilungsID;
     }
