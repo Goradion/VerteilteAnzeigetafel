@@ -10,4 +10,29 @@ public class Anzeigetafel {
     private ArrayList localMessages;
     private ArrayList globalMessages;
     private AbstractSet userIDs;
+
+    public int getAbteilungsID() {
+        return abteilungsID;
+    }
+
+    public int getMessageAnzahl() {
+        return messageAnzahl;
+    }
+
+    public int getKoordinatorID() {
+        return koordinatorID;
+    }
+
+    public ArrayList getLocalMessages() {
+        return localMessages;
+    }
+
+    public ArrayList getGlobalMessages() {
+        return globalMessages;
+    }
+
+    public AbstractSet getUserIDs() {
+        return userIDs;
+    }
+    
 }
