@@ -15,13 +15,19 @@ import java.net.Socket;
  */
 public class Client {
     
+    public static final int ENDE =0;
     private String benutzername;
     private int abtNr;
     private String message;
     private int port=50000;
     private String ip;
     private static Socket socket;
-    
+  
+    /**
+     * Konstruktor zu Erstellung eines Benutzers
+     * @param benutzername
+     * @param abtNr 
+     */
     public Client(String benutzername,int abtNr)
     {
         this.benutzername = benutzername;
@@ -52,12 +58,18 @@ public class Client {
         return ip;
     }
     
+    static public int hauptschleife()
+    {
+        return ENDE;
+    }
     
     
     
     public static void main(String[] args) {
         // TODO code application logic here
         int a; //tolle variable
+        int ende ;
+        ende = hauptschleife();
         System.out.println("hi");
     }
 }
