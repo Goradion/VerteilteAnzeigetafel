@@ -1,4 +1,10 @@
-
+/**
+ *Projekt Anzeigetafel
+ * @author  Michael Moser, Andrea Caruana, Diego Rodriguez Castellanos,
+ * Alex Müller,Viktor Semenitsch, Simon Bastian??
+ *Datei: Client
+ * Client zur Kommunikation zwischen Benutzer und Anzeigetafel
+ */
 package Client;
 
 import java.io.BufferedReader;
@@ -9,10 +15,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.InetAddress;
 import java.net.Socket;
-/**
- *
- * @author micha
- */
+
 public class Client {
     
     public static final int ENDE =0;
@@ -26,12 +29,17 @@ public class Client {
     private int messageID;
     static private int port = 50000; //festgelegter Port(frei)
     private String ip;
-    private static Socket socket;
+   
     private boolean administrator;
     private boolean removeMsg;
     private boolean modifyMsg;
     private boolean newMessage;
-  
+    /**
+     * Erstellung eines neuen Sockets;
+     */
+    private static Socket socket;
+    
+
     /**
      * Konstruktor zum Erstellung des Benutzers
      * @param user
@@ -71,26 +79,59 @@ public class Client {
         return ip;
     }
 
-    public boolean sendeMessage()
+    public static int sendeMessage()
     {
         
+        
+       return TRUE;
+    }
+    public static int neueNachricht(int port,String adresse)
+    {
+        
+        socket = new Socket(int port, String adresse);
+        int senden;
+        senden =sendeMessage();
+        if(senden==1)
+        {
+            System.out.printf("Nachricht Erfolgreich versenden");
+        }
+        else
+        {
+           System.out.printf("Nachricht konnte nicht gesendet werden");   
+        }
     }
     static public int hauptschleife()
     {
         while(true)
         {
-            
-           /* int auswahl=0;
-            switch(auswahl)
-            {
-                case 1:
-                    break;
-                case 2:
-                    break;
-                case 3:
-                    break;
-                
-            }*/
+           try
+           {
+               String host ="localhost";
+               InetAddress adresse= InetAddress.getByName(host);
+               int neueNachricht = -1;
+               neueNachricht=neueNachricht(port,adresse);
+               /*          
+               switch()
+              {
+                   case 1:
+              }*/
+              
+           }
+           catch(Exception exception)
+           {
+              System.out.printf("Client Fehler");
+           }
+           finally
+           {
+               try
+               {
+                   socket.close();
+               }
+               catch(Exception e)
+               {
+                   System.out.printf("Fehler beim Schließen des Sockets");
+               }
+           }
             break;    
         }
         return ENDE;
@@ -99,7 +140,7 @@ public class Client {
     
     
     public static void main(String[] args) {
-        // TODO code application logic here
+       
         int ende ;
         ende = hauptschleife();
         System.out.println("Client geschlossen");
