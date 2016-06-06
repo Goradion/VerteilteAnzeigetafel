@@ -1,5 +1,5 @@
 package VerteilteAnzeigetafel;
-//vsemenishch
+//vsemenishch, Git funktioniert!
 import java.util.AbstractSet;
 import java.util.ArrayList;
 
