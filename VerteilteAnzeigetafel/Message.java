@@ -17,7 +17,7 @@ public class Message implements Serializable {
     private int userID; // 
     private int abtNr; // von welcher Abteilung kommt die Nachricht
     private String inhalt;
-    boolean oeffentlich;
+    private boolean oeffentlich;
     private Time time;
     
     /**
@@ -25,15 +25,18 @@ public class Message implements Serializable {
      * @param msg 
      * @param messageID
      */
-    public Message(Message msg, int messageID){
-        this.messageID = msg.getMessageID();
+    
+    public Message(Message msg, int msgID){
+        this.messageID = msgID;
         this.inhalt = msg.getInhalt();
         this.userID = msg.getUserID();
         this.abtNr = msg.getAbtNr();
         this.time = msg.getTime();
         this.oeffentlich = msg.isOeffentlich();
     }
-    
+    /* Dieser Konstruktor wird vom Client benutzt um eine Nachricht, die noch
+        ohne messageID ist zu erstellen
+    */
     public Message(String inhalt, int userID, int abtNr, boolean oeffentlich ){
         this.inhalt = inhalt;
         this.userID = userID;
@@ -42,6 +45,8 @@ public class Message implements Serializable {
         time.setTime(System.currentTimeMillis());
         this.messageID = Integer.parseInt(""+userID+""+abtNr+""+time.getTime()%1000);
     }
+    
+    
     
     public String toString(){
         return ""+userID+"  "+abtNr+"   "+"\""+inhalt+"\"";
