@@ -26,7 +26,9 @@ public class TafelServer {
 		try {
 			socket = new ServerSocket(SERVER_PORT);
     	while (true){
+    		//print("accept...");
     		Socket client = socket.accept();
+    		//print("Starte LocalThread...");
     		new LocalThread(client).start();
     	}
 		} catch (IOException e) {
@@ -53,5 +55,8 @@ public class TafelServer {
     public static synchronized void activateQueue(int abteilungsID){
     	//TODO implement this method
     }
-    
+    public static synchronized void print (String nachricht)
+    {
+       System.out.println (nachricht);
+    }
 }

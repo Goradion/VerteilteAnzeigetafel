@@ -11,11 +11,13 @@ public class LocalThread extends Thread {
 	public void run(){
 		
 		try {
+			//TafelServer.print("hi");
 			ObjectInputStream input = new ObjectInputStream(client.getInputStream());
-			while (input.available() == 0);
-			
+			//while (input.available() == 0);
+			//TafelServer.print("lese");
 	        ServerRequest request = (ServerRequest) input.readObject();
 	        handleServerRequest(request);
+	       TafelServer.print(request.toString());
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
