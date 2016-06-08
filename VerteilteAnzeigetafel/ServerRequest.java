@@ -1,8 +1,19 @@
 package VerteilteAnzeigetafel;
 
-public class ServerRequest {
+import java.io.Serializable;
+
+public class ServerRequest implements Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 974934460395601110L;
 	private ServerRequestType type;
 	private int messageID;
+	public void setMessageID(int messageID) {
+		this.messageID = messageID;
+	}
+
+
 	private String message;
 	private int abteilungsID; 
 	public ServerRequest(ServerRequestType type, int messageID, String message,
