@@ -5,10 +5,31 @@
  */
 package VerteilteAnzeigetafel;
 
+import java.net.*;
+import java.io.*;
 /**
  *
- * @author micha
+ * @author noone
  */
+
 public class Client {
-    
+	public static final int SERVER_PORT = 10001;
+	public static final String SERVER_HOSTNAME = "localhost";
+	 public static void main(String[] args) {
+		 try {
+			Socket socket = new Socket (SERVER_HOSTNAME, SERVER_PORT);
+			ServerRequest sr = new ServerRequest(ServerRequestType.CREATE, 0, "hi", 1);
+			ObjectOutputStream oout = new ObjectOutputStream(socket.getOutputStream());
+			System.out.println("Sende Objekt...");
+			oout.writeObject(sr);
+			System.out.println("Objekt gesendet");
+			oout.close();
+		} catch (UnknownHostException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	    }
 }
