@@ -10,6 +10,7 @@ public class Anzeigetafel implements Serializable{
     private static String lastID;
     private final int abteilungsID;
     private int messageAnzahl;
+    private int msgLaufNr;
     private final int koordinatorID;
     private HashMap localMessages;
     private HashMap globalMessages;
@@ -82,11 +83,12 @@ public class Anzeigetafel implements Serializable{
             globalMessages.put(nMsg.getMessageID(), nMsg);
         }
         messageAnzahl++;
+        msgLaufNr++;
         return msgID;
     }
 
     private String getNewMsgID(int userID) {
-        Anzeigetafel.lastID = "" + abteilungsID + userID + System.currentTimeMillis() % 1000;
+        Anzeigetafel.lastID = "" + abteilungsID + userID + msgLaufNr;
         return Anzeigetafel.lastID;
     }
 
