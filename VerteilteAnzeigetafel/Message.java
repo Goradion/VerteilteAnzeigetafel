@@ -42,7 +42,7 @@ public class Message implements Serializable {
         this.userID = userID;
         this.abtNr = abtNr;
         this.oeffentlich = oeffentlich;
-        time.setTime(System.currentTimeMillis());
+        time = new Time(System.currentTimeMillis());
         this.messageID = Integer.parseInt(""+userID+""+abtNr+""+time.getTime()%1000);
     }
     

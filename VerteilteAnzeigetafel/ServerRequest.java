@@ -9,19 +9,20 @@ public class ServerRequest implements Serializable{
 	private static final long serialVersionUID = 974934460395601110L;
 	private ServerRequestType type;
 	private int messageID;
-	public void setMessageID(int messageID) {
-		this.messageID = messageID;
-	}
-
-
 	private String message;
-	private int abteilungsID; 
-	public ServerRequest(ServerRequestType type, int messageID, String message,
+	private int userID;
+	private int abteilungsID;
+	private boolean oeffentlich;
+	
+
+
+	public ServerRequest(ServerRequestType type, int messageID, String message, int userID,
 			int abteilungsID) {
 		super();
 		this.type = type;
 		this.messageID = messageID;
 		this.message = message;
+		this.userID = userID;
 		this.abteilungsID = abteilungsID;
 	}
 
@@ -36,7 +37,9 @@ public class ServerRequest implements Serializable{
 	}
 
 
-
+	public void setMessageID(int messageID) {
+		this.messageID = messageID;
+	}
 
 	public int getAbteilungsID() {
 		return abteilungsID;
@@ -53,6 +56,14 @@ public class ServerRequest implements Serializable{
 
 	public String getMessage() {
 		return message;
+	}
+
+	public int getUserID() {
+		return userID;
+	}
+
+	public boolean isOeffentlich() {
+		return oeffentlich;
 	}
 
 	

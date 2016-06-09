@@ -40,8 +40,8 @@ public class TafelServer {
     	anzeigetafel = new Anzeigetafel();
     }
     
-    public static synchronized void createMessage(){
-    	anzeigetafel.createMessage(null);
+    public static synchronized void createMessage(String msg, int userID, int abtNr, boolean oeffentlich){
+    	anzeigetafel.createMessage(new Message(msg, userID, abtNr, oeffentlich));
     }
     
     public static synchronized void deleteMessage(int messageID){
@@ -58,5 +58,8 @@ public class TafelServer {
     public static synchronized void print (String nachricht)
     {
        System.out.println (nachricht);
+    }
+    public static synchronized void printMessages(){
+    	System.out.println(anzeigetafel.getLocalMessages().toString());
     }
 }

@@ -17,7 +17,8 @@ public class LocalThread extends Thread {
 			//TafelServer.print("lese");
 	        ServerRequest request = (ServerRequest) input.readObject();
 	        handleServerRequest(request);
-	       TafelServer.print(request.toString());
+	        //TafelServer.print(request.toString());
+	        TafelServer.printMessages();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -29,7 +30,8 @@ public class LocalThread extends Thread {
 	
 	private void handleServerRequest(ServerRequest request){
 		switch (request.getType()) {
-		case CREATE: TafelServer.createMessage();
+		case CREATE: TafelServer.createMessage(request.getMessage(), request.getUserID(), 
+				request.getAbteilungsID(), request.isOeffentlich());
 			break;
 		case DELETE: TafelServer.deleteMessage(request.getMessageID());
 			break;

@@ -18,7 +18,8 @@ public class Client {
 	 public static void main(String[] args) {
 		 try {
 			Socket socket = new Socket (SERVER_HOSTNAME, SERVER_PORT);
-			ServerRequest sr = new ServerRequest(ServerRequestType.CREATE, 0, "hi", 1);
+			//ServerRequest sr = new ServerRequest(ServerRequestType.CREATE, 0, "hi", 3, 1);
+			ServerRequest sr = new ServerRequest(ServerRequestType.DELETE,31792,"asdf",3,1);
 			ObjectOutputStream oout = new ObjectOutputStream(socket.getOutputStream());
 			System.out.println("Sende Objekt...");
 			oout.writeObject(sr);
