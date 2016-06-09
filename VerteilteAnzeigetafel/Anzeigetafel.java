@@ -1,10 +1,11 @@
 package VerteilteAnzeigetafel;
 //vsemenishch, Git funktioniert!
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.HashSet;
 
-public class Anzeigetafel {
+public class Anzeigetafel implements Serializable{
 
     private static String lastID;
     private final int abteilungsID;
