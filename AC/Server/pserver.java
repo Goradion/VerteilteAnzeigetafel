@@ -1,3 +1,5 @@
+package AC.Server;
+
 
 import java.io.ObjectInputStream;
 import java.net.*;
@@ -8,7 +10,7 @@ import java.io.Serializable;
 import java.net.Socket;
 import java.net.ServerSocket;
 import java.io.InputStream;
-
+import AC.Client.SMessage;
 class pserver {
 
     public static void schreibeAbteilungDatei(SMessage NachrichtinDatei[],  int i) throws IOException {

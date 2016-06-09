@@ -9,7 +9,7 @@
  *Datei: Client
  * Client zur Kommunikation zwischen Benutzer und Anzeigetafel
  */
-package Client;
+
 
 import java.net.*;
 import java.io.*;
@@ -47,8 +47,9 @@ public class Client2 {
      * @param abtNr
      * @param administrator
      * @param message 
+     * @return 
      */
-    public Client(String user,int abtNr,boolean administrator,String message)
+    public  Client2(String user,int abtNr,boolean administrator,String message)
     {
         this.benutzerName = benutzerName;
         this.abtNr = abtNr;
@@ -110,7 +111,7 @@ public class Client2 {
         {
            try
                {
-                   socket.close();
+                  // socket.close();
                }
                catch(Exception e)
                {
@@ -139,7 +140,7 @@ public class Client2 {
            {
                
                int neueNachricht = -1;
-               neueNachricht = neueNachricht();
+              // neueNachricht = neueNachricht();
            }
            catch(Exception exception)
            {
