@@ -1,9 +1,8 @@
 package VerteilteAnzeigetafel;
 //vsemenishch, Git funktioniert!
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.TreeSet;
+import java.util.HashSet;
 
 public class Anzeigetafel {
 
@@ -13,7 +12,7 @@ public class Anzeigetafel {
     private final int koordinatorID;
     private HashMap localMessages;
     private HashMap globalMessages;
-    private TreeSet userIDs;
+    private HashSet userIDs;
 
     public Anzeigetafel() {
         /* welche Nummern sollen die einzelnen Anzeigetafeln bekommen?*/
@@ -24,7 +23,7 @@ public class Anzeigetafel {
         Anzeigetafel.lastID = null;
         this.localMessages = new HashMap();
         this.globalMessages = new HashMap();
-        this.userIDs = new TreeSet<>();
+        this.userIDs = new HashSet<>();
         /* Füge 5 users ein, die zu dieser Anzeigetafel gehören*/
         for (int i = 1; i < 6; i++) {
             userIDs.add(i);
@@ -86,7 +85,7 @@ public class Anzeigetafel {
     }
 
     private String getNewMsgID(int userID) {
-        Anzeigetafel.lastID = "" + userID + abteilungsID + System.currentTimeMillis() % 1000;
+        Anzeigetafel.lastID = "" + abteilungsID + userID + System.currentTimeMillis() % 1000;
         return Anzeigetafel.lastID;
     }
 
@@ -110,7 +109,7 @@ public class Anzeigetafel {
         return globalMessages;
     }
 
-    public TreeSet getUserIDs() {
+    public HashSet getUserIDs() {
         return userIDs;
     }
 
