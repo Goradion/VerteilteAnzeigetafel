@@ -3,14 +3,14 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
+package AC.Client;
 import java.io.Serializable;
 
 /**
  *
  * @author andrea
  */
-class SMessage implements Serializable {
+public class SMessage implements Serializable {
 
     String benutzerName;
     int userID;
