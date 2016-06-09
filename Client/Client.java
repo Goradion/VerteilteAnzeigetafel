@@ -1,6 +1,4 @@
-<<<<<<< Upstream, based on origin/master
 
-=======
 /**
  *Projekt Anzeigetafel
  * @author:  Michael Moser
@@ -12,10 +10,8 @@
  *Datei: Client
  * Client zur Kommunikation zwischen Benutzer und Anzeigetafel
  */
->>>>>>> 343fac8 Die Methoden erweitert und kommentare
 package Client;
 
-<<<<<<< Upstream, based on origin/master
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.InputStream;
@@ -28,17 +24,12 @@ import java.net.Socket;
  *
  * @author micha
  */
-=======
 import java.net.*;
 import java.io.*;
 
->>>>>>> 343fac8 Die Methoden erweitert und kommentare
 public class Client {
-    
-<<<<<<< Upstream, based on origin/master
+
     private String benutzername;
-    private int abtNr;
-=======
     public static final int ENDE =0;
     public static final int TRUE = 1;
     public static final int FALSE = 0;
@@ -48,14 +39,10 @@ public class Client {
     private String benutzerName;
     private int userID;
     private int abtNr;//Abteilungsnummer
->>>>>>> 343fac8 Die Methoden erweitert und kommentare
     private String message;
     private int port=50000;
     private String ip;
-<<<<<<< Upstream, based on origin/master
-    private static Socket socket;
-=======
-   
+    private static Socket socket;   
     private boolean administrator;
     private boolean removeMsg;
     private boolean modifyMsg;
@@ -65,7 +52,6 @@ public class Client {
      * Erstellung eines neuen Sockets;
      */
    // private static Socket socket;
->>>>>>> 343fac8 Die Methoden erweitert und kommentare
     
     public Client(String benutzername,int abtNr)
     {
@@ -159,7 +145,7 @@ public class Client {
            {
                
                int neueNachricht = -1;
-               neueNachricht = neueNachricht();
+               //neueNachricht = neueNachricht();
            }
            catch(Exception exception)
            {
@@ -169,7 +155,6 @@ public class Client {
         }
         return ENDE;
     }
->>>>>>> 343fac8 Die Methoden erweitert und kommentare
     
     
     
