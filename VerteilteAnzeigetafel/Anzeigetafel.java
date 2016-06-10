@@ -12,9 +12,9 @@ public class Anzeigetafel implements Serializable{
     private int messageAnzahl;
     private int msgLaufNr;
     private final int koordinatorID;
-    private HashMap localMessages;
-    private HashMap globalMessages;
-    private HashSet userIDs;
+    private HashMap<Integer,Message> localMessages;
+    private HashMap<Integer,Message> globalMessages;
+    private HashSet<Integer> userIDs;
 
     public Anzeigetafel() {
         /* welche Nummern sollen die einzelnen Anzeigetafeln bekommen?*/
