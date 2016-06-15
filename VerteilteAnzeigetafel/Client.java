@@ -14,17 +14,18 @@ import java.io.*;
 
 public class Client {
 	public static final int SERVER_PORT = 10001;
-	public static final String SERVER_HOSTNAME = "localhost";
+	public static final String SERVER_HOSTNAME = "134.96.216.13";
 	 public static void main(String[] args) {
 		 try {
 			Socket socket = new Socket (SERVER_HOSTNAME, SERVER_PORT);
-			//ServerRequest sr = new ServerRequest(ServerRequestType.CREATE, 0, "hi", 3, 1);
-			ServerRequest sr = new ServerRequest(ServerRequestType.DELETE,31792,"asdf",3,1);
+			ServerRequest sr = new ServerRequest(ServerRequestType.CREATE, 0, "hi", 3, 1);
+			//ServerRequest sr = new ServerRequest(ServerRequestType.DELETE,31792,"asdf",3,1);
 			ObjectOutputStream oout = new ObjectOutputStream(socket.getOutputStream());
 			System.out.println("Sende Objekt...");
 			oout.writeObject(sr);
 			System.out.println("Objekt gesendet");
 			oout.close();
+			socket.close();
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

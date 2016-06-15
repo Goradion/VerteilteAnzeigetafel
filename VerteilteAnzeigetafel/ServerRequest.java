@@ -25,9 +25,7 @@ public class ServerRequest implements Serializable{
 		this.userID = userID;
 		this.abteilungsID = abteilungsID;
 	}
-
-
-
+	
 	
 	@Override
 	public String toString() {
