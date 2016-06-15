@@ -6,7 +6,7 @@
  * @author:Viktor Semenitsch
  * @author:Simon Bastian
  * @author:Alex Müller
- *Datei: Client
+ * Datei: Client
  * Client zur Kommunikation zwischen Benutzer und Anzeigetafel
  */
 package Client;
@@ -38,7 +38,6 @@ public class Client {
     /**
      * Erstellung eines neuen Sockets;
      */
-   // private static Socket socket;
     
 
     /**
@@ -117,11 +116,13 @@ public class Client {
   
        return TRUE;
     }
+    
     /**
      *Methode zu Erstellung einer neuen Nachricht 
      * Diese Methode wird nur für das Erstellen der Nachricht verwendet
      * 
     */
+    
     public static boolean neueNachricht()
     {
        int senden= -1;
@@ -134,6 +135,14 @@ public class Client {
     	   return false;
        }
     	   
+    }
+    public void removeMessage(int messageID)
+    {
+    	
+    }
+    public void changeMessage(int messageID)
+    {
+    	
     }
     static public int hauptschleife()
     {
@@ -166,8 +175,7 @@ public class Client {
     
     public static void main(String[] args) {
        
-        int ende ;
-        ende = hauptschleife();
+        hauptschleife();
         System.out.println("Client geschlossen");
     }
 }
