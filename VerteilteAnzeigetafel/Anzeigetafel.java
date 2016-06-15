@@ -1,13 +1,14 @@
 package VerteilteAnzeigetafel;
 //vsemenishch, Git funktioniert!
 
-import java.io.Serializable;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.io.*;
+import java.nio.file.*;
+import java.util.*;
+import java.util.logging.*;
 
 public class Anzeigetafel implements Serializable {
-
-    private static String lastID;
+    private static final String TAFELNAME = "tafel";
+    private String lastID;
     private final int abteilungsID;
     private int messageAnzahl;
     private int msgLaufNr;
@@ -21,7 +22,7 @@ public class Anzeigetafel implements Serializable {
         // eine neue Nummer festlegen
         this.koordinatorID = 1;
         this.messageAnzahl = 0;
-        Anzeigetafel.lastID = null;
+        lastID = null;
         this.Messages = new HashMap();
 
         this.userIDs = new HashSet<>();
@@ -31,6 +32,16 @@ public class Anzeigetafel implements Serializable {
         }
     }
 
+    public Anzeigetafel(Anzeigetafel at){
+        this.Messages=at.Messages;
+        this.abteilungsID=at.abteilungsID;
+        this.koordinatorID=at.koordinatorID;
+        this.messageAnzahl=at.messageAnzahl;
+        this.msgLaufNr=at.msgLaufNr;
+        this.userIDs=at.userIDs;
+        this.lastID=at.lastID;
+    }
+    
     public boolean isUser(int userID) {
         return userIDs.contains(userID);
     }
@@ -97,8 +108,8 @@ public class Anzeigetafel implements Serializable {
     }
 
     private String getNewMsgID(int userID) {
-        Anzeigetafel.lastID = "" + abteilungsID + userID + msgLaufNr;
-        return Anzeigetafel.lastID;
+        lastID = "" + abteilungsID + userID + msgLaufNr;
+        return lastID;
     }
 
     public int getAbteilungsID() {
@@ -124,8 +135,54 @@ public class Anzeigetafel implements Serializable {
         return userIDs;
     }
 
-    public static String getLastID() {
+    public String getLastID() {
         return lastID;
+    }
+    /**
+     * Ermöglicht das Speichern des aktuellen Zustandes der Anzeigetafel
+     * in eine Datei.
+     */
+    public void saveStateToFile() {
+        FileOutputStream fileoutput = null;
+        ObjectOutputStream objoutput = null;
+        try {
+            fileoutput = new FileOutputStream("./"+TAFELNAME);
+            objoutput = new ObjectOutputStream(fileoutput);
+            objoutput.writeObject(this);
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(Anzeigetafel.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(Anzeigetafel.class.getName()).log(Level.SEVERE, null, ex);
+        } finally{
+            try {
+                objoutput.close();
+            } catch (IOException ex) {
+                Logger.getLogger(Anzeigetafel.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+    /**
+     * Ermöglicht das Laden des Zustandes aus einer Datei.
+     * @return 
+     * @throws VerteilteAnzeigetafel.TafelException
+     */
+    public static Anzeigetafel loadStateFromFile() throws TafelException{
+        if(!Files.exists(FileSystems.getDefault().getPath("./", TAFELNAME))){
+           throw new TafelException("Could not load state from file.");
+        }
+        Anzeigetafel at = null;
+        FileInputStream fileinput = null;
+        ObjectInputStream objinput = null;
+        try {
+            fileinput = new FileInputStream("./"+TAFELNAME);
+            objinput = new ObjectInputStream(fileinput);
+            at = new Anzeigetafel((Anzeigetafel)objinput.readObject());            
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(Anzeigetafel.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException | ClassNotFoundException ex) {
+            Logger.getLogger(Anzeigetafel.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return at;
     }
 
 }
