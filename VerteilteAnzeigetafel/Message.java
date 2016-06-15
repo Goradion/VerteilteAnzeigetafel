@@ -13,6 +13,7 @@ import java.sql.Time;
  * @author am
  */
 public class Message implements Serializable {
+    private static final long serialVersionUID = 88889999L ;  
     private int messageID;
     private int userID; // 
     private int abtNr; // von welcher Abteilung kommt die Nachricht
@@ -23,6 +24,7 @@ public class Message implements Serializable {
     /**
      Konstruiert ein Message-Objekt mit Hilfe eines anderen Msg-Objekts
      * @param msg 
+     * @param msgID 
      * @param messageID
      */
     
@@ -76,5 +78,8 @@ public class Message implements Serializable {
         return time;
     }
     
+    public void setOeffentlich(){
+        this.oeffentlich=true;
+    }
    
 }
