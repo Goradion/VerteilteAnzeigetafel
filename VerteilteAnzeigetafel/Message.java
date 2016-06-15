@@ -13,7 +13,11 @@ import java.sql.Time;
  * @author am
  */
 public class Message implements Serializable {
-    private int messageID;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 7162932561989401921L;
+	private int messageID;
     private int userID; // 
     private int abtNr; // von welcher Abteilung kommt die Nachricht
     private String inhalt;
@@ -48,9 +52,11 @@ public class Message implements Serializable {
     
     
     
-    public String toString(){
-        return ""+userID+"  "+abtNr+"   "+"\""+inhalt+"\"";
-    }
+    @Override
+	public String toString() {
+		return "Message [messageID=" + messageID + ", userID=" + userID + ", abtNr=" + abtNr + ", inhalt=" + inhalt
+				+ ", oeffentlich=" + oeffentlich + ", time=" + time + "]";
+	}
 
     public int getAbtNr() {
         return abtNr;
