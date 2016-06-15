@@ -48,6 +48,9 @@ public class TafelServer {
     	anzeigetafel.deleteMessage(messageID);
     }
     
+    public static synchronized void publishMesaage(int messageID){
+    //TODO implemt this method
+    }
     public static synchronized void modifyMessage(int messageID, String inhalt){
     	anzeigetafel.modifyMessage(messageID, inhalt);;
     }

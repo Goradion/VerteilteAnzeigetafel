@@ -37,6 +37,8 @@ public class LocalThread extends Thread {
 			break;
 		case MODIFY: TafelServer.modifyMessage(request.getMessageID(), request.getMessage());
 			break;
+		case PUBLISH: //TODO
+			break;
 		case REGISTER: TafelServer.activateQueue(request.getAbteilungsID());
 			break;
 		default:

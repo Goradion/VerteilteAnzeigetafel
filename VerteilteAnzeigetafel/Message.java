@@ -9,26 +9,31 @@ import java.io.Serializable; // importiert Libarys
 import java.sql.Time;
 
 /**
- * 
+ *
  * @author am
  */
 public class Message implements Serializable {
-    private static final long serialVersionUID = 88889999L ;  
+
+    /**
+     *
+     */
+    private static final long serialVersionUID = 7162932561989401921L;
     private int messageID;
+
     private int userID; // 
     private int abtNr; // von welcher Abteilung kommt die Nachricht
     private String inhalt;
     private boolean oeffentlich;
     private Time time;
-    
+
     /**
-     Konstruiert ein Message-Objekt mit Hilfe eines anderen Msg-Objekts
-     * @param msg 
-     * @param msgID 
+     * Konstruiert ein Message-Objekt mit Hilfe eines anderen Msg-Objekts
+     *
+     * @param msg
+     * @param msgID
      * @param messageID
      */
-    
-    public Message(Message msg, int msgID){
+    public Message(Message msg, int msgID) {
         this.messageID = msgID;
         this.inhalt = msg.getInhalt();
         this.userID = msg.getUserID();
@@ -36,28 +41,29 @@ public class Message implements Serializable {
         this.time = msg.getTime();
         this.oeffentlich = msg.isOeffentlich();
     }
+
     /* Dieser Konstruktor wird vom Client benutzt um eine Nachricht, die noch
         ohne messageID ist zu erstellen
-    */
-    public Message(String inhalt, int userID, int abtNr, boolean oeffentlich ){
+     */
+    public Message(String inhalt, int userID, int abtNr, boolean oeffentlich) {
         this.inhalt = inhalt;
         this.userID = userID;
         this.abtNr = abtNr;
         this.oeffentlich = oeffentlich;
         time = new Time(System.currentTimeMillis());
-        this.messageID = Integer.parseInt(""+userID+""+abtNr+""+time.getTime()%1000);
+        this.messageID = Integer.parseInt("" + userID + "" + abtNr + "" + time.getTime() % 1000);
     }
-    
-    
-    
-    public String toString(){
-        return ""+userID+"  "+abtNr+"   "+"\""+inhalt+"\"";
+
+    @Override
+    public String toString() {
+        return "Message [messageID=" + messageID + ", userID=" + userID + ", abtNr=" + abtNr + ", inhalt=" + inhalt
+                + ", oeffentlich=" + oeffentlich + ", time=" + time + "]";
     }
 
     public int getAbtNr() {
         return abtNr;
     }
-    
+
     public int getMessageID() {
         return messageID;
     }
@@ -77,9 +83,9 @@ public class Message implements Serializable {
     public Time getTime() {
         return time;
     }
-    
-    public void setOeffentlich(){
-        this.oeffentlich=true;
+
+    public void setOeffentlich() {
+        this.oeffentlich = true;
     }
-   
+
 }

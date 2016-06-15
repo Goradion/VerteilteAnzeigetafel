@@ -1,5 +1,5 @@
 package VerteilteAnzeigetafel;
 
 public enum ServerRequestType {
-	CREATE, DELETE, MODIFY, REGISTER
+	CREATE, DELETE, MODIFY, PUBLISH, SHOW_MY_MESSAGES, REGISTER
 }
