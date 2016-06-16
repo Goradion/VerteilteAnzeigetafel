@@ -119,7 +119,7 @@ public class Anzeigetafel implements Serializable {
         return koordinatorID;
     }
 
-    public HashMap getMessages() {
+    public HashMap<Integer,Message> getMessages() {
         return messages;
     }
 
