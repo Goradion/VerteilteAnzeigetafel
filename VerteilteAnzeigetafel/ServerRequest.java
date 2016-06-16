@@ -64,8 +64,7 @@ public class ServerRequest implements Serializable{
 	public boolean isOeffentlich() {
 		return oeffentlich;
 	}
-	public static  ServerRequest buildCreateRequest(ServerRequestType type, int messageID, String message, 
-			int userID, int abteilungsID ) {
+	public static  ServerRequest buildCreateRequest(ServerRequestType type, String message, int userID, int abteilungsID ) {
 		if (type == ServerRequestType.CREATE){
 			return new ServerRequest(type, 0, message, userID, abteilungsID);
 		} else {
