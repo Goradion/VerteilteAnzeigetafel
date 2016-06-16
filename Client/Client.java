@@ -12,11 +12,18 @@
 package Client;
 
 import java.net.*;
+import java.util.Scanner;
+
+import VerteilteAnzeigetafel.ServerRequest;
+import VerteilteAnzeigetafel.ServerRequestType;
+
 import java.io.*;
 
-public class Client {
+public class Client implements Serializable{
     
-    public static final int ENDE =0;
+    
+	private static final long serialVersionUID = -1466790708777017802L;
+	public static final int ENDE =0;
     public static final int TRUE = 1;
     public static final int FALSE = 0;
     public static final int SERVER_PORT = 10001;
@@ -27,19 +34,15 @@ public class Client {
     private int abtNr;//Abteilungsnummer
     private String message;
     private int messageID;
+    private String datum;
 //    static private int port = 50000; //festgelegter Port(frei)
-    private String ip;
+//    private String ip;
    
-    private boolean administrator;
-    private boolean removeMsg;
-    private boolean modifyMsg;
-    private boolean newMessage;
+    private boolean administrator =false;
+    private boolean removeMsg =false;
+    private boolean modifyMsg = false;
+    private boolean newMessage =false;
    
-    /**
-     * Erstellung eines neuen Sockets;
-     */
-    
-
     /**
      * Konstruktor zum Erstellung des Benutzers
      * @param user
@@ -68,7 +71,12 @@ public class Client {
     {
         return message;
     }
- /*   
+    public void  setBenutzerName(String benutzerName)
+    {
+    	this.benutzerName = benutzerName;
+    }
+    
+    /*   
     public int getport()
     {
         return port;
@@ -84,23 +92,29 @@ public class Client {
      * Die Methode ist nur für das senden der Nachricht und das abfangen der 
      * damit verbundenen Fehlerfälle zuständig
     */
-    public static int sendeMessage()
+    public static boolean sendeMessage()
     {
        try
        {
-           boolean nachricht;
+           
+           // Eröffnen eines neuen Sockets um die Nachricht zu übermitteln
            Socket socket = new Socket (SERVER_HOSTNAME, SERVER_PORT);
            System.out.println ("Verbunden mit Server: " + socket.getRemoteSocketAddress());
-           nachricht = neueNachricht();
-           if(nachricht == true)
-           {
-        	   System.out.printf("Nachricht wurde erfolgreich gesendet");
-           }
-           else
-           {
-        	   //TODO // andere Funktion benutzen um nochmal versuchen zu versenden
-           }
-     //      socket.getOutputStream().write ();
+           
+           // Erstellen einer Nachricht 
+           Scanner sc = new Scanner(System.in);
+           System.out.println("Geben sie ihre Nachricht ein.\n");
+           String message = sc.next();
+           
+           // Senden der Nachricht über einen Stream
+           ServerRequest sr = new ServerRequest(ServerRequestType.CREATE, 0, message , 3, 1);
+           
+           // Bauen eines Objektes 
+           ObjectOutputStream oout = new ObjectOutputStream(socket.getOutputStream());
+           System.out.println("Sende Objekt...");
+           oout.writeObject(sr);
+           System.out.println("Objekt gesendet");
+           oout.close();
            socket.close(); 
        } 
        catch (UnknownHostException e)
@@ -114,7 +128,7 @@ public class Client {
     	   System.out.println ("Fehler während der Kommunikation:\n" + e.getMessage());
        }
   
-       return TRUE;
+       return true;
     }
     
     /**
@@ -123,9 +137,10 @@ public class Client {
      * 
     */
     
-    public static boolean neueNachricht()
+/*    public static boolean neueNachricht()
     {
        int senden= -1;
+       
        if(senden == 1)
        {
     	   return true;
@@ -135,14 +150,17 @@ public class Client {
     	   return false;
        }
     	   
-    }
-    public void removeMessage(int messageID)
-    {
-    	
+    }*/
+    public void removemsg(String benutzerName, boolean administrator, boolean removeMsg, int messageID) {
+        // Welches NachrichtenObjekt soll gelÃ¶scht werden
+        this.benutzerName = benutzerName;
+        this.administrator = administrator;
+        this.removeMsg = removeMsg;
+        this.messageID= messageID;
     }
     public void changeMessage(int messageID)
     {
-    	
+    	//TODO	
     }
     static public int hauptschleife()
     {
@@ -152,7 +170,7 @@ public class Client {
            {
                
                boolean neueNachricht = false;
-               neueNachricht = neueNachricht();
+               neueNachricht = sendeMessage();
                if(neueNachricht == true)
                {
             	   System.out.println("Nachricht wurde erfolgreich gesendet\n");
