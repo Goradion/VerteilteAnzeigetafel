@@ -12,11 +12,18 @@
 package Client;
 
 import java.net.*;
+import java.util.Scanner;
+
+import VerteilteAnzeigetafel.ServerRequest;
+import VerteilteAnzeigetafel.ServerRequestType;
+
 import java.io.*;
 
-public class Client {
+public class Client implements Serializable{
     
-    public static final int ENDE =0;
+    
+	private static final long serialVersionUID = -1466790708777017802L;
+	public static final int ENDE =0;
     public static final int TRUE = 1;
     public static final int FALSE = 0;
     public static final int SERVER_PORT = 10001;
@@ -27,32 +34,29 @@ public class Client {
     private int abtNr;//Abteilungsnummer
     private String message;
     private int messageID;
+    private String datum;
 //    static private int port = 50000; //festgelegter Port(frei)
-    private String ip;
+//    private String ip;
    
-    private boolean administrator;
-    private boolean removeMsg;
-    private boolean modifyMsg;
-    private boolean newMessage;
+    private boolean administrator =false;
+    private boolean removeMsg =false;
+    private boolean modifyMsg = false;
+    private boolean newMessage =false;
    
-    /**
-     * Erstellung eines neuen Sockets;
-     */
-    
-
     /**
      * Konstruktor zum Erstellung des Benutzers
-     * @param user
+     * @param benutzerName	
      * @param abtNr
      * @param administrator
-     * @param message 
+     * @param userID
      */
-    public Client(String user,int abtNr,boolean administrator,String message)
+    public Client(String benutzerName, int userID ,int abtNr,boolean administrator)
     {
         this.benutzerName = benutzerName;
+        this.userID = userID;
         this.abtNr = abtNr;
         this.administrator=administrator;
-        this.message =message;
+        
     }
     
     public String getbenutzername()
@@ -64,43 +68,45 @@ public class Client {
     {
         return abtNr;
     }
-    public String getmessage()
+    public int getUserID()
     {
-        return message;
+        return userID;
     }
- /*   
-    public int getport()
+    public void  setBenutzerName(String benutzerName)
     {
-        return port;
+    	this.benutzerName = benutzerName;
     }
     
-    public String getip()
-    {
-        return ip;
-    }
-*/
+
     /**
      * Methode zum senden der Nachricht
      * Die Methode ist nur für das senden der Nachricht und das abfangen der 
      * damit verbundenen Fehlerfälle zuständig
     */
-    public static int sendeMessage()
+    public static boolean sendeMessage(String name,int abteilung, int userID)
     {
        try
        {
-           boolean nachricht;
+    	// Erstellen einer Nachricht 
+           Scanner ms = new Scanner(System.in);
+           System.out.println("Geben sie ihre Nachricht ein.");
+           String message = ms.nextLine();
+           ms.close();
+           
+           // Eröffnen eines neuen Sockets um die Nachricht zu übermitteln
            Socket socket = new Socket (SERVER_HOSTNAME, SERVER_PORT);
            System.out.println ("Verbunden mit Server: " + socket.getRemoteSocketAddress());
-           nachricht = neueNachricht();
-           if(nachricht == true)
-           {
-        	   System.out.printf("Nachricht wurde erfolgreich gesendet");
-           }
-           else
-           {
-        	   //TODO // andere Funktion benutzen um nochmal versuchen zu versenden
-           }
-     //      socket.getOutputStream().write ();
+           
+           // Senden der Nachricht über einen Stream
+           ServerRequest sr = ServerRequest.buildCreateRequest(ServerRequestType.CREATE, 2, message, userID, abteilung);
+           
+           // Bauen eines Objektes 
+           ObjectOutputStream oout = new ObjectOutputStream(socket.getOutputStream());
+           System.out.println("Sende Objekt...");
+           oout.writeObject(sr);
+           System.out.println("Objekt gesendet");
+           oout.close();
+          
            socket.close(); 
        } 
        catch (UnknownHostException e)
@@ -114,35 +120,20 @@ public class Client {
     	   System.out.println ("Fehler während der Kommunikation:\n" + e.getMessage());
        }
   
-       return TRUE;
+       return true;
     }
     
-    /**
-     *Methode zu Erstellung einer neuen Nachricht 
-     * Diese Methode wird nur für das Erstellen der Nachricht verwendet
-     * 
-    */
-    
-    public static boolean neueNachricht()
-    {
-       int senden= -1;
-       if(senden == 1)
-       {
-    	   return true;
-       }
-       else
-       {
-    	   return false;
-       }
-    	   
-    }
-    public void removeMessage(int messageID)
-    {
-    	
+
+    public void removemsg(String benutzerName, boolean administrator, boolean removeMsg, int messageID) {
+        // Welches NachrichtenObjekt soll gelÃ¶scht werden
+        this.benutzerName = benutzerName;
+        this.administrator = administrator;
+        this.removeMsg = removeMsg;
+        this.messageID= messageID;
     }
     public void changeMessage(int messageID)
     {
-    	
+    	//TODO	
     }
     static public int hauptschleife()
     {
@@ -150,21 +141,38 @@ public class Client {
         {
            try
            {
+        	   Scanner sc = new Scanner(System.in);
                
+        	   System.out.println("Geben Sie ihren Namen ein: ");
+               String name = sc.nextLine();
+ //              System.out.println("\n");
+        	  
+               System.out.println("Geben Sie Ihre Abteilungsnumer ein: ");
+               int abteilung = sc.nextInt();
+ //              System.out.println("\n");
+        	   
+        	   System.out.println("Geben Sie ihre userID ein :");
+               int userID = sc.nextInt();
+ //              System.out.println("\n");
+              
+               
+
                boolean neueNachricht = false;
-               neueNachricht = neueNachricht();
-               if(neueNachricht == true)
+               neueNachricht = sendeMessage( name, abteilung,userID);
+               sc.close();
+               /*               if(neueNachricht == true)
                {
             	   System.out.println("Nachricht wurde erfolgreich gesendet\n");
                }
                else
                {
             	   System.out.println("Nachricht konnte nicht gesendet werden");
-               }
+               }*/
            }
            catch(Exception exception)
            {
-              System.out.printf("Client Fehler");
+        	   exception.printStackTrace();
+             
            }
             break;    
         }
