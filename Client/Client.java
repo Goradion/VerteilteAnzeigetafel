@@ -98,7 +98,7 @@ public class Client implements Serializable{
            System.out.println ("Verbunden mit Server: " + socket.getRemoteSocketAddress());
            
            // Senden der Nachricht über einen Stream
-           ServerRequest sr = ServerRequest.buildCreateRequest(ServerRequestType.CREATE, 2, message, userID, abteilung);
+           ServerRequest sr = ServerRequest.buildCreateRequest(ServerRequestType.CREATE, message, userID, abteilung);
            
            // Bauen eines Objektes 
            ObjectOutputStream oout = new ObjectOutputStream(socket.getOutputStream());
