@@ -12,14 +12,12 @@ public class LocalThread extends Thread {
 	public void run(){
 		
 		try {
-			//TafelServer.print("hi");
+			
 			ObjectInputStream input = new ObjectInputStream(client.getInputStream());
-			//while (input.available() == 0);
-			//TafelServer.print("lese");
-	        ServerRequest request = (ServerRequest) input.readObject();
-	        handleServerRequest(request);
-	        //TafelServer.print(request.toString());
-	        TafelServer.printMessages();
+			ServerRequest request = (ServerRequest) input.readObject();
+			handleServerRequest(request);
+			//input.close();
+			client.close();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -54,13 +52,14 @@ public class LocalThread extends Thread {
 	}
 	private void showMessagesToClient(int userID)  {
 		LinkedList<Message> userMessages= TafelServer.getMessagesByUserID(userID);
-		try {
-			ObjectOutputStream oout = new ObjectOutputStream(client.getOutputStream());
-			oout.writeObject(userMessages);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		TafelServer.print(userMessages.toString());
+//		try {
+//			ObjectOutputStream oout = new ObjectOutputStream(client.getOutputStream());
+//			oout.writeObject(userMessages);
+//		} catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
 		
 	}
 }

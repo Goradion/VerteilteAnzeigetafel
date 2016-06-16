@@ -43,7 +43,9 @@ public class TafelServer {
     }
     
     public static synchronized void createMessage(String msg, int userID, int abtNr, boolean oeffentlich) throws TafelException{
-    	anzeigetafel.createMessage(new Message(msg, userID, abtNr, oeffentlich), abtNr);
+    	Message m = new Message(msg, userID, abtNr, oeffentlich);
+    	anzeigetafel.createMessage(m, userID);
+    	print("Nachricht erstellt:\n"+m);
     }
     
     public static synchronized void deleteMessage(int messageID,int userID) throws TafelException{
