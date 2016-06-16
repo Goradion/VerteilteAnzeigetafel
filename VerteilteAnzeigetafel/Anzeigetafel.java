@@ -13,7 +13,7 @@ public class Anzeigetafel implements Serializable {
     private int messageAnzahl;
     private int msgLaufNr;
     private final int koordinatorID;
-    private HashMap<Integer, Message> Messages;
+    private LinkedHashMap<Integer, Message> messages;
     private HashSet<Integer> userIDs;
     private HashMap<Integer, LinkedList<Integer>> userMsgs;
 
@@ -24,25 +24,15 @@ public class Anzeigetafel implements Serializable {
         this.koordinatorID = 1;
         this.messageAnzahl = 0;
         lastID = null;
-        this.Messages = new HashMap();
+        this.messages = new LinkedHashMap<Integer,Message>();
         this.userMsgs = new HashMap<Integer,LinkedList<Integer>>();
-        this.userIDs = new HashSet<>();
+        this.userIDs = new HashSet<Integer>();
         /* Füge 5 users ein, die zu dieser Anzeigetafel gehören*/
         for (int i = 1; i < 6; i++) {
             userIDs.add(i);
         }
     }
 
-    public Anzeigetafel(Anzeigetafel at){
-        this.Messages=at.Messages;
-        this.abteilungsID=at.abteilungsID;
-        this.koordinatorID=at.koordinatorID;
-        this.messageAnzahl=at.messageAnzahl;
-        this.msgLaufNr=at.msgLaufNr;
-        this.userIDs=at.userIDs;
-        this.lastID=at.lastID;
-    }
-    
     public boolean isUser(int userID) {
         return userIDs.contains(userID);
     }
@@ -53,12 +43,12 @@ public class Anzeigetafel implements Serializable {
 
     public void modifyMessage(int messageID, String inhalt, int user) throws TafelException {
 
-        if (Messages.containsKey(messageID)) {
+        if (messages.containsKey(messageID)) {
             /* Autor oder Koordinator ?*/
-            if (user == Messages.get(messageID).getUserID() || isCoordinator(user)) {
-                Message msg = new Message(inhalt, Messages.get(messageID).getUserID(),
-                        Messages.get(messageID).getAbtNr(), Messages.get(messageID).isOeffentlich());
-                Messages.replace(messageID, msg);
+            if (user == messages.get(messageID).getUserID() || isCoordinator(user)) {
+                Message msg = new Message(inhalt, messages.get(messageID).getUserID(),
+                        messages.get(messageID).getAbtNr(), messages.get(messageID).isOeffentlich());
+                messages.replace(messageID, msg);
             } else {
                 throw new TafelException(user + " nicht berechtigt zum Modifizieren");
             }
@@ -69,11 +59,11 @@ public class Anzeigetafel implements Serializable {
     }
 
     public void publishMessage(int messageID, int user) throws TafelException {
-        if (!Messages.containsKey(messageID)) {
+        if (!messages.containsKey(messageID)) {
             throw new TafelException("Keine Message mit ID " + messageID + " gefunden!");
         }
         if (isCoordinator(user)) {
-            Messages.get(messageID).setOeffentlich();
+            messages.get(messageID).setOeffentlich();
         } else {
             throw new TafelException("Keine Berechtigung zum Publizieren!");
         }
@@ -81,10 +71,10 @@ public class Anzeigetafel implements Serializable {
 
     public void deleteMessage(int messageID, int user) throws TafelException {
         
-        if (Messages.containsKey(messageID)) {
+        if (messages.containsKey(messageID)) {
             /* Autor oder Koordinator ?*/
-            if (user == Messages.get(messageID).getUserID() || isCoordinator(user)) {
-                Messages.remove(messageID);
+            if (user == messages.get(messageID).getUserID() || isCoordinator(user)) {
+                messages.remove(messageID);
                 userMsgs.get(user).remove(messageID);
             } else {
                 throw new TafelException(user + " nicht berechtigt zum Löschen");
@@ -101,7 +91,7 @@ public class Anzeigetafel implements Serializable {
         }
         int msgID = Integer.parseInt(getNewMsgID(msg.getUserID()));
         Message nMsg = new Message(msg, msgID);
-        Messages.put(nMsg.getMessageID(), nMsg);
+        messages.put(nMsg.getMessageID(), nMsg);
         /* noch kein user da*/
         if(!userMsgs.containsKey(user)){
             userMsgs.put(user, new LinkedList<Integer>());
@@ -130,7 +120,7 @@ public class Anzeigetafel implements Serializable {
     }
 
     public HashMap getMessages() {
-        return Messages;
+        return messages;
     }
 
 //    public HashMap getGlobalMessages() {
@@ -181,7 +171,7 @@ public class Anzeigetafel implements Serializable {
         try {
             fileinput = new FileInputStream("./"+TAFELNAME);
             objinput = new ObjectInputStream(fileinput);
-            at = new Anzeigetafel((Anzeigetafel)objinput.readObject());            
+            at = (Anzeigetafel)objinput.readObject();            
         } catch (FileNotFoundException ex) {
             Logger.getLogger(Anzeigetafel.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException | ClassNotFoundException ex) {
@@ -194,6 +184,17 @@ public class Anzeigetafel implements Serializable {
         if(!userMsgs.containsKey(userID))
             throw new TafelException("Kein User gefunden!");
         return userMsgs.get(userID);
+    }
+    
+   
+    @Override
+    public String toString(){
+        String str = "";
+        for(HashMap.Entry<Integer,Message> entry : messages.entrySet()){
+            str = str+"User : "+entry.getKey()+" / "+entry.getValue()+"\n";
+            
+        }
+        return str;
     }
     
 }
