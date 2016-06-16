@@ -15,6 +15,7 @@ public class Anzeigetafel implements Serializable {
     private final int koordinatorID;
     private HashMap<Integer, Message> Messages;
     private HashSet<Integer> userIDs;
+    private HashMap<Integer, LinkedList<Integer>> userMsgs;
 
     public Anzeigetafel() {
         /* welche Nummern sollen die einzelnen Anzeigetafeln bekommen?*/
@@ -24,7 +25,7 @@ public class Anzeigetafel implements Serializable {
         this.messageAnzahl = 0;
         lastID = null;
         this.Messages = new HashMap();
-
+        this.userMsgs = new HashMap<Integer,LinkedList<Integer>>();
         this.userIDs = new HashSet<>();
         /* Füge 5 users ein, die zu dieser Anzeigetafel gehören*/
         for (int i = 1; i < 6; i++) {
@@ -79,13 +80,12 @@ public class Anzeigetafel implements Serializable {
     }
 
     public void deleteMessage(int messageID, int user) throws TafelException {
-        /* Entferne die Message wenn vorhanden aus localMessages 
-            und globalMessages */
-
+        
         if (Messages.containsKey(messageID)) {
             /* Autor oder Koordinator ?*/
             if (user == Messages.get(messageID).getUserID() || isCoordinator(user)) {
                 Messages.remove(messageID);
+                userMsgs.get(user).remove(messageID);
             } else {
                 throw new TafelException(user + " nicht berechtigt zum Löschen");
             }
@@ -102,6 +102,11 @@ public class Anzeigetafel implements Serializable {
         int msgID = Integer.parseInt(getNewMsgID(msg.getUserID()));
         Message nMsg = new Message(msg, msgID);
         Messages.put(nMsg.getMessageID(), nMsg);
+        /* noch kein user da*/
+        if(!userMsgs.containsKey(user)){
+            userMsgs.put(user, new LinkedList<Integer>());
+        }
+        userMsgs.get(user).add(msgID);
         messageAnzahl++;
         msgLaufNr++;
         return msgID;
@@ -184,5 +189,11 @@ public class Anzeigetafel implements Serializable {
         }
         return at;
     }
-
+    
+    public LinkedList<Integer> getMessagesByUserID(int userID) throws TafelException{
+        if(!userMsgs.containsKey(userID))
+            throw new TafelException("Kein User gefunden!");
+        return userMsgs.get(userID);
+    }
+    
 }
