@@ -25,7 +25,7 @@ public class Anzeigetafel implements Serializable {
         this.messageAnzahl = 0;
         lastID = null;
         this.Messages = new HashMap();
-
+        this.userMsgs = new HashMap<Integer,LinkedList<Integer>>();
         this.userIDs = new HashSet<>();
         /* Füge 5 users ein, die zu dieser Anzeigetafel gehören*/
         for (int i = 1; i < 6; i++) {
