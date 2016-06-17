@@ -237,7 +237,7 @@ public class Client implements Serializable {
         int genommen;
         BufferedReader eingabe = new BufferedReader(new InputStreamReader(System.in));
         System.out.println("*****anzeigetafel*******\n");
-        System.out.println("(1) Neuer Nachricht \n(2)Nachricht ENTFERNEN \n (3) aendern \n (4) senden\n (5) ende\n");
+        System.out.println("(1) Neuer Nachricht \n(2)Nachricht ENTFERNEN \n (3) aendern \n (4) sehen\n (5) ende\n");
         String wahl = eingabe.readLine();
         genommen = Integer.parseInt(wahl);
         return genommen;
