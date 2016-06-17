@@ -5,7 +5,7 @@
  * @author: Diego Rodriguez Castellanos
  * @author:Viktor Semenitsch
  * @author:Simon Bastian
- * @author:Alex Müller
+ * @author:Alex Mueller
  * Datei: Client
  * Client zur Kommunikation zwischen Benutzer und Anzeigetafel
  */
@@ -80,8 +80,8 @@ public class Client implements Serializable{
 
     /**
      * Methode zum senden der Nachricht
-     * Die Methode ist nur für das senden der Nachricht und das abfangen der 
-     * damit verbundenen Fehlerfälle zuständig
+     * Die Methode ist nur fuer das senden der Nachricht und das abfangen der 
+     * damit verbundenen Fehlerfuelle zustaendig
     */
     public static boolean sendeMessage(String name,int abteilung, int userID)
     {
@@ -93,11 +93,11 @@ public class Client implements Serializable{
            String message = ms.nextLine();
            ms.close();
            
-           // Eröffnen eines neuen Sockets um die Nachricht zu übermitteln
+           // Eroeffnen eines neuen Sockets um die Nachricht zu uebermitteln
            Socket socket = new Socket (SERVER_HOSTNAME, SERVER_PORT);
            System.out.println ("Verbunden mit Server: " + socket.getRemoteSocketAddress());
            
-           // Senden der Nachricht über einen Stream
+           // Senden der Nachricht ueber einen Stream
            ServerRequest sr = ServerRequest.buildCreateRequest(ServerRequestType.CREATE, message, userID, abteilung);
            
            // Bauen eines Objektes 
@@ -116,27 +116,52 @@ public class Client implements Serializable{
        }
        catch (IOException e)
        {
-         // Wenn die Kommunikation fehlschlägt
-    	   System.out.println ("Fehler während der Kommunikation:\n" + e.getMessage());
+         // Wenn die Kommunikation fehlschlaegt
+    	   System.out.println ("Fehler waehrend der Kommunikation:\n" + e.getMessage());
        }
   
        return true;
     }
     
 
-    public void removemsg(String benutzerName, boolean administrator, boolean removeMsg, int messageID) {
-        // Welches NachrichtenObjekt soll gelÃ¶scht werden
-        this.benutzerName = benutzerName;
-        this.administrator = administrator;
-        this.removeMsg = removeMsg;
-        this.messageID= messageID;
-    }
+    public static void removemsg(String benutzerName, int abteilungNr, int userIdClient) {
+        try
+        {
+     	   Scanner messegID = new Scanner(System.in);
+            System.out.println("Geben Sie messegId ein: ");
+            int nachrichtId = messegID.nextInt();
+            messegID.close();
+            Socket socketServer = new Socket (SERVER_HOSTNAME, SERVER_PORT);
+            System.out.println ("Verbunden mit Server: " + socketServer.getRemoteSocketAddress());
+            ServerRequest serverR = ServerRequest.buildDeleteRequest(ServerRequestType.DELETE, nachrichtId, userIdClient);
+            ObjectOutputStream oout = new ObjectOutputStream(socketServer.getOutputStream());
+            System.out.println("Sende Objekt...");
+            oout.writeObject(serverR);
+            System.out.println("Objekt gesendet");
+            oout.close();
+            socketServer.close();
+            
+         }
+        catch (UnknownHostException e)
+        {
+        // Wenn Rechnername nicht bekannt ist.
+     	   System.out.println ("Rechnername unbekannt:\n" +  e.getMessage());
+        }
+        catch (IOException e)
+        {
+          // Wenn die Kommunikation fehlschlaegt
+     	   System.out.println ("Fehler waehrend der Kommunikation:\n" + e.getMessage());
+        }
+            
+   }
+    
     public void changeMessage(int messageID)
     {
     	//TODO	
     }
     static public int hauptschleife()
     {
+    	int option;
         while(true)
         {
            try
@@ -154,11 +179,12 @@ public class Client implements Serializable{
         	   System.out.println("Geben Sie ihre userID ein :");
                int userID = sc.nextInt();
  //              System.out.println("\n");
-              
+               option=auswahl();
+               menuTafel(option,name, abteilung,  userID);
                
 
-               boolean neueNachricht = false;
-               neueNachricht = sendeMessage( name, abteilung,userID);
+              // boolean neueNachricht = false;
+              // neueNachricht = sendeMessage( name, abteilung,userID);
                sc.close();
                /*               if(neueNachricht == true)
                {
@@ -179,11 +205,56 @@ public class Client implements Serializable{
         return ENDE;
     }
     
+    public static int auswahl(){
+   	 
+   	 BufferedReader eingabe = new BufferedReader(new InputStreamReader(System.in));
+   	 System.out.println ("*****anzeigetafel*******\n");
+   	 System.out.println (" (1) Neuer Nachricht \n (2)Nachricht ENTFERNEN \n (3) aendern \n (4) senden\n (5) ende\n");
+   	 try{
+   		  int genommen;
+   		  String wahl = eingabe.readLine();
+   		  genommen = Integer.parseInt(wahl);
+   		  return genommen;
+   	 }
+     catch(Exception exception)
+     {
+  	   exception.printStackTrace();
+       
+     }
+   	 
+   	 return 0;
+   	 
+   }
     
+    public static void menuTafel(int option,String name,int abteilung, int userID)throws IOException{
+    	   	
+    	switch (option){
+    	case 1:
+    		sendeMessage(name,abteilung, userID);
+    		break;
+    	case 2:
+    		removemsg(name,abteilung, userID);
+    		
+    		break;
+    	case 3:
+    		break;
+    	case 4:
+    		
+    		break;
+    	case 5:
+    	    break;
+    	default:
+    		System.out.println("falsche eingabe! \n");
+    		break;
+    	
+    	}
+    	
+    }
+
+	
     
     public static void main(String[] args) {
-       
-        hauptschleife();
+    	hauptschleife();
         System.out.println("Client geschlossen");
     }
 }
