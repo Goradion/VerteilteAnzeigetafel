@@ -24,8 +24,6 @@ public class Client implements Serializable{
     
 	private static final long serialVersionUID = -1466790708777017802L;
 	public static final int ENDE =0;
-    public static final int TRUE = 1;
-    public static final int FALSE = 0;
     public static final int SERVER_PORT = 10001;
     public static final String SERVER_HOSTNAME = "localhost";
     
@@ -50,12 +48,12 @@ public class Client implements Serializable{
      * @param administrator
      * @param userID
      */
-    public Client(String benutzerName, int userID ,int abtNr,boolean administrator)
+    public Client(String benutzerName, int userID ,int abtNr)
     {
         this.benutzerName = benutzerName;
         this.userID = userID;
         this.abtNr = abtNr;
-        this.administrator=administrator;
+        
         
     }
     
@@ -76,14 +74,15 @@ public class Client implements Serializable{
     {
     	this.benutzerName = benutzerName;
     }
-    
+
+
 
     /**
      * Methode zum senden der Nachricht
      * Die Methode ist nur für das senden der Nachricht und das abfangen der 
      * damit verbundenen Fehlerfälle zuständig
     */
-    public static boolean sendeMessage(String name,int abteilung, int userID)
+    public static boolean sendMessage(String name,int abteilung, int userID)
     {
        try
        {
@@ -97,10 +96,11 @@ public class Client implements Serializable{
            Socket socket = new Socket (SERVER_HOSTNAME, SERVER_PORT);
            System.out.println ("Verbunden mit Server: " + socket.getRemoteSocketAddress());
            
-           // Senden der Nachricht über einen Stream
+           // 
            ServerRequest sr = ServerRequest.buildCreateRequest(ServerRequestType.CREATE, message, userID, abteilung);
            
-           // Bauen eines Objektes 
+           
+        // Bauen eines Objektes 
            ObjectOutputStream oout = new ObjectOutputStream(socket.getOutputStream());
            System.out.println("Sende Objekt...");
            oout.writeObject(sr);
@@ -122,18 +122,29 @@ public class Client implements Serializable{
   
        return true;
     }
-    
-
-    public void removemsg(String benutzerName, boolean administrator, boolean removeMsg, int messageID) {
-        // Welches NachrichtenObjekt soll gelÃ¶scht werden
-        this.benutzerName = benutzerName;
-        this.administrator = administrator;
-        this.removeMsg = removeMsg;
-        this.messageID= messageID;
-    }
-    public void changeMessage(int messageID)
+   
+    public void removemsg(int messageID)
     {
-    	//TODO	
+        //TODO
+    }
+    public static void modifyMessage(int messageID,int userID) throws IOException
+    {
+/*    	Socket socket = new Socket (SERVER_HOSTNAME, SERVER_PORT);
+        System.out.println ("Verbunden mit Server: " + socket.getRemoteSocketAddress());
+        
+ //   	ServerRequest sr = ServerRequest.buildModifyRequest(ServerRequestType.MODIFY,messageID,  userID, message);
+    	// Bauen eines Objektes 
+        ObjectOutputStream oout = new ObjectOutputStream(socket.getOutputStream());
+        System.out.println("Sende Objekt...");
+        oout.writeObject(sr);
+        System.out.println("Objekt gesendet");
+        oout.close();
+    	socket.close();
+ */   			 
+    }			 
+    public void oeffentlich(int messageID)
+    {
+    	//TODO
     }
     static public int hauptschleife()
     {
@@ -143,22 +154,17 @@ public class Client implements Serializable{
            {
         	   Scanner sc = new Scanner(System.in);
                
-        	   System.out.println("Geben Sie ihren Namen ein: ");
+         	   System.out.println("Geben Sie ihren Namen ein: ");
                String name = sc.nextLine();
- //              System.out.println("\n");
-        	  
+         	  
                System.out.println("Geben Sie Ihre Abteilungsnumer ein: ");
                int abteilung = sc.nextInt();
- //              System.out.println("\n");
-        	   
-        	   System.out.println("Geben Sie ihre userID ein :");
+
+         	   	System.out.println("Geben Sie ihre userID ein :");
                int userID = sc.nextInt();
- //              System.out.println("\n");
-              
-               
 
                boolean neueNachricht = false;
-               neueNachricht = sendeMessage( name, abteilung,userID);
+               neueNachricht = sendMessage( name, abteilung,userID);
                sc.close();
                /*               if(neueNachricht == true)
                {
