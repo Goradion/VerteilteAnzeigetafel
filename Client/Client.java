@@ -91,7 +91,7 @@ public class Client implements Serializable{
            Scanner ms = new Scanner(System.in);
            System.out.println("Geben sie ihre Nachricht ein.");
            String message = ms.nextLine();
-           ms.close();
+           
            
            // Eroeffnen eines neuen Sockets um die Nachricht zu uebermitteln
            Socket socket = new Socket (SERVER_HOSTNAME, SERVER_PORT);
@@ -106,7 +106,7 @@ public class Client implements Serializable{
            oout.writeObject(sr);
            System.out.println("Objekt gesendet");
            oout.close();
-          
+           ms.close();
            socket.close(); 
        } 
        catch (UnknownHostException e)
@@ -130,7 +130,7 @@ public class Client implements Serializable{
      	   Scanner messegID = new Scanner(System.in);
             System.out.println("Geben Sie messegId ein: ");
             int nachrichtId = messegID.nextInt();
-            messegID.close();
+           
             Socket socketServer = new Socket (SERVER_HOSTNAME, SERVER_PORT);
             System.out.println ("Verbunden mit Server: " + socketServer.getRemoteSocketAddress());
             ServerRequest serverR = ServerRequest.buildDeleteRequest(ServerRequestType.DELETE, nachrichtId, userIdClient);
@@ -139,6 +139,7 @@ public class Client implements Serializable{
             oout.writeObject(serverR);
             System.out.println("Objekt gesendet");
             oout.close();
+            messegID.close();
             socketServer.close();
             
          }
@@ -159,11 +160,10 @@ public class Client implements Serializable{
     {
     	//TODO	
     }
-    static public int hauptschleife()
+    static public void hauptschleife()
     {
     	int option;
-        while(true)
-        {
+       
            try
            {
         	   Scanner sc = new Scanner(System.in);
@@ -178,76 +178,61 @@ public class Client implements Serializable{
         	   
         	   System.out.println("Geben Sie ihre userID ein :");
                int userID = sc.nextInt();
- //              System.out.println("\n");
-               option=auswahl();
-               menuTafel(option,name, abteilung,  userID);
-               
-
-              // boolean neueNachricht = false;
-              // neueNachricht = sendeMessage( name, abteilung,userID);
-               sc.close();
-               /*               if(neueNachricht == true)
-               {
-            	   System.out.println("Nachricht wurde erfolgreich gesendet\n");
-               }
-               else
-               {
-            	   System.out.println("Nachricht konnte nicht gesendet werden");
-               }*/
+               boolean inMenu =true;
+               while (inMenu==true)
+              {
+            	   option=auswahl();
+            	   inMenu=menuTafel(option,name, abteilung,  userID);
+                   
+              }
+            	   sc.close();
            }
            catch(Exception exception)
            {
         	   exception.printStackTrace();
              
            }
-            break;    
-        }
-        return ENDE;
+           
+               
     }
+        
     
-    public static int auswahl(){
-   	 
+    
+    
+    
+    public static int auswahl()throws IOException{
+   	 int genommen;
    	 BufferedReader eingabe = new BufferedReader(new InputStreamReader(System.in));
    	 System.out.println ("*****anzeigetafel*******\n");
-   	 System.out.println (" (1) Neuer Nachricht \n (2)Nachricht ENTFERNEN \n (3) aendern \n (4) senden\n (5) ende\n");
-   	 try{
-   		  int genommen;
-   		  String wahl = eingabe.readLine();
-   		  genommen = Integer.parseInt(wahl);
-   		  return genommen;
-   	 }
-     catch(Exception exception)
-     {
-  	   exception.printStackTrace();
-       
-     }
-   	 
-   	 return 0;
-   	 
-   }
+   	 System.out.println ("(1) Neuer Nachricht \n(2)Nachricht ENTFERNEN \n (3) aendern \n (4) senden\n (5) ende\n");
+   	 String wahl = eingabe.readLine();
+   	 genommen = Integer.parseInt(wahl);
+   	 return genommen;
+ }
     
-    public static void menuTafel(int option,String name,int abteilung, int userID)throws IOException{
-    	   	
+    public static boolean menuTafel(int option,String name,int abteilung, int userID)throws IOException{
+    		
     	switch (option){
     	case 1:
     		sendeMessage(name,abteilung, userID);
-    		break;
-    	case 2:
+    		return true;
+     	case 2:
     		removemsg(name,abteilung, userID);
-    		
-    		break;
+    		return true;
     	case 3:
-    		break;
+    		return true;
     	case 4:
     		
-    		break;
+    		return true;
     	case 5:
-    	    break;
+    		System.out.println("EXIT! \n");
+    		return false;
     	default:
     		System.out.println("falsche eingabe! \n");
-    		break;
+    		return true;
     	
     	}
+    	
     	
     }
 
@@ -255,6 +240,6 @@ public class Client implements Serializable{
     
     public static void main(String[] args) {
     	hauptschleife();
-        System.out.println("Client geschlossen");
+        
     }
 }
