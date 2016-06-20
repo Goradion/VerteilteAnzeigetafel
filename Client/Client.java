@@ -1,13 +1,22 @@
 /**
  *Projekt Anzeigetafel
- * @author:  Michael Moser
- * @author: Andrea Caruana 
+ *
+ * @author: Michael Moser
+ * @author: Andrea Caruana
  * @author: Diego Rodriguez Castellanos
+<<<<<<< HEAD
  * @author:Viktor Semenitsch
  * @author:Simon Bastian
  * @author:Alex M�ller
  * Datei: Client
  * Client zur Kommunikation zwischen Benutzer und Anzeigetafel
+=======
+ * @author: Viktor Semenitsch
+ * @author: Simon Bastian
+ * @author: Alexander Mueller 
+ * Datei: Client Client zur Kommunikation zwischen
+ * Benutzer und Anzeigetafel
+>>>>>>> branch 'master' of https://github.com/Goradion/VerteilteAnzeigetafel
  */
 package Client;
 
@@ -18,16 +27,15 @@ import VerteilteAnzeigetafel.ServerRequest;
 
 import java.io.*;
 
-public class Client implements Serializable{
-    
-    
-	private static final long serialVersionUID = -1466790708777017802L;
-	public static final int ENDE =0;
+public class Client implements Serializable {
+
+    private static final long serialVersionUID = -1466790708777017802L;
+    public static final int ENDE = 0;
     public static final int TRUE = 1;
     public static final int FALSE = 0;
     public static final int SERVER_PORT = 10001;
     public static final String SERVER_HOSTNAME = "localhost";
-    
+
     private String benutzerName;
     private int userID;
     private int abtNr;//Abteilungsnummer
@@ -36,153 +44,241 @@ public class Client implements Serializable{
     private String datum;
 //    static private int port = 50000; //festgelegter Port(frei)
 //    private String ip;
-   
-    private boolean administrator =false;
-    private boolean removeMsg =false;
+
+    private boolean administrator = false;
+    private boolean removeMsg = false;
     private boolean modifyMsg = false;
-    private boolean newMessage =false;
-   
+    private boolean newMessage = false;
+
     /**
      * Konstruktor zum Erstellung des Benutzers
-     * @param benutzerName	
+     *
+     * @param benutzerName
      * @param abtNr
      * @param administrator
      * @param userID
      */
-    public Client(String benutzerName, int userID ,int abtNr,boolean administrator)
-    {
+    public Client(String benutzerName, int userID, int abtNr, boolean administrator) {
         this.benutzerName = benutzerName;
         this.userID = userID;
         this.abtNr = abtNr;
-        this.administrator=administrator;
-        
+        this.administrator = administrator;
+
     }
-    
-    public String getbenutzername()
-    {
+
+    public String getbenutzername() {
         return benutzerName;
     }
-    
-    public int getabtNr()
-    {
+
+    public int getabtNr() {
         return abtNr;
     }
-    public int getUserID()
-    {
+
+    public int getUserID() {
         return userID;
     }
-    public void  setBenutzerName(String benutzerName)
-    {
-    	this.benutzerName = benutzerName;
-    }
-    
 
-    /**
-     * Methode zum senden der Nachricht
-     * Die Methode ist nur f�r das senden der Nachricht und das abfangen der 
-     * damit verbundenen Fehlerf�lle zust�ndig
-    */
-    public static boolean sendeMessage(String name,int abteilung, int userID)
-    {
-       try
-       {
-    	// Erstellen einer Nachricht 
-           Scanner ms = new Scanner(System.in);
-           System.out.println("Geben sie ihre Nachricht ein.");
-           String message = ms.nextLine();
-           ms.close();
-           
-           // Er�ffnen eines neuen Sockets um die Nachricht zu �bermitteln
-           Socket socket = new Socket (SERVER_HOSTNAME, SERVER_PORT);
-           System.out.println ("Verbunden mit Server: " + socket.getRemoteSocketAddress());
-           
-           // Senden der Nachricht �ber einen Stream
-           ServerRequest sr = ServerRequest.buildCreateRequest(message, userID, abteilung);
-           
-           // Bauen eines Objektes 
-           ObjectOutputStream oout = new ObjectOutputStream(socket.getOutputStream());
-           System.out.println("Sende Objekt...");
-           oout.writeObject(sr);
-           System.out.println("Objekt gesendet");
-           oout.close();
-          
-           socket.close(); 
-       } 
-       catch (UnknownHostException e)
-       {
-       // Wenn Rechnername nicht bekannt ist.
-    	   System.out.println ("Rechnername unbekannt:\n" +  e.getMessage());
-       }
-       catch (IOException e)
-       {
-         // Wenn die Kommunikation fehlschl�gt
-    	   System.out.println ("Fehler w�hrend der Kommunikation:\n" + e.getMessage());
-       }
-  
-       return true;
-    }
-    
 
-    public void removemsg(String benutzerName, boolean administrator, boolean removeMsg, int messageID) {
-        // Welches NachrichtenObjekt soll gelöscht werden
+    public void setBenutzerName(String benutzerName) {
         this.benutzerName = benutzerName;
-        this.administrator = administrator;
-        this.removeMsg = removeMsg;
-        this.messageID= messageID;
     }
-    public void changeMessage(int messageID)
-    {
-    	//TODO	
-    }
-    static public int hauptschleife()
-    {
-        while(true)
-        {
-           try
-           {
-        	   Scanner sc = new Scanner(System.in);
-               
-        	   System.out.println("Geben Sie ihren Namen ein: ");
-               String name = sc.nextLine();
- //              System.out.println("\n");
-        	  
-               System.out.println("Geben Sie Ihre Abteilungsnumer ein: ");
-               int abteilung = sc.nextInt();
- //              System.out.println("\n");
-        	   
-        	   System.out.println("Geben Sie ihre userID ein :");
-               int userID = sc.nextInt();
- //              System.out.println("\n");
-              
-               
 
-               boolean neueNachricht = false;
-               neueNachricht = sendeMessage( name, abteilung,userID);
-               sc.close();
-               /*               if(neueNachricht == true)
-               {
-            	   System.out.println("Nachricht wurde erfolgreich gesendet\n");
-               }
-               else
-               {
-            	   System.out.println("Nachricht konnte nicht gesendet werden");
-               }*/
-           }
-           catch(Exception exception)
-           {
-        	   exception.printStackTrace();
-             
-           }
-            break;    
+    /*
+     * Methode zum senden der Nachricht Die Methode ist nur fuer das senden der
+     * Nachricht und das abfangen der damit verbundenen Fehlerfuelle zustaendig
+     */
+    public static boolean sendeMessage(String name, int abteilung, int userID) {
+        try {
+            // Erstellen einer Nachricht 
+            Scanner ms = new Scanner(System.in);
+            System.out.println("Geben sie ihre Nachricht ein.");
+            String message = ms.nextLine();
+
+            // Eroeffnen eines neuen Sockets um die Nachricht zu uebermitteln
+            Socket socket = new Socket(SERVER_HOSTNAME, SERVER_PORT);
+            System.out.println("Verbunden mit Server: " + socket.getRemoteSocketAddress());
+
+            // Senden der Nachricht ueber einen Stream
+            ServerRequest sr = ServerRequest.buildCreateRequest(message, userID, abteilung);
+
+            // Bauen eines Objektes 
+            ObjectOutputStream oout = new ObjectOutputStream(socket.getOutputStream());
+            System.out.println("Sende Objekt...");
+            oout.writeObject(sr);
+            System.out.println("Objekt gesendet");
+            oout.close();
+            ms.close();
+            socket.close();
+        } catch (UnknownHostException e) {
+            // Wenn Rechnername nicht bekannt ist.
+            System.out.println("Rechnername unbekannt:\n" + e.getMessage());
+        } catch (IOException e) {
+            // Wenn die Kommunikation fehlschlaegt
+            System.out.println("Fehler waehrend der Kommunikation:\n" + e.getMessage());
         }
-        return ENDE;
+
+        return true;
+
+    }
+
+    public static void removemsg(String benutzerName, int abteilungNr, int userIdClient){
+        try {
+            Scanner messegID = new Scanner(System.in);
+            System.out.println("Geben Sie messegId ein: ");
+            int nachrichtId = messegID.nextInt();
+
+            Socket socketServer = new Socket(SERVER_HOSTNAME, SERVER_PORT);
+            System.out.println("Verbunden mit Server: " + socketServer.getRemoteSocketAddress());
+            ServerRequest serverR = ServerRequest.buildDeleteRequest(nachrichtId, userIdClient);
+            ObjectOutputStream oout = new ObjectOutputStream(socketServer.getOutputStream());
+            System.out.println("Sende Objekt...");
+            oout.writeObject(serverR);
+            System.out.println("Objekt gesendet");
+            oout.close();
+            messegID.close();
+            socketServer.close();
+
+        } catch (UnknownHostException e) {
+            // Wenn Rechnername nicht bekannt ist.
+            System.out.println("Rechnername unbekannt:\n" + e.getMessage());
+        } catch (IOException e) {
+            // Wenn die Kommunikation fehlschlaegt
+            System.out.println("Fehler waehrend der Kommunikation:\n" + e.getMessage());
+        }
     }
     
     
+    public static void changeMessage(int userID)
+    {
+        try
+        {
+        	Scanner newMesseg = new Scanner(System.in);
+        	Scanner messegID = new Scanner(System.in);
+            System.out.println("Geben Sie messegId ein,die sie aendern wollen: ");
+            int nachrichtId = messegID.nextInt();
+            
+            Socket socketServer = new Socket (SERVER_HOSTNAME, SERVER_PORT);
+            System.out.println ("Verbunden mit Server: " + socketServer.getRemoteSocketAddress());
+            System.out.println("Geben Sie die geaenderte nachrich: ");
+            String neueNachricht = newMesseg.nextLine(); 
+            ServerRequest serverR = ServerRequest.buildModifyRequest(nachrichtId,neueNachricht,userID);
+            ObjectOutputStream oout = new ObjectOutputStream(socketServer.getOutputStream());
+            System.out.println("Sende Objekt...");
+            oout.writeObject(serverR);
+            System.out.println("Objekt gesendet");
+            
+            oout.close();
+            messegID.close();
+            newMesseg.close();
+            socketServer.close();
+            
+         }
+        catch (UnknownHostException e)
+        {
+        // Wenn Rechnername nicht bekannt ist.
+     	   System.out.println ("Rechnername unbekannt:\n" +  e.getMessage());
+        }
+        catch (IOException e)
+        {
+          // Wenn die Kommunikation fehlschlaegt
+     	   System.out.println ("Fehler waehrend der Kommunikation:\n" + e.getMessage());
+        }
+    }
     
+    
+    static public void meineNachricht(int userId){
+    	try{
+    		 Socket socketServer = new Socket (SERVER_HOSTNAME, SERVER_PORT);
+    		 System.out.println ("Verbunden mit Server: " + socketServer.getRemoteSocketAddress());
+    		 ServerRequest serverR = ServerRequest.buildShowMyMessagesRequest(userId);
+             ObjectOutputStream oout = new ObjectOutputStream(socketServer.getOutputStream());
+             System.out.println("Sende Objekt...");
+             oout.writeObject(serverR);
+             System.out.println("Objekt gesendet");
+             oout.close();
+    	}
+        catch (UnknownHostException e)
+        {
+        // Wenn Rechnername nicht bekannt ist.
+     	   System.out.println ("Rechnername unbekannt:\n" +  e.getMessage());
+        }
+        catch (IOException e)
+        {
+          // Wenn die Kommunikation fehlschlaegt
+     	   System.out.println ("Fehler waehrend der Kommunikation:\n" + e.getMessage());
+        }
+    	
+    	
+    }
+
+    static public void hauptschleife() {
+        int option;
+
+        try {
+            Scanner sc = new Scanner(System.in);
+
+            System.out.println("Geben Sie ihren Namen ein: ");
+            String name = sc.nextLine();
+            //              System.out.println("\n");
+
+            System.out.println("Geben Sie Ihre Abteilungsnumer ein: ");
+            int abteilung = sc.nextInt();
+            //              System.out.println("\n");
+
+            System.out.println("Geben Sie ihre userID ein :");
+            int userID = sc.nextInt();
+            boolean inMenu = true;
+            while (inMenu == true) {
+                option = auswahl();
+                inMenu = menuTafel(option, name, abteilung, userID);
+
+            }
+            sc.close();
+        } catch (Exception exception) {
+            exception.printStackTrace();
+
+        }
+
+    }
+
+    public static int auswahl() throws IOException {
+        int genommen;
+        BufferedReader eingabe = new BufferedReader(new InputStreamReader(System.in));
+        System.out.println("*****anzeigetafel*******\n");
+        System.out.println("(1) Neuer Nachricht \n(2)Nachricht ENTFERNEN \n (3) aendern \n (4) sehen\n (5) ende\n");
+        String wahl = eingabe.readLine();
+        genommen = Integer.parseInt(wahl);
+        return genommen;
+    }
+
+    public static boolean menuTafel(int option,String name,int abteilung, int userID)throws IOException{
+		
+    	switch (option){
+    	case 1:
+    		sendeMessage(name,abteilung, userID);
+    		return true;
+     	case 2:
+    		removemsg(name,abteilung, userID);
+    		return true;
+    	case 3: 
+    		changeMessage(userID);
+    		return true;
+    	case 4:
+    		meineNachricht(userID);
+    		return true;
+    	case 5:
+    		System.out.println("EXIT! \n");
+    		return false;
+    	default:
+    		System.out.println("falsche eingabe! \n");
+    		return true;
+    	
+    	}
+    	
+    }  
+
     public static void main(String[] args) {
-       
         hauptschleife();
-        System.out.println("Client geschlossen");
+
     }
 }
