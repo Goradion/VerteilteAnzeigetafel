@@ -5,7 +5,7 @@
  * @author: Diego Rodriguez Castellanos
  * @author:Viktor Semenitsch
  * @author:Simon Bastian
- * @author:Alex Müller
+ * @author:Alex Mï¿½ller
  * Datei: Client
  * Client zur Kommunikation zwischen Benutzer und Anzeigetafel
  */
@@ -15,7 +15,6 @@ import java.net.*;
 import java.util.Scanner;
 
 import VerteilteAnzeigetafel.ServerRequest;
-import VerteilteAnzeigetafel.ServerRequestType;
 
 import java.io.*;
 
@@ -80,8 +79,8 @@ public class Client implements Serializable{
 
     /**
      * Methode zum senden der Nachricht
-     * Die Methode ist nur für das senden der Nachricht und das abfangen der 
-     * damit verbundenen Fehlerfälle zuständig
+     * Die Methode ist nur fï¿½r das senden der Nachricht und das abfangen der 
+     * damit verbundenen Fehlerfï¿½lle zustï¿½ndig
     */
     public static boolean sendeMessage(String name,int abteilung, int userID)
     {
@@ -93,12 +92,12 @@ public class Client implements Serializable{
            String message = ms.nextLine();
            ms.close();
            
-           // Eröffnen eines neuen Sockets um die Nachricht zu übermitteln
+           // Erï¿½ffnen eines neuen Sockets um die Nachricht zu ï¿½bermitteln
            Socket socket = new Socket (SERVER_HOSTNAME, SERVER_PORT);
            System.out.println ("Verbunden mit Server: " + socket.getRemoteSocketAddress());
            
-           // Senden der Nachricht über einen Stream
-           ServerRequest sr = ServerRequest.buildCreateRequest(ServerRequestType.CREATE, message, userID, abteilung);
+           // Senden der Nachricht ï¿½ber einen Stream
+           ServerRequest sr = ServerRequest.buildCreateRequest(message, userID, abteilung);
            
            // Bauen eines Objektes 
            ObjectOutputStream oout = new ObjectOutputStream(socket.getOutputStream());
@@ -116,8 +115,8 @@ public class Client implements Serializable{
        }
        catch (IOException e)
        {
-         // Wenn die Kommunikation fehlschlägt
-    	   System.out.println ("Fehler während der Kommunikation:\n" + e.getMessage());
+         // Wenn die Kommunikation fehlschlï¿½gt
+    	   System.out.println ("Fehler wï¿½hrend der Kommunikation:\n" + e.getMessage());
        }
   
        return true;
