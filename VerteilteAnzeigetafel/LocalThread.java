@@ -57,6 +57,9 @@ public class LocalThread extends Thread {
 		} catch (TafelException te) {
 			te.printStackTrace();
 			antwort = te.getMessage();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		output.write(antwort.getBytes());
 	}

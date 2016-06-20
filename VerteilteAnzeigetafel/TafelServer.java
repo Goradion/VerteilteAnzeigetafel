@@ -6,17 +6,19 @@
 package VerteilteAnzeigetafel;
 import java.io.*;
 import java.net.*;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Queue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  *
  * @author Simon Bastian
  */
 public class TafelServer {
-	private static LinkedList<Queue<Message>> queueList;
+	private static ArrayList<LinkedBlockingQueue<Message>> queueList;
 	public static final int SERVER_PORT = 10001;
 	private static  Anzeigetafel anzeigetafel;
     /**
@@ -75,9 +77,9 @@ public class TafelServer {
     	print("User mit ID="+userID+" hat Nachricht mit ID="+messageID+" gelöscht!");
     }
     
-    public static synchronized void publishMessage(int messageID){
-    	for (Queue<Message> q : queueList){
-    		q.add(anzeigetafel.getMessages().get(messageID));
+    public static synchronized void publishMessage(int messageID) throws InterruptedException{
+    	for (LinkedBlockingQueue<Message> q : queueList){
+				q.put(anzeigetafel.getMessages().get(messageID));
     	}
     }
     public static synchronized void modifyMessage(int messageID, String inhalt,int userID) throws TafelException{
