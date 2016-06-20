@@ -4,19 +4,11 @@
  * @author: Michael Moser
  * @author: Andrea Caruana
  * @author: Diego Rodriguez Castellanos
-<<<<<<< HEAD
- * @author:Viktor Semenitsch
- * @author:Simon Bastian
- * @author:Alex M�ller
- * Datei: Client
- * Client zur Kommunikation zwischen Benutzer und Anzeigetafel
-=======
  * @author: Viktor Semenitsch
  * @author: Simon Bastian
  * @author: Alexander Mueller 
  * Datei: Client Client zur Kommunikation zwischen
  * Benutzer und Anzeigetafel
->>>>>>> branch 'master' of https://github.com/Goradion/VerteilteAnzeigetafel
  */
 package Client;
 
