@@ -26,32 +26,33 @@ public class Message implements Serializable {
     private boolean oeffentlich;
     private Time time;
 
-    /**
-     * Konstruiert ein Message-Objekt mit Hilfe eines anderen Msg-Objekts
-     *
-     * @param msg
-     * @param msgID
-     * @param messageID
-     */
-    public Message(Message msg, int msgID) {
-        this.messageID = msgID;
-        this.inhalt = msg.getInhalt();
-        this.userID = msg.getUserID();
-        this.abtNr = msg.getAbtNr();
-        this.time = msg.getTime();
-        this.oeffentlich = msg.isOeffentlich();
-    }
+//    /**
+//     * Konstruiert ein Message-Objekt mit Hilfe eines anderen Msg-Objekts
+//     *
+//     * @param msg
+//     * @param msgID
+//     * @param messageID
+//     */
+//    public Message(Message msg, int msgID) {
+//        this.messageID = msgID;
+//        this.inhalt = msg.getInhalt();
+//        this.userID = msg.getUserID();
+//        this.abtNr = msg.getAbtNr();
+//        this.time = msg.getTime();
+//        this.oeffentlich = msg.isOeffentlich();
+//    }
 
     /* Dieser Konstruktor wird vom Client benutzt um eine Nachricht, die noch
         ohne messageID ist zu erstellen
      */
-    public Message(String inhalt, int userID, int abtNr, boolean oeffentlich) {
+    public Message(String inhalt, int userID, int abtNr, boolean oeffentlich, int msgID) {
         this.inhalt = inhalt;
         this.userID = userID;
         this.abtNr = abtNr;
         this.oeffentlich = oeffentlich;
         time = new Time(System.currentTimeMillis());
-        this.messageID = Integer.parseInt("" + userID + "" + abtNr + "" + time.getTime() % 1000);
+        this.messageID=msgID;
+//        this.messageID = Integer.parseInt("" + userID + "" + abtNr + "" + time.getTime() % 1000);
     }
 
     @Override

@@ -7,15 +7,19 @@ import java.util.*;
 import java.util.logging.*;
 
 public class Anzeigetafel implements Serializable {
+
     private static final String TAFELNAME = "tafel";
     private String lastID;
     private final int abteilungsID;
     private int messageAnzahl;
     private int msgLaufNr;
     private final int koordinatorID;
-    private LinkedHashMap<Integer, Message> messages; /*msgID, msg*/
+    private LinkedHashMap<Integer, Message> messages;
+    /*msgID, msg*/
     private HashSet<Integer> userIDs;
-    private HashMap<Integer, LinkedList<Integer>> userMsgs; /*userID, List<msgID>*/
+    private HashMap<Integer, LinkedList<Integer>> userMsgs;
+
+    /*userID, List<msgID>*/
 
     public Anzeigetafel() {
         /* welche Nummern sollen die einzelnen Anzeigetafeln bekommen?*/
@@ -24,8 +28,8 @@ public class Anzeigetafel implements Serializable {
         this.koordinatorID = 1;
         this.messageAnzahl = 0;
         lastID = null;
-        this.messages = new LinkedHashMap<Integer,Message>();
-        this.userMsgs = new HashMap<Integer,LinkedList<Integer>>();
+        this.messages = new LinkedHashMap<Integer, Message>();
+        this.userMsgs = new HashMap<Integer, LinkedList<Integer>>();
         this.userIDs = new HashSet<Integer>();
         /* Füge 5 users ein, die zu dieser Anzeigetafel gehören*/
         for (int i = 1; i < 6; i++) {
@@ -47,7 +51,9 @@ public class Anzeigetafel implements Serializable {
             /* Autor oder Koordinator ?*/
             if (user == messages.get(messageID).getUserID() || isCoordinator(user)) {
                 Message msg = new Message(inhalt, messages.get(messageID).getUserID(),
-                        messages.get(messageID).getAbtNr(), messages.get(messageID).isOeffentlich());
+                        messages.get(messageID).getAbtNr(), 
+                        messages.get(messageID).isOeffentlich(),
+                        messages.get(messageID).getMessageID());
                 messages.replace(messageID, msg);
             } else {
                 throw new TafelException(user + " nicht berechtigt zum Modifizieren");
@@ -55,6 +61,10 @@ public class Anzeigetafel implements Serializable {
         } else {
             throw new TafelException("Keine Message mit ID " + messageID + " gefunden!");
         }
+        /*Delete after debugging*/
+        System.out.println("######  Anzeigetafel ######");
+        System.out.println(this.toString());
+        System.out.println("###########################");
 
     }
 
@@ -67,15 +77,23 @@ public class Anzeigetafel implements Serializable {
         } else {
             throw new TafelException("Keine Berechtigung zum Publizieren!");
         }
+
+        /*Delete after debugging*/
+        System.out.println("######  Anzeigetafel ######");
+        System.out.println(this.toString());
+        System.out.println("###########################");
+
     }
 
     public void deleteMessage(int messageID, int user) throws TafelException {
-        
+
         if (messages.containsKey(messageID)) {
             /* Autor oder Koordinator ?*/
             if (user == messages.get(messageID).getUserID() || isCoordinator(user)) {
                 messages.remove(messageID);
-                userMsgs.get(user).remove(messageID);
+                userMsgs.get(user).remove(new Integer(messageID));
+//                userMsgs.get(user).
+//                userMsgs.get(user).remove(messageID);
             } else {
                 throw new TafelException(user + " nicht berechtigt zum Löschen");
             }
@@ -83,22 +101,33 @@ public class Anzeigetafel implements Serializable {
             throw new TafelException("Keine Message mit ID " + messageID + " gefunden!");
         }
 
+        /*Delete after debugging*/
+        System.out.println("######  Anzeigetafel ######");
+        System.out.println(this.toString());
+        System.out.println("###########################");
+
     }
 
-    public int createMessage(Message msg, int user) throws TafelException {
+    public int createMessage(String inhalt, int user, int abtNr, boolean oeffentlich) throws TafelException {
         if (!userIDs.contains(user)) {
             throw new TafelException("Keine Berechtigung zum Erstellen!");
         }
-        int msgID = Integer.parseInt(getNewMsgID(msg.getUserID()));
-        Message nMsg = new Message(msg, msgID);
+        int msgID = Integer.parseInt(getNewMsgID(user));
+        Message nMsg = new Message(inhalt, user, abtNr, oeffentlich, msgID);
         messages.put(nMsg.getMessageID(), nMsg);
         /* noch kein user da*/
-        if(!userMsgs.containsKey(user)){
+        if (!userMsgs.containsKey(user)) {
             userMsgs.put(user, new LinkedList<Integer>());
         }
         userMsgs.get(user).add(msgID);
         messageAnzahl++;
         msgLaufNr++;
+
+        /*Delete after debugging*/
+        System.out.println("######  Anzeigetafel ######");
+        System.out.println(this.toString());
+        System.out.println("###########################");
+
         return msgID;
     }
 
@@ -119,7 +148,7 @@ public class Anzeigetafel implements Serializable {
         return koordinatorID;
     }
 
-    public HashMap<Integer,Message> getMessages() {
+    public HashMap<Integer, Message> getMessages() {
         return messages;
     }
 
@@ -133,22 +162,23 @@ public class Anzeigetafel implements Serializable {
     public String getLastID() {
         return lastID;
     }
+
     /**
-     * Ermöglicht das Speichern des aktuellen Zustandes der Anzeigetafel
-     * in eine Datei.
+     * Ermöglicht das Speichern des aktuellen Zustandes der Anzeigetafel in eine
+     * Datei.
      */
     public void saveStateToFile() throws TafelException {
         FileOutputStream fileoutput = null;
         ObjectOutputStream objoutput = null;
         try {
-            fileoutput = new FileOutputStream("./"+TAFELNAME);
+            fileoutput = new FileOutputStream("./" + TAFELNAME);
             objoutput = new ObjectOutputStream(fileoutput);
             objoutput.writeObject(this);
         } catch (FileNotFoundException ex) {
             Logger.getLogger(Anzeigetafel.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
             Logger.getLogger(Anzeigetafel.class.getName()).log(Level.SEVERE, null, ex);
-        } finally{
+        } finally {
             try {
                 objoutput.close();
             } catch (IOException ex) {
@@ -156,22 +186,24 @@ public class Anzeigetafel implements Serializable {
             }
         }
     }
+
     /**
      * Ermöglicht das Laden des Zustandes aus einer Datei.
-     * @return 
+     *
+     * @return
      * @throws VerteilteAnzeigetafel.TafelException
      */
-    public static Anzeigetafel loadStateFromFile() throws TafelException{
-        if(!Files.exists(FileSystems.getDefault().getPath("./", TAFELNAME))){
-           throw new TafelException("Could not load state from file.");
+    public static Anzeigetafel loadStateFromFile() throws TafelException {
+        if (!Files.exists(FileSystems.getDefault().getPath("./", TAFELNAME))) {
+            throw new TafelException("Could not load state from file.");
         }
         Anzeigetafel at = null;
         FileInputStream fileinput = null;
         ObjectInputStream objinput = null;
         try {
-            fileinput = new FileInputStream("./"+TAFELNAME);
+            fileinput = new FileInputStream("./" + TAFELNAME);
             objinput = new ObjectInputStream(fileinput);
-            at = (Anzeigetafel)objinput.readObject();            
+            at = (Anzeigetafel) objinput.readObject();
         } catch (FileNotFoundException ex) {
             Logger.getLogger(Anzeigetafel.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException | ClassNotFoundException ex) {
@@ -179,33 +211,33 @@ public class Anzeigetafel implements Serializable {
         }
         return at;
     }
-    
+
 //    public LinkedList<Integer> getMessagesByUserID(int userID) throws TafelException{
 //        if(!userMsgs.containsKey(userID))
 //            throw new TafelException("Kein User gefunden!");
 //        return userMsgs.get(userID);
 //    }
-    
-    public LinkedList<Message> getMessagesByUserID(int userID) throws TafelException{
-        if(!userMsgs.containsKey(userID))
+    public LinkedList<Message> getMessagesByUserID(int userID) throws TafelException {
+        if (!userMsgs.containsKey(userID)) {
             throw new TafelException("Kein User gefunden!");
+        }
         LinkedList<Integer> umsgIDs = userMsgs.get(userID);
-        LinkedList<Message> uMsgs = new LinkedList<Message>() ;
-        for (Integer element : umsgIDs){
+        LinkedList<Message> uMsgs = new LinkedList<Message>();
+        for (Integer element : umsgIDs) {
             uMsgs.add(messages.get(element));
         }
         return uMsgs;
     }
-   
+
     @Override
-    public String toString(){
+    public String toString() {
         String str = "";
-        for(HashMap.Entry<Integer,Message> entry : messages.entrySet()){
-            str = str+"User: "+entry.getValue().getUserID()+" / "
-                    +entry.getValue()+"\n\t\t" + entry.getValue().getInhalt()+"\n";
-            
+        for (HashMap.Entry<Integer, Message> entry : messages.entrySet()) {
+            str = str + "User: " + entry.getValue().getUserID() + " / "
+                    + entry.getValue() + "\n\t\t" + entry.getValue().getInhalt() + "\n";
+
         }
         return str;
     }
-    
+
 }
