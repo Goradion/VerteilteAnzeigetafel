@@ -16,7 +16,7 @@ import java.net.*;
 import java.util.LinkedList;
 import java.util.Scanner;
 
-import AC.Client.SMessage;
+
 import VerteilteAnzeigetafel.Message;
 import VerteilteAnzeigetafel.ServerRequest;
 
@@ -33,9 +33,7 @@ public class Client implements Serializable {
     private String benutzerName;
     private int userID;
     private int abtNr;//Abteilungsnummer
-    private String message;
-    private int messageID;
-    private String datum;
+
 //    static private int port = 50000; //festgelegter Port(frei)
 //    private String ip;
 
@@ -201,9 +199,9 @@ public class Client implements Serializable {
      //        oout.close();
             
           
- 			ObjectInputStream input = new ObjectInputStream(socketServer.getInputStream());
- 			LinkedList<Message> userMessages = (LinkedList<Message>) input.readObject();
- 			System.out.println(userMessages.toString());
+ 			 ObjectInputStream input = new ObjectInputStream(socketServer.getInputStream());
+ 			 LinkedList<Message> userMessages = (LinkedList<Message>) input.readObject();
+ 			 System.out.println(userMessages.toString());
              oout.close();
              socketServer.close();
     	}
@@ -224,7 +222,33 @@ public class Client implements Serializable {
 
     	
     }
-
+    static public void publicMsg ( int userId ){
+    	try{
+        	BufferedReader messegID = new BufferedReader(new InputStreamReader(System.in));
+            System.out.println("Geben Sie messegId ein: ");
+            String msgId = messegID.readLine();
+            int messegId = Integer.parseInt(msgId);
+    		Socket socketServer = new Socket (SERVER_HOSTNAME, SERVER_PORT);
+   		    System.out.println ("Verbunden mit Server: " + socketServer.getRemoteSocketAddress());
+   		    ServerRequest serverR = ServerRequest.buildPublishRequest(messegId, userId);
+            ObjectOutputStream oout = new ObjectOutputStream(socketServer.getOutputStream());
+            System.out.println("Sende Objekt...");
+            oout.writeObject(serverR);
+            System.out.println("Objekt gesendet");
+            socketServer.close();
+    	}
+    	  catch (UnknownHostException e)
+        {
+        // Wenn Rechnername nicht bekannt ist.
+     	   System.out.println ("Rechnername unbekannt:\n" +  e.getMessage());
+        }
+        catch (IOException e)
+        {
+          // Wenn die Kommunikation fehlschlaegt
+     	   System.out.println ("Fehler waehrend der Kommunikation:\n" + e.getMessage());
+        }
+    	
+    }
     static public void hauptschleife() {
         int option;
 
@@ -259,7 +283,7 @@ public class Client implements Serializable {
         int auswahl ;
         BufferedReader eingabe = new BufferedReader(new InputStreamReader(System.in));
     	System.out.println("*****anzeigetafel*******\n");
-        System.out.println("(1) Neuer Nachricht \n(2)Nachricht ENTFERNEN \n (3) Nachricht aendern \n (4)Nachrichten ansehen\n (5) ende\n");
+        System.out.println("(1) Neue Nachricht \n(2)Nachricht ENTFERNEN \n (3) Nachricht aendern \n (4)Nachrichten ansehen\n (5)Nachricht publizieren\n (6) ende\n");
         String wahl = eingabe.readLine();
         auswahl = Integer.parseInt(wahl);
         return auswahl;
@@ -283,6 +307,10 @@ public class Client implements Serializable {
     		showMsg(userID);
     		return true;
     	case 5:
+    		showMsg(userID);
+    		publicMsg (userID );
+    		return true;
+    	case 6:
     		System.out.println("EXIT! \n");
     		return false;
     	default:
