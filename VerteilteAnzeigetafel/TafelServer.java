@@ -73,24 +73,17 @@ public class TafelServer {
 //    	}
     }
     
-    public static synchronized void createMessage(String msg, int userID, int abtNr, boolean oeffentlich) throws TafelException, InterruptedException{
-    	Message m = new Message(msg, userID, abtNr, oeffentlich);
-    	if(abtNr==anzeigetafel.getAbteilungsID()){
-    		int msgID = anzeigetafel.createMessage(m, userID);
-    		if (oeffentlich){
-        		publishMessage(msgID, userID);
-        	}
-    	} else { // Nachricht wurde von einer anderen Tafel veröffentlicht
-    		anzeigetafel.createMessage(m, anzeigetafel.getKoordinatorID());
-    	}
-    	
-    	print("Nachricht erstellt:\n"+m);
+    public static synchronized int createMessage(String msg, int userID, int abtNr, boolean oeffentlich) throws TafelException, InterruptedException{
+    	int msgID = anzeigetafel.createMessage(msg, userID, abtNr, oeffentlich);
+    	print("Nachricht erstellt:\n"+anzeigetafel.getMessages().get(msgID));
     	anzeigetafel.saveStateToFile();
+    	return msgID;
     }
     
     public static synchronized void deleteMessage(int messageID, int userID) throws TafelException{
     	anzeigetafel.deleteMessage(messageID, userID);
     	print("User mit ID="+userID+" hat Nachricht mit ID="+messageID+" gelöscht!");
+    	anzeigetafel.saveStateToFile();
     }
     
     public static synchronized void publishMessage(int messageID, int userID) throws InterruptedException, TafelException{
@@ -98,14 +91,16 @@ public class TafelServer {
     	for (LinkedBlockingQueue<Message> q : queueList){
 				q.put(anzeigetafel.getMessages().get(messageID));
     	}
+    	anzeigetafel.saveStateToFile();
     }
     public static synchronized void modifyMessage(int messageID, String inhalt,int userID) throws TafelException{
     	anzeigetafel.modifyMessage(messageID, inhalt, userID);
     	print("User mit ID="+userID+" hatNachricht mit ID="+messageID+" geändert!");
+    	anzeigetafel.saveStateToFile();
     }
     
     public static synchronized void activateQueue(int abteilungsID){
-    	outboxThreads.get(abteilungsID).interrupt();
+    	//TODO implement this mehod
     }
     public static synchronized void print (String nachricht)
     {
