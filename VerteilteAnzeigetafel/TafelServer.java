@@ -18,7 +18,8 @@ import java.util.concurrent.LinkedBlockingQueue;
  * @author Simon Bastian
  */
 public class TafelServer {
-	private static ArrayList<LinkedBlockingQueue<Message>> queueList;
+	private static ArrayList<LinkedBlockingQueue<Message>> queueList = new ArrayList<LinkedBlockingQueue<Message>>();
+	public static HashMap<Integer, OutboxThread> outboxThreads = new HashMap<Integer, OutboxThread>();
 	public static final int SERVER_PORT = 10001;
 	private static  Anzeigetafel anzeigetafel;
     /**
@@ -41,8 +42,14 @@ public class TafelServer {
 		}
     }
     private static void init(){
-    	anzeigetafel = new Anzeigetafel();
-//    	File f = new File("tafel");
+    	try {
+    		print("Zustand aus Datei geladen!");
+			anzeigetafel = Anzeigetafel.loadStateFromFile();
+		} catch (TafelException e) {
+			print("Neue Anzeigetafel erstellt!");
+			anzeigetafel = new Anzeigetafel();
+		}
+    			//    	File f = new File("tafel");
 //    	if(f.exists() && !f.isDirectory()){
 //    		try {
 //				anzeigetafel = Anzeigetafel.loadStateFromFile();
@@ -66,10 +73,19 @@ public class TafelServer {
 //    	}
     }
     
-    public static synchronized void createMessage(String msg, int userID, int abtNr, boolean oeffentlich) throws TafelException{
+    public static synchronized void createMessage(String msg, int userID, int abtNr, boolean oeffentlich) throws TafelException, InterruptedException{
     	Message m = new Message(msg, userID, abtNr, oeffentlich);
-    	anzeigetafel.createMessage(m, userID);
+    	if(abtNr==anzeigetafel.getAbteilungsID()){
+    		int msgID = anzeigetafel.createMessage(m, userID);
+    		if (oeffentlich){
+        		publishMessage(msgID, userID);
+        	}
+    	} else { // Nachricht wurde von einer anderen Tafel veröffentlicht
+    		anzeigetafel.createMessage(m, anzeigetafel.getKoordinatorID());
+    	}
+    	
     	print("Nachricht erstellt:\n"+m);
+    	anzeigetafel.saveStateToFile();
     }
     
     public static synchronized void deleteMessage(int messageID, int userID) throws TafelException{
@@ -77,7 +93,8 @@ public class TafelServer {
     	print("User mit ID="+userID+" hat Nachricht mit ID="+messageID+" gelöscht!");
     }
     
-    public static synchronized void publishMessage(int messageID) throws InterruptedException{
+    public static synchronized void publishMessage(int messageID, int userID) throws InterruptedException, TafelException{
+    	anzeigetafel.publishMessage(messageID, userID);
     	for (LinkedBlockingQueue<Message> q : queueList){
 				q.put(anzeigetafel.getMessages().get(messageID));
     	}
@@ -88,26 +105,18 @@ public class TafelServer {
     }
     
     public static synchronized void activateQueue(int abteilungsID){
-    	//TODO implement this method
+    	outboxThreads.get(abteilungsID).interrupt();
     }
     public static synchronized void print (String nachricht)
     {
        System.out.println (nachricht);
     }
     public static synchronized void printMessages(){
-    		System.out.println(anzeigetafel.getMessages().toString());
+    		System.out.println(anzeigetafel.toString());
     }
     
-    public static synchronized LinkedList<Message> getMessagesByUserID(int userID){
+    public static synchronized LinkedList<Message> getMessagesByUserID(int userID) throws TafelException{
     	print("Showing Messages to user "+userID);
-    	Collection<Message> allMessages = anzeigetafel.getMessages().values();
-    	LinkedList<Message> userMessages = new LinkedList<Message>();
-    	for(Message m : allMessages){
-    		if (m.getUserID() == userID){
-    			userMessages.add(m);
-    		}
-    	}
-    	return userMessages;
-    	
+    	return  anzeigetafel.getMessagesByUserID(userID);    	
     }
 }
