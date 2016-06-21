@@ -5,7 +5,7 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.concurrent.LinkedBlockingQueue;
 
-public class OutboxThread {
+public class OutboxThread extends Thread {
 	int abteilungsID;
 	Socket socket;
 	LinkedBlockingQueue<Message> messageQueue;
@@ -17,17 +17,18 @@ public class OutboxThread {
 		this.messageQueue = messageQueue;
 	}
 
-	void run() {
+	public void run() {
 
 		try {
 			while (true) {
 				ObjectOutputStream oout = new ObjectOutputStream(socket.getOutputStream());
-				Message message = messageQueue.take();
-				ServerRequest request;
+				Message msg = messageQueue.take();
+				ServerRequest request = ServerRequest.buildCreateRequest(msg.getInhalt(), msg.getUserID(), 
+						msg.getUserID(), msg.isOeffentlich());
+				oout.writeObject(request);
 			}
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			TafelServer.print("OutboxThread für Abteilung "+abteilungsID+" wurfe unterbrochen!");
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
