@@ -81,19 +81,20 @@ public class Client implements Serializable {
      * Methode zum senden der Nachricht Die Methode ist nur fuer das senden der
      * Nachricht und das abfangen der damit verbundenen Fehlerfuelle zustaendig
      */
-    public static boolean sendeMessage(String name, int abteilung, int userID) {
+    public static void sendeMessage(String name, int abteilung, int userID,boolean oeffentlich) {
         try {
             // Erstellen einer Nachricht 
-            Scanner ms = new Scanner(System.in);
+            //Scanner ms = new Scanner(System.in);
+        	BufferedReader eingabe = new BufferedReader(new InputStreamReader(System.in));
             System.out.println("Geben sie ihre Nachricht ein.");
-            String message = ms.nextLine();
-
+            String message = eingabe.readLine();
+            
             // Eroeffnen eines neuen Sockets um die Nachricht zu uebermitteln
             Socket socket = new Socket(SERVER_HOSTNAME, SERVER_PORT);
             System.out.println("Verbunden mit Server: " + socket.getRemoteSocketAddress());
-
+            oeffentlich =true;
             // Senden der Nachricht ueber einen Stream
-            ServerRequest sr = ServerRequest.buildCreateRequest(message, userID, abteilung);
+            ServerRequest sr = ServerRequest.buildCreateRequest(message, userID, abteilung, oeffentlich);
 
             // Bauen eines Objektes 
             ObjectOutputStream oout = new ObjectOutputStream(socket.getOutputStream());
@@ -101,7 +102,7 @@ public class Client implements Serializable {
             oout.writeObject(sr);
             System.out.println("Objekt gesendet");
             oout.close();
-            ms.close();
+            //ms.close();
             socket.close();
         } catch (UnknownHostException e) {
             // Wenn Rechnername nicht bekannt ist.
@@ -112,15 +113,17 @@ public class Client implements Serializable {
 
         }
 
-        return true;
+        
 
     }
 
     public static void removemsg(String benutzerName, int abteilungNr, int userIdClient){
         try {
-            Scanner messegID = new Scanner(System.in);
+        	
+        	BufferedReader messegID = new BufferedReader(new InputStreamReader(System.in));
             System.out.println("Geben Sie messegId ein: ");
-            int nachrichtId = messegID.nextInt();
+            String msgId = messegID.readLine();
+            int nachrichtId = Integer.parseInt(msgId);
 
             Socket socketServer = new Socket(SERVER_HOSTNAME, SERVER_PORT);
             System.out.println("Verbunden mit Server: " + socketServer.getRemoteSocketAddress());
@@ -130,7 +133,6 @@ public class Client implements Serializable {
             oout.writeObject(serverR);
             System.out.println("Objekt gesendet");
             oout.close();
-            messegID.close();
             socketServer.close();
 
         } catch (UnknownHostException e) {
@@ -147,15 +149,19 @@ public class Client implements Serializable {
     {
         try
         {
-        	Scanner newMesseg = new Scanner(System.in);
-        	Scanner messegID = new Scanner(System.in);
+        	BufferedReader newMesseg = new BufferedReader(new InputStreamReader(System.in));
+        	//Scanner newMesseg = new Scanner(System.in);
+        	BufferedReader messegID = new BufferedReader(new InputStreamReader(System.in));
+        	//Scanner messegID = new Scanner(System.in);
             System.out.println("Geben Sie messegId ein,die sie aendern wollen: ");
-            int nachrichtId = messegID.nextInt();
+            String stringId = messegID.readLine();
+            int nachrichtId = Integer.parseInt(stringId);
+            
             
             Socket socketServer = new Socket (SERVER_HOSTNAME, SERVER_PORT);
             System.out.println ("Verbunden mit Server: " + socketServer.getRemoteSocketAddress());
             System.out.println("Geben Sie die geaenderte nachrich: ");
-            String neueNachricht = newMesseg.nextLine(); 
+            String neueNachricht = newMesseg.readLine(); 
             ServerRequest serverR = ServerRequest.buildModifyRequest(nachrichtId,neueNachricht,userID);
             ObjectOutputStream oout = new ObjectOutputStream(socketServer.getOutputStream());
             System.out.println("Sende Objekt...");
@@ -163,8 +169,6 @@ public class Client implements Serializable {
             System.out.println("Objekt gesendet");
             
             oout.close();
-            messegID.close();
-            newMesseg.close();
             socketServer.close();
             
          }
@@ -227,7 +231,7 @@ public class Client implements Serializable {
             while (inMenu == true) {
                 option = auswahl();
                 inMenu = menuTafel(option, name, abteilung, userID);
-
+                
             }
             sc.close();
         } catch (Exception exception) {
@@ -238,9 +242,9 @@ public class Client implements Serializable {
     }
 
     public static int auswahl() throws IOException {
-        int genommen;
+        int genommen ;
         BufferedReader eingabe = new BufferedReader(new InputStreamReader(System.in));
-        System.out.println("*****anzeigetafel*******\n");
+    	System.out.println("*****anzeigetafel*******\n");
         System.out.println("(1) Neuer Nachricht \n(2)Nachricht ENTFERNEN \n (3) aendern \n (4) sehen\n (5) ende\n");
         String wahl = eingabe.readLine();
         genommen = Integer.parseInt(wahl);
@@ -251,7 +255,7 @@ public class Client implements Serializable {
 		
     	switch (option){
     	case 1:
-    		sendeMessage(name,abteilung, userID);
+    		sendeMessage(name,abteilung, userID,true);
     		return true;
      	case 2:
     		removemsg(name,abteilung, userID);
