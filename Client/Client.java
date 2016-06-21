@@ -13,8 +13,11 @@
 package Client;
 
 import java.net.*;
+import java.util.LinkedList;
 import java.util.Scanner;
 
+import AC.Client.SMessage;
+import VerteilteAnzeigetafel.Message;
 import VerteilteAnzeigetafel.ServerRequest;
 
 import java.io.*;
@@ -35,11 +38,6 @@ public class Client implements Serializable {
     private String datum;
 //    static private int port = 50000; //festgelegter Port(frei)
 //    private String ip;
-
-    private boolean administrator = false;
-    private boolean removeMsg = false;
-    private boolean modifyMsg = false;
-    private boolean newMessage = false;
 
     /**
      * Konstruktor zum Erstellung des Benutzers
@@ -81,7 +79,7 @@ public class Client implements Serializable {
      * Methode zum senden der Nachricht Die Methode ist nur fuer das senden der
      * Nachricht und das abfangen der damit verbundenen Fehlerfuelle zustaendig
      */
-    public static void sendeMessage(String name, int abteilung, int userID,boolean oeffentlich) {
+    public static void sendeMessage(String name, int abteilung, int userID) {
         try {
             // Erstellen einer Nachricht 
             //Scanner ms = new Scanner(System.in);
@@ -89,10 +87,14 @@ public class Client implements Serializable {
             System.out.println("Geben sie ihre Nachricht ein.");
             String message = eingabe.readLine();
             
+/*           BufferedReader sc = new BufferedReader(new InputStreamReader(System.in));
+            System.out.println("Soll die Nachricht veröffentlicht werden?");
+            boolean oeffentlich = sc.ready();*/
+            
             // Eroeffnen eines neuen Sockets um die Nachricht zu uebermitteln
             Socket socket = new Socket(SERVER_HOSTNAME, SERVER_PORT);
             System.out.println("Verbunden mit Server: " + socket.getRemoteSocketAddress());
-            oeffentlich =true;
+            //oeffentlich =true;
             // Senden der Nachricht ueber einen Stream
             ServerRequest sr = ServerRequest.buildCreateRequest(message, userID, abteilung, oeffentlich);
 
@@ -168,6 +170,7 @@ public class Client implements Serializable {
             oout.writeObject(serverR);
             System.out.println("Objekt gesendet");
             
+            
             oout.close();
             socketServer.close();
             
@@ -185,8 +188,9 @@ public class Client implements Serializable {
     }
     
     
-    static public void meineNachricht(int userId){
+    static public void showMsg(int userId) {
     	try{
+    		
     		 Socket socketServer = new Socket (SERVER_HOSTNAME, SERVER_PORT);
     		 System.out.println ("Verbunden mit Server: " + socketServer.getRemoteSocketAddress());
     		 ServerRequest serverR = ServerRequest.buildShowMyMessagesRequest(userId);
@@ -194,6 +198,12 @@ public class Client implements Serializable {
              System.out.println("Sende Objekt...");
              oout.writeObject(serverR);
              System.out.println("Objekt gesendet");
+     //        oout.close();
+            
+          
+ 			ObjectInputStream input = new ObjectInputStream(socketServer.getInputStream());
+ 			LinkedList<Message> userMessages = (LinkedList<Message>) input.readObject();
+ 			System.out.println(userMessages.toString());
              oout.close();
              socketServer.close();
     	}
@@ -207,7 +217,11 @@ public class Client implements Serializable {
           // Wenn die Kommunikation fehlschlaegt
      	   System.out.println ("Fehler waehrend der Kommunikation:\n" + e.getMessage());
         }
-    	
+    	 catch (ClassNotFoundException e) {
+ 			// TODO Auto-generated catch block
+ 			e.printStackTrace();
+ 		}
+
     	
     }
 
@@ -221,7 +235,7 @@ public class Client implements Serializable {
             String name = sc.nextLine();
             //              System.out.println("\n");
 
-            System.out.println("Geben Sie Ihre Abteilungsnumer ein: ");
+            System.out.println("Geben Sie Ihre Abteilungsnummer ein: ");
             int abteilung = sc.nextInt();
             //              System.out.println("\n");
 
@@ -242,29 +256,31 @@ public class Client implements Serializable {
     }
 
     public static int auswahl() throws IOException {
-        int genommen ;
+        int auswahl ;
         BufferedReader eingabe = new BufferedReader(new InputStreamReader(System.in));
     	System.out.println("*****anzeigetafel*******\n");
-        System.out.println("(1) Neuer Nachricht \n(2)Nachricht ENTFERNEN \n (3) aendern \n (4) sehen\n (5) ende\n");
+        System.out.println("(1) Neuer Nachricht \n(2)Nachricht ENTFERNEN \n (3) Nachricht aendern \n (4)Nachrichten ansehen\n (5) ende\n");
         String wahl = eingabe.readLine();
-        genommen = Integer.parseInt(wahl);
-        return genommen;
+        auswahl = Integer.parseInt(wahl);
+        return auswahl;
     }
 
     public static boolean menuTafel(int option,String name,int abteilung, int userID)throws IOException{
 		
     	switch (option){
     	case 1:
-    		sendeMessage(name,abteilung, userID,true);
+    		sendeMessage(name,abteilung, userID);
     		return true;
      	case 2:
+     		showMsg(userID);
     		removemsg(name,abteilung, userID);
     		return true;
     	case 3: 
+    		showMsg(userID);
     		changeMessage(userID);
     		return true;
     	case 4:
-    		meineNachricht(userID);
+    		showMsg(userID);
     		return true;
     	case 5:
     		System.out.println("EXIT! \n");
