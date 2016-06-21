@@ -94,7 +94,7 @@ public class Client implements Serializable {
             // Eroeffnen eines neuen Sockets um die Nachricht zu uebermitteln
             Socket socket = new Socket(SERVER_HOSTNAME, SERVER_PORT);
             System.out.println("Verbunden mit Server: " + socket.getRemoteSocketAddress());
-            //oeffentlich =true;
+            boolean oeffentlich =true;
             // Senden der Nachricht ueber einen Stream
             ServerRequest sr = ServerRequest.buildCreateRequest(message, userID, abteilung, oeffentlich);
 
