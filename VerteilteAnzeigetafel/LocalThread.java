@@ -45,7 +45,7 @@ public class LocalThread extends Thread {
 				break;
 			case SHOW_MY_MESSAGES: showMessagesToClient(request.getUserID());
 				break;
-			case PUBLISH: TafelServer.publishMessage(request.getMessageID());
+			case PUBLISH: TafelServer.publishMessage(request.getMessageID(),request.getUserID());
 						  antwort = "Nachricht veröffentlicht!";
 				break;
 			case REGISTER: TafelServer.activateQueue(request.getAbteilungsID());
@@ -63,7 +63,7 @@ public class LocalThread extends Thread {
 		}
 		output.write(antwort.getBytes());
 	}
-	private void showMessagesToClient(int userID)  {
+	private void showMessagesToClient(int userID) throws TafelException  {
 		LinkedList<Message> userMessages= TafelServer.getMessagesByUserID(userID);
 		//TafelServer.print(userMessages.toString());
 		try {
