@@ -13,9 +13,9 @@ public class Anzeigetafel implements Serializable {
     private int messageAnzahl;
     private int msgLaufNr;
     private final int koordinatorID;
-    private LinkedHashMap<Integer, Message> messages;
+    private LinkedHashMap<Integer, Message> messages; /*msgID, msg*/
     private HashSet<Integer> userIDs;
-    private HashMap<Integer, LinkedList<Integer>> userMsgs;
+    private HashMap<Integer, LinkedList<Integer>> userMsgs; /*userID, List<msgID>*/
 
     public Anzeigetafel() {
         /* welche Nummern sollen die einzelnen Anzeigetafeln bekommen?*/
@@ -119,7 +119,7 @@ public class Anzeigetafel implements Serializable {
         return koordinatorID;
     }
 
-    public HashMap getMessages() {
+    public HashMap<Integer,Message> getMessages() {
         return messages;
     }
 
@@ -137,7 +137,7 @@ public class Anzeigetafel implements Serializable {
      * Ermöglicht das Speichern des aktuellen Zustandes der Anzeigetafel
      * in eine Datei.
      */
-    public void saveStateToFile() {
+    public void saveStateToFile() throws TafelException {
         FileOutputStream fileoutput = null;
         ObjectOutputStream objoutput = null;
         try {
@@ -180,18 +180,29 @@ public class Anzeigetafel implements Serializable {
         return at;
     }
     
-    public LinkedList<Integer> getMessagesByUserID(int userID) throws TafelException{
+//    public LinkedList<Integer> getMessagesByUserID(int userID) throws TafelException{
+//        if(!userMsgs.containsKey(userID))
+//            throw new TafelException("Kein User gefunden!");
+//        return userMsgs.get(userID);
+//    }
+    
+    public LinkedList<Message> getMessagesByUserID(int userID) throws TafelException{
         if(!userMsgs.containsKey(userID))
             throw new TafelException("Kein User gefunden!");
-        return userMsgs.get(userID);
+        LinkedList<Integer> umsgIDs = userMsgs.get(userID);
+        LinkedList<Message> uMsgs = new LinkedList<Message>() ;
+        for (Integer element : umsgIDs){
+            uMsgs.add(messages.get(element));
+        }
+        return uMsgs;
     }
-    
    
     @Override
     public String toString(){
         String str = "";
         for(HashMap.Entry<Integer,Message> entry : messages.entrySet()){
-            str = str+"User : "+entry.getKey()+" / "+entry.getValue()+"\n";
+            str = str+"User: "+entry.getValue().getUserID()+" / "
+                    +entry.getValue()+"\n\t\t" + entry.getValue().getInhalt()+"\n";
             
         }
         return str;

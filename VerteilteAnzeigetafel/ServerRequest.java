@@ -2,7 +2,7 @@ package VerteilteAnzeigetafel;
 
 import java.io.Serializable;
 
-public class ServerRequest implements Serializable{
+public class ServerRequest implements Serializable {
 	/**
 	 * 
 	 */
@@ -13,11 +13,8 @@ public class ServerRequest implements Serializable{
 	private int userID;
 	private int abteilungsID;
 	private boolean oeffentlich;
-	
 
-
-	public ServerRequest(ServerRequestType type, int messageID, String message, int userID,
-			int abteilungsID) {
+	public ServerRequest(ServerRequestType type, int messageID, String message, int userID, int abteilungsID) {
 		super();
 		this.type = type;
 		this.messageID = messageID;
@@ -25,16 +22,12 @@ public class ServerRequest implements Serializable{
 		this.userID = userID;
 		this.abteilungsID = abteilungsID;
 	}
-	
 
-	
 	@Override
 	public String toString() {
-		return "ServerRequest [type=" + type + ", messageID=" + messageID
-				+ ", message=" + message + ", abteilungsID=" + abteilungsID
-				+ "]";
+		return "ServerRequest [type=" + type + ", messageID=" + messageID + ", message=" + message + ", abteilungsID="
+				+ abteilungsID + "]";
 	}
-
 
 	public void setMessageID(int messageID) {
 		this.messageID = messageID;
@@ -52,7 +45,6 @@ public class ServerRequest implements Serializable{
 		return messageID;
 	}
 
-
 	public String getMessage() {
 		return message;
 	}
@@ -64,51 +56,28 @@ public class ServerRequest implements Serializable{
 	public boolean isOeffentlich() {
 		return oeffentlich;
 	}
-	public static  ServerRequest buildCreateRequest(ServerRequestType type, String message, int userID, int abteilungsID ) {
-		if (type == ServerRequestType.CREATE){
-			return new ServerRequest(type, 0, message, userID, abteilungsID);
-		} else {
-			return null;
-		}	
+
+	public static ServerRequest buildCreateRequest(String message, int userID, int abteilungsID) {
+		return new ServerRequest(ServerRequestType.CREATE, 0, message, userID, abteilungsID);
 	}
-	public static ServerRequest buildDeleteRequest(ServerRequestType type, int messageID, int userID){
-		if (type == ServerRequestType.DELETE){
-			return new ServerRequest(type, messageID, null, userID, 0);
-		} else {
-			return null;
-		}
+
+	public static ServerRequest buildDeleteRequest(int messageID, int userID) {
+		return new ServerRequest(ServerRequestType.DELETE, messageID, null, userID, 0);
 	}
-	
-	public static ServerRequest buildModifyRequest(ServerRequestType type, int messageID, String newMessage,
-			int userID){
-		if (type == ServerRequestType.MODIFY){
-			return new ServerRequest(type, messageID, newMessage, userID, 0);
-		} else {
-			return null;
-		}
+
+	public static ServerRequest buildModifyRequest(int messageID, String newMessage, int userID) {
+		return new ServerRequest(ServerRequestType.MODIFY, messageID, newMessage, userID, 0);
 	}
-	
-	public static ServerRequest buildPublishRequest(ServerRequestType type, int messageID, int userID){
-		if (type == ServerRequestType.PUBLISH){
-			return new ServerRequest(type, messageID, null, userID, 0);
-		} else {
-			return null;
-		}
+
+	public static ServerRequest buildPublishRequest(int messageID, int userID) {
+		return new ServerRequest(ServerRequestType.PUBLISH, messageID, null, userID, 0);
 	}
-	
-	public static ServerRequest buildShowMyMessagesRequest(ServerRequestType type, int userID){
-		if (type == ServerRequestType.SHOW_MY_MESSAGES){
-			return new ServerRequest(type, 0, null, userID, 0);
-		} else {
-			return null;
-		}
+
+	public static ServerRequest buildShowMyMessagesRequest(int userID) {
+		return new ServerRequest(ServerRequestType.SHOW_MY_MESSAGES, 0, null, userID, 0);
 	}
-	
-	public static ServerRequest buildRegisterRequest(ServerRequestType type,int abteilungsID){
-		if (type == ServerRequestType.REGISTER){
-			return new ServerRequest(type, 0, null, 0, abteilungsID);
-		} else {
-			return null;
-		}
+
+	public static ServerRequest buildRegisterRequest(int abteilungsID) {
+		return new ServerRequest(ServerRequestType.REGISTER, 0, null, 0, abteilungsID);
 	}
 }
