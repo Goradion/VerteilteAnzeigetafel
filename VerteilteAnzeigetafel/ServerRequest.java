@@ -14,13 +14,14 @@ public class ServerRequest implements Serializable {
 	private int abteilungsID;
 	private boolean oeffentlich;
 
-	public ServerRequest(ServerRequestType type, int messageID, String message, int userID, int abteilungsID) {
+	public ServerRequest(ServerRequestType type, int messageID, String message, int userID, int abteilungsID, boolean oeffentlich) {
 		super();
 		this.type = type;
 		this.messageID = messageID;
 		this.message = message;
 		this.userID = userID;
 		this.abteilungsID = abteilungsID;
+		this.oeffentlich = oeffentlich;
 	}
 
 	@Override
@@ -57,27 +58,27 @@ public class ServerRequest implements Serializable {
 		return oeffentlich;
 	}
 
-	public static ServerRequest buildCreateRequest(String message, int userID, int abteilungsID) {
-		return new ServerRequest(ServerRequestType.CREATE, 0, message, userID, abteilungsID);
+	public static ServerRequest buildCreateRequest(String message, int userID, int abteilungsID, boolean oeffentlich) {
+		return new ServerRequest(ServerRequestType.CREATE, 0, message, userID, abteilungsID, oeffentlich);
 	}
 
 	public static ServerRequest buildDeleteRequest(int messageID, int userID) {
-		return new ServerRequest(ServerRequestType.DELETE, messageID, null, userID, 0);
+		return new ServerRequest(ServerRequestType.DELETE, messageID, null, userID, 0, false);
 	}
 
 	public static ServerRequest buildModifyRequest(int messageID, String newMessage, int userID) {
-		return new ServerRequest(ServerRequestType.MODIFY, messageID, newMessage, userID, 0);
+		return new ServerRequest(ServerRequestType.MODIFY, messageID, newMessage, userID, 0, false);
 	}
 
 	public static ServerRequest buildPublishRequest(int messageID, int userID) {
-		return new ServerRequest(ServerRequestType.PUBLISH, messageID, null, userID, 0);
+		return new ServerRequest(ServerRequestType.PUBLISH, messageID, null, userID, 0, true);
 	}
 
 	public static ServerRequest buildShowMyMessagesRequest(int userID) {
-		return new ServerRequest(ServerRequestType.SHOW_MY_MESSAGES, 0, null, userID, 0);
+		return new ServerRequest(ServerRequestType.SHOW_MY_MESSAGES, 0, null, userID, 0, false);
 	}
 
 	public static ServerRequest buildRegisterRequest(int abteilungsID) {
-		return new ServerRequest(ServerRequestType.REGISTER, 0, null, 0, abteilungsID);
+		return new ServerRequest(ServerRequestType.REGISTER, 0, null, 0, abteilungsID, false);
 	}
 }
