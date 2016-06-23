@@ -21,12 +21,23 @@ public class TafelServer {
 	private static HashMap<Integer, OutboxThread> outboxThreads = new HashMap<Integer, OutboxThread>();
 	public static final int SERVER_PORT = 10001;
 	private static Anzeigetafel anzeigetafel;
+	private static int abteilungsID;
 
 	/**
 	 * @param args
 	 *            the command line arguments
 	 */
 	public static void main(String[] args) {
+		if (args.length >=1){
+			try{
+			abteilungsID = Integer.parseInt(args[0]);
+			print("AbteilungsID="+abteilungsID);
+			} catch (NumberFormatException nfe){
+				print(args[0]+ "ist keine Integerzahl");
+			}
+		} else {
+			abteilungsID = 1;
+		}
 		init();
 		ServerSocket socket;
 		try {
@@ -45,9 +56,17 @@ public class TafelServer {
 
 	private static void init() {
 		anzeigetafel = Anzeigetafel.loadStateFromFile();
+		if(anzeigetafel != null){
+			print("Anzeigetafel aus Datei geladen!");
+		} else {
+			anzeigetafel = new Anzeigetafel(abteilungsID);
+			anzeigetafel.saveStateToFile();
+			print("Neue Anzeigetafel erstellt!");
+		}
 		queueMap = loadQueueMapFromFile();
 		tafelAdressen = loadTafelAdressenFromFile();
-		print("Zustand aus Datei geladen!");
+		
+		tafelAdressen.put(2, new InetSocketAddress("134.96.216.22", SERVER_PORT));
 		// LinkedBlockingQueue<Message> q = new LinkedBlockingQueue<Message>();
 		// q.add(new Message("AAAAAAAAAAAAAAAAAAAA", 1, 2, true, 4711));
 		// q.add(new Message("BBBBBBBBBBBBBBBBBBBB", 1, 2, true, 4711));
