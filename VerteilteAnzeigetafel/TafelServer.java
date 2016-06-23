@@ -16,7 +16,7 @@ import java.util.concurrent.LinkedBlockingQueue;
  * @author Simon Bastian
  */
 public class TafelServer {
-	private static HashMap<Integer, LinkedBlockingQueue<Message>> queueMap;
+	private static HashMap<Integer, LinkedBlockingQueue<Message>> queueMap = new HashMap<Integer, LinkedBlockingQueue<Message>>();
 	private static HashMap<Integer, SocketAddress> tafelAdressen = new HashMap<Integer, SocketAddress>();
 	private static HashMap<Integer, OutboxThread> outboxThreads = new HashMap<Integer, OutboxThread>();
 	public static final int SERVER_PORT = 10001;
@@ -98,8 +98,8 @@ public class TafelServer {
 		for (LinkedBlockingQueue<Message> q : queueMap.values()) {
 			q.put(anzeigetafel.getMessages().get(messageID));
 		}
-		saveQueueMapToFile();
 		anzeigetafel.saveStateToFile();
+
 	}
 
 	
@@ -131,16 +131,6 @@ public class TafelServer {
 		} // else Queue already active
 	}
 	
-	
-
-	public static synchronized void print(String nachricht) {
-		System.out.println(nachricht);
-	}
-
-	public static synchronized void printMessages() {
-		System.out.println(anzeigetafel.toString());
-	}
-
 	
 	public static synchronized void saveQueueMapToFile() {
 		FileOutputStream fileoutput = null;
@@ -180,6 +170,7 @@ public class TafelServer {
 		}
 		return qMap;
 	}
+	
 	public static synchronized void saveTafelAdressenToFile(){
 		FileOutputStream fileoutput = null;
 		ObjectOutputStream objoutput = null;
@@ -217,4 +208,14 @@ public class TafelServer {
 		}
 		return adressen;
 	}
+
+
+	public static synchronized void print(String nachricht) {
+		System.out.println(nachricht);
+	}
+
+	public static synchronized void printMessages() {
+		System.out.println(anzeigetafel.toString());
+	}
+
 }
