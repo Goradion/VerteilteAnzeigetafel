@@ -237,5 +237,13 @@ public class Anzeigetafel implements Serializable {
         }
         return str;
     }
+    
+    public void receiveMessage(Message msg) throws TafelException{
+        if(msg.getAbtNr()==abteilungsID){
+            throw new TafelException("msg.getAbtNr()==abteilungsID");
+        }
+        messages.put(msg.getMessageID(), msg);
+        
+    }
 
 }
