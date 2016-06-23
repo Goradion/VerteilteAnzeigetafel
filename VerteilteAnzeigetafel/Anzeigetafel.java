@@ -194,10 +194,11 @@ public class Anzeigetafel implements Serializable {
      * @throws VerteilteAnzeigetafel.TafelException
      */
     public static Anzeigetafel loadStateFromFile()  {
-        if (!Files.exists(FileSystems.getDefault().getPath("./", TAFELNAME))) {
-            throw new TafelException("Could not load state from file.");
-        }
         Anzeigetafel at = null;
+        if (!Files.exists(FileSystems.getDefault().getPath("./", TAFELNAME))) {
+           at = new Anzeigetafel();
+           at.saveStateToFile();
+        }
         FileInputStream fileinput = null;
         ObjectInputStream objinput = null;
         try {
