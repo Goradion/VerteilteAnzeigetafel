@@ -7,7 +7,7 @@ import java.util.*;
 import java.util.logging.*;
 
 public class Anzeigetafel implements Serializable {
-
+    
     private static final String TAFELNAME = "tafel";
     private String lastID;
     private final int abteilungsID;
@@ -21,9 +21,9 @@ public class Anzeigetafel implements Serializable {
 
     /*userID, List<msgID>*/
 
-    public Anzeigetafel() {
+    public Anzeigetafel(int abtNr) {
         /* welche Nummern sollen die einzelnen Anzeigetafeln bekommen?*/
-        this.abteilungsID = 1; // hier muss man fuer jedes kompilierte Programm
+        this.abteilungsID = abtNr; // hier muss man fuer jedes kompilierte Programm
         // eine neue Nummer festlegen
         this.koordinatorID = 1;
         this.messageAnzahl = 0;
@@ -193,12 +193,9 @@ public class Anzeigetafel implements Serializable {
      * @return
      * @throws VerteilteAnzeigetafel.TafelException
      */
-    public static Anzeigetafel loadStateFromFile()  {
+    public static Anzeigetafel loadStateFromFile(){
         Anzeigetafel at = null;
-        if (!Files.exists(FileSystems.getDefault().getPath("./", TAFELNAME))) {
-           at = new Anzeigetafel();
-           at.saveStateToFile();
-        }
+      
         FileInputStream fileinput = null;
         ObjectInputStream objinput = null;
         try {
