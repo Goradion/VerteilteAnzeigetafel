@@ -7,12 +7,8 @@ package VerteilteAnzeigetafel;
 
 import java.io.*;
 import java.net.*;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.Queue;
-import java.util.Vector;
 import java.util.concurrent.LinkedBlockingQueue;
 
 /**
@@ -20,7 +16,7 @@ import java.util.concurrent.LinkedBlockingQueue;
  * @author Simon Bastian
  */
 public class TafelServer {
-	private static HashMap<Integer, LinkedBlockingQueue<Message>> queueMap = new HashMap<Integer, LinkedBlockingQueue<Message>>();
+	private static HashMap<Integer, LinkedBlockingQueue<Message>> queueMap;
 	private static HashMap<Integer, SocketAddress> tafelAdressen = new HashMap<Integer, SocketAddress>();
 	private static HashMap<Integer, OutboxThread> outboxThreads = new HashMap<Integer, OutboxThread>();
 	public static final int SERVER_PORT = 10001;
@@ -48,19 +44,15 @@ public class TafelServer {
 	}
 
 	private static void init() {
-		try {
-			anzeigetafel = Anzeigetafel.loadStateFromFile();
-			print("Zustand aus Datei geladen!");
-		} catch (TafelException e) {
-			print("Neue Anzeigetafel erstellt!");
-			anzeigetafel = new Anzeigetafel();
-		}
-//		LinkedBlockingQueue<Message> q = new LinkedBlockingQueue<Message>();
-//		q.add(new Message("AAAAAAAAAAAAAAAAAAAA", 1, 2, true, 4711));
-//		q.add(new Message("BBBBBBBBBBBBBBBBBBBB", 1, 2, true, 4711));
-//		queueMap.put(1, q);
-//		tafelAdressen.put(1, new InetSocketAddress("134.96.216.15", 10001));
-//		activateQueue(1);
+		anzeigetafel = Anzeigetafel.loadStateFromFile();
+		queueMap = loadQueueMapFromFile();
+		print("Zustand aus Datei geladen!");
+		// LinkedBlockingQueue<Message> q = new LinkedBlockingQueue<Message>();
+		// q.add(new Message("AAAAAAAAAAAAAAAAAAAA", 1, 2, true, 4711));
+		// q.add(new Message("BBBBBBBBBBBBBBBBBBBB", 1, 2, true, 4711));
+		// queueMap.put(1, q);
+		// tafelAdressen.put(1, new InetSocketAddress("134.96.216.15", 10001));
+		// activateQueue(1);
 		// File f = new File("tafel");
 		// if(f.exists() && !f.isDirectory()){
 		// try {
@@ -105,7 +97,55 @@ public class TafelServer {
 		for (LinkedBlockingQueue<Message> q : queueMap.values()) {
 			q.put(anzeigetafel.getMessages().get(messageID));
 		}
+		saveQueueMapToFile();
 		anzeigetafel.saveStateToFile();
+	}
+
+	public static void saveQueueMapToFile() {
+		FileOutputStream fileoutput = null;
+		ObjectOutputStream objoutput = null;
+		try {
+			fileoutput = new FileOutputStream("./QueueMap");
+			objoutput = new ObjectOutputStream(fileoutput);
+			objoutput.writeObject(queueMap);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				objoutput.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	private static HashMap<Integer, LinkedBlockingQueue<Message>> loadQueueMapFromFile() {
+		HashMap<Integer, LinkedBlockingQueue<Message>> qMap = new HashMap<Integer, LinkedBlockingQueue<Message>>();
+		FileInputStream fileInput = null;
+		ObjectInputStream objinput = null;
+		try {
+			fileInput = new FileInputStream("./QueueMap");
+			objinput = new ObjectInputStream(fileInput);
+			Object obj = objinput.readObject();
+
+			if (obj instanceof HashMap) {
+				qMap = (HashMap<Integer, LinkedBlockingQueue<Message>>) obj;
+			}
+
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return qMap;
 	}
 
 	public static synchronized void modifyMessage(int messageID, String inhalt, int userID) throws TafelException {
@@ -116,10 +156,11 @@ public class TafelServer {
 
 	public static synchronized void activateQueue(int abteilungsID) {
 		if (!outboxThreads.containsKey(abteilungsID) || !outboxThreads.get(abteilungsID).isAlive()) {
-			OutboxThread obt = new OutboxThread(abteilungsID, tafelAdressen.get(abteilungsID), queueMap.get(abteilungsID)); 
+			OutboxThread obt = new OutboxThread(abteilungsID, tafelAdressen.get(abteilungsID),
+					queueMap.get(abteilungsID));
 			outboxThreads.put(abteilungsID, obt);
 			obt.start();
-		}//else Queue already active
+		} // else Queue already active
 	}
 
 	public static synchronized void print(String nachricht) {
