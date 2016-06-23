@@ -167,7 +167,7 @@ public class Anzeigetafel implements Serializable {
      * Ermöglicht das Speichern des aktuellen Zustandes der Anzeigetafel in eine
      * Datei.
      */
-    public void saveStateToFile() throws TafelException {
+    public void saveStateToFile(){
         FileOutputStream fileoutput = null;
         ObjectOutputStream objoutput = null;
         try {
@@ -193,7 +193,7 @@ public class Anzeigetafel implements Serializable {
      * @return
      * @throws VerteilteAnzeigetafel.TafelException
      */
-    public static Anzeigetafel loadStateFromFile() throws TafelException {
+    public static Anzeigetafel loadStateFromFile()  {
         if (!Files.exists(FileSystems.getDefault().getPath("./", TAFELNAME))) {
             throw new TafelException("Could not load state from file.");
         }
