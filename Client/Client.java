@@ -196,8 +196,11 @@ public class Client implements Serializable {
     			// Empfangen der Nachricht 
     			ObjectInputStream input = new ObjectInputStream(socketServer.getInputStream());
     			LinkedList<Message> userMessages = (LinkedList<Message>) input.readObject();
-    			System.out.println(userMessages.toString());
-    			oout.close();
+//    			System.out.println(userMessages.toString());
+                        for(Message m : userMessages){
+                            System.out.println(m.toString());
+                        }
+                        oout.close();
     			socketServer.close();
     	}
         catch (UnknownHostException e)
@@ -283,7 +286,7 @@ public class Client implements Serializable {
         		+ "(3) Nachricht aendern \n "
         		+ "(4)Nachrichten ansehen\n "
         		+ "(5)Nachricht publizieren\n "
-        		+ "(6) Nachricht Veröffentlichen\n"
+        		+ "(6) Nachricht Verï¿½ffentlichen\n"
         		+ " (7) ende\n");
         String wahl = eingabe.readLine();
         auswahl = Integer.parseInt(wahl);
