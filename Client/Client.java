@@ -85,9 +85,7 @@ public class Client implements Serializable {
             System.out.println("Geben sie ihre Nachricht ein.");
             String message = eingabe.readLine();
             
-/*           BufferedReader sc = new BufferedReader(new InputStreamReader(System.in));
-            System.out.println("Soll die Nachricht veröffentlicht werden?");
-            boolean oeffentlich = sc.ready();*/
+
             
             // Eroeffnen eines neuen Sockets um die Nachricht zu uebermitteln
             Socket socket = new Socket(SERVER_HOSTNAME, SERVER_PORT);
@@ -98,9 +96,9 @@ public class Client implements Serializable {
 
             // Bauen eines Objektes 
             ObjectOutputStream oout = new ObjectOutputStream(socket.getOutputStream());
-            System.out.println("Sende Objekt...");
+           
             oout.writeObject(sr);
-            System.out.println("Objekt gesendet");
+            
             oout.close();
             //ms.close();
             socket.close();
@@ -129,9 +127,9 @@ public class Client implements Serializable {
             System.out.println("Verbunden mit Server: " + socketServer.getRemoteSocketAddress());
             ServerRequest serverR = ServerRequest.buildDeleteRequest(nachrichtId, userIdClient);
             ObjectOutputStream oout = new ObjectOutputStream(socketServer.getOutputStream());
-            System.out.println("Sende Objekt...");
+        
             oout.writeObject(serverR);
-            System.out.println("Objekt gesendet");
+            
             oout.close();
             socketServer.close();
 
@@ -162,10 +160,9 @@ public class Client implements Serializable {
             String neueNachricht = newMesseg.readLine(); 
             ServerRequest serverR = ServerRequest.buildModifyRequest(nachrichtId,neueNachricht,userID);
             ObjectOutputStream oout = new ObjectOutputStream(socketServer.getOutputStream());
-            System.out.println("Sende Objekt...");
+        
             oout.writeObject(serverR);
             System.out.println("id" + nachrichtId + "nachricht:" + neueNachricht + "user"+userID);
-            
             
             oout.close();
             socketServer.close();
@@ -185,6 +182,7 @@ public class Client implements Serializable {
     
     
     static public void showMsg(int userId) {
+    	
     	try{
     		
     		 Socket socketServer = new Socket (SERVER_HOSTNAME, SERVER_PORT);
@@ -194,19 +192,18 @@ public class Client implements Serializable {
              System.out.println("Sende Objekt...");
              oout.writeObject(serverR);
              System.out.println("Objekt gesendet");
-   
-            
+
              
- 			 ObjectInputStream input = new ObjectInputStream(socketServer.getInputStream());
- 			 @SuppressWarnings("unchecked")
-			LinkedList<Message> userMessages = (LinkedList<Message>) input.readObject();
- 			 Object array[] =userMessages.toArray();
- 			 for(int i = 0; i < array.length; i++){
- 			      System.out.println(array[i]);
- 			 }
- 			 //System.out.println(userMessages.toString());
- 			 oout.close();
-             socketServer.close();
+ 		
+    			// Empfangen der Nachricht 
+    			ObjectInputStream input = new ObjectInputStream(socketServer.getInputStream());
+    			LinkedList<Message> userMessages = (LinkedList<Message>) input.readObject();
+//    			System.out.println(userMessages.toString());
+                        for(Message m : userMessages){
+                            System.out.println(m.toString());
+                        }
+                        oout.close();
+    			socketServer.close();
     	}
         catch (UnknownHostException e)
         {
@@ -235,9 +232,9 @@ public class Client implements Serializable {
    		    System.out.println ("Verbunden mit Server: " + socketServer.getRemoteSocketAddress());
    		    ServerRequest serverR = ServerRequest.buildPublishRequest(messegId, userId);
             ObjectOutputStream oout = new ObjectOutputStream(socketServer.getOutputStream());
-            System.out.println("Sende Objekt...");
+          
             oout.writeObject(serverR);
-            System.out.println("Objekt gesendet");
+           
             socketServer.close();
     	}
     	  catch (UnknownHostException e)
@@ -286,7 +283,13 @@ public class Client implements Serializable {
         int auswahl ;
         BufferedReader eingabe = new BufferedReader(new InputStreamReader(System.in));
     	System.out.println("*****anzeigetafel*******\n");
-        System.out.println("(1) Neue Nachricht \n(2)Nachricht ENTFERNEN \n (3) Nachricht aendern \n (4)Nachrichten ansehen\n (5)Nachricht publizieren\n (6) ende\n");
+        System.out.println("(1) Neue Nachricht \n"
+        		+ "(2)Nachricht ENTFERNEN \n "
+        		+ "(3) Nachricht aendern \n "
+        		+ "(4)Nachrichten ansehen\n "
+        		+ "(5)Nachricht publizieren\n "
+        		+ "(6) Nachricht Verï¿½ffentlichen\n"
+        		+ " (7) ende\n");
         String wahl = eingabe.readLine();
         auswahl = Integer.parseInt(wahl);
         return auswahl;
@@ -315,8 +318,13 @@ public class Client implements Serializable {
     		publicMsg (userID );
     		return true;
     	case 6:
+			showMsg(userID);
+			publicMsg(userID);
+			return true;
+    	case 7:
     		System.out.println("EXIT! \n");
     		return false;
+    	
     	default:
     		System.out.println("falsche eingabe! \n");
     		return true;
