@@ -20,7 +20,6 @@ public class Anzeigetafel implements Serializable {
     private HashMap<Integer, LinkedList<Integer>> userMsgs;
 
     /*userID, List<msgID>*/
-
     public Anzeigetafel() {
         /* welche Nummern sollen die einzelnen Anzeigetafeln bekommen?*/
         this.abteilungsID = 1; // hier muss man fuer jedes kompilierte Programm
@@ -51,7 +50,7 @@ public class Anzeigetafel implements Serializable {
             /* Autor oder Koordinator ?*/
             if (user == messages.get(messageID).getUserID() || isCoordinator(user)) {
                 Message msg = new Message(inhalt, messages.get(messageID).getUserID(),
-                        messages.get(messageID).getAbtNr(), 
+                        messages.get(messageID).getAbtNr(),
                         messages.get(messageID).isOeffentlich(),
                         messages.get(messageID).getMessageID());
                 messages.replace(messageID, msg);
@@ -167,7 +166,7 @@ public class Anzeigetafel implements Serializable {
      * Ermöglicht das Speichern des aktuellen Zustandes der Anzeigetafel in eine
      * Datei.
      */
-    public void saveStateToFile() throws TafelException {
+    public void saveStateToFile() {
         FileOutputStream fileoutput = null;
         ObjectOutputStream objoutput = null;
         try {
@@ -193,21 +192,21 @@ public class Anzeigetafel implements Serializable {
      * @return
      * @throws VerteilteAnzeigetafel.TafelException
      */
-    public static Anzeigetafel loadStateFromFile() throws TafelException {
-        if (!Files.exists(FileSystems.getDefault().getPath("./", TAFELNAME))) {
-            throw new TafelException("Could not load state from file.");
-        }
+    public static Anzeigetafel loadStateFromFile() {
         Anzeigetafel at = null;
-        FileInputStream fileinput = null;
-        ObjectInputStream objinput = null;
-        try {
-            fileinput = new FileInputStream("./" + TAFELNAME);
-            objinput = new ObjectInputStream(fileinput);
-            at = (Anzeigetafel) objinput.readObject();
-        } catch (FileNotFoundException ex) {
-            Logger.getLogger(Anzeigetafel.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException | ClassNotFoundException ex) {
-            Logger.getLogger(Anzeigetafel.class.getName()).log(Level.SEVERE, null, ex);
+        if (!Files.exists(FileSystems.getDefault().getPath("./", TAFELNAME))) {
+            at = new Anzeigetafel();
+            at.saveStateToFile();
+        } else {
+            FileInputStream fileinput = null;
+            ObjectInputStream objinput = null;
+            try {
+                fileinput = new FileInputStream("./" + TAFELNAME);
+                objinput = new ObjectInputStream(fileinput);
+                at = (Anzeigetafel) objinput.readObject();
+            } catch (IOException | ClassNotFoundException ex) {
+                ex.printStackTrace();
+            }
         }
         return at;
     }
