@@ -46,6 +46,7 @@ public class TafelServer {
 	private static void init() {
 		anzeigetafel = Anzeigetafel.loadStateFromFile();
 		queueMap = loadQueueMapFromFile();
+		tafelAdressen = loadTafelAdressenFromFile();
 		print("Zustand aus Datei geladen!");
 		// LinkedBlockingQueue<Message> q = new LinkedBlockingQueue<Message>();
 		// q.add(new Message("AAAAAAAAAAAAAAAAAAAA", 1, 2, true, 4711));
@@ -101,7 +102,47 @@ public class TafelServer {
 		anzeigetafel.saveStateToFile();
 	}
 
-	public static void saveQueueMapToFile() {
+	
+
+	public static synchronized void modifyMessage(int messageID, String inhalt, int userID) throws TafelException {
+		anzeigetafel.modifyMessage(messageID, inhalt, userID);
+		print("User mit ID=" + userID + " hatNachricht mit ID=" + messageID + " geändert!");
+		anzeigetafel.saveStateToFile();
+	}
+	
+	public static synchronized LinkedList<Message> getMessagesByUserID(int userID) throws TafelException {
+		print("Showing Messages to user " + userID);
+		return anzeigetafel.getMessagesByUserID(userID);
+	}
+	public static synchronized void registerTafel(int abteilungsID, SocketAddress address){
+		if(tafelAdressen.containsKey(abteilungsID)){
+			tafelAdressen.replace(abteilungsID, address);
+		}else {
+			tafelAdressen.put(abteilungsID, address);
+		}
+		saveTafelAdressenToFile();
+	}
+	public static synchronized void activateQueue(int abteilungsID) {
+		if (!outboxThreads.containsKey(abteilungsID) || !outboxThreads.get(abteilungsID).isAlive()) {
+			OutboxThread obt = new OutboxThread(abteilungsID, tafelAdressen.get(abteilungsID),
+					queueMap.get(abteilungsID));
+			outboxThreads.put(abteilungsID, obt);
+			obt.start();
+		} // else Queue already active
+	}
+	
+	
+
+	public static synchronized void print(String nachricht) {
+		System.out.println(nachricht);
+	}
+
+	public static synchronized void printMessages() {
+		System.out.println(anzeigetafel.toString());
+	}
+
+	
+	public static synchronized void saveQueueMapToFile() {
 		FileOutputStream fileoutput = null;
 		ObjectOutputStream objoutput = null;
 		try {
@@ -127,52 +168,53 @@ public class TafelServer {
 		FileInputStream fileInput = null;
 		ObjectInputStream objinput = null;
 		try {
-			fileInput = new FileInputStream("./QueueMap");
+			fileInput = new FileInputStream("./queueMap");
 			objinput = new ObjectInputStream(fileInput);
 			Object obj = objinput.readObject();
-
-			if (obj instanceof HashMap) {
-				qMap = (HashMap<Integer, LinkedBlockingQueue<Message>>) obj;
-			}
-
+			qMap = (HashMap<Integer, LinkedBlockingQueue<Message>>) obj;
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
+			print("Kein Queue-Backup gefunden");
+		} catch (IOException | ClassNotFoundException e) {
+			print("Fehler beim lesen des Queue-Backups");
 			e.printStackTrace();
 		}
 		return qMap;
 	}
-
-	public static synchronized void modifyMessage(int messageID, String inhalt, int userID) throws TafelException {
-		anzeigetafel.modifyMessage(messageID, inhalt, userID);
-		print("User mit ID=" + userID + " hatNachricht mit ID=" + messageID + " geändert!");
-		anzeigetafel.saveStateToFile();
+	public static synchronized void saveTafelAdressenToFile(){
+		FileOutputStream fileoutput = null;
+		ObjectOutputStream objoutput = null;
+		try {
+			fileoutput = new FileOutputStream("./TafelAdressen");
+			objoutput = new ObjectOutputStream(fileoutput);
+			objoutput.writeObject(tafelAdressen);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				objoutput.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 	}
-
-	public static synchronized void activateQueue(int abteilungsID) {
-		if (!outboxThreads.containsKey(abteilungsID) || !outboxThreads.get(abteilungsID).isAlive()) {
-			OutboxThread obt = new OutboxThread(abteilungsID, tafelAdressen.get(abteilungsID),
-					queueMap.get(abteilungsID));
-			outboxThreads.put(abteilungsID, obt);
-			obt.start();
-		} // else Queue already active
-	}
-
-	public static synchronized void print(String nachricht) {
-		System.out.println(nachricht);
-	}
-
-	public static synchronized void printMessages() {
-		System.out.println(anzeigetafel.toString());
-	}
-
-	public static synchronized LinkedList<Message> getMessagesByUserID(int userID) throws TafelException {
-		print("Showing Messages to user " + userID);
-		return anzeigetafel.getMessagesByUserID(userID);
+	@SuppressWarnings("unchecked")
+	private static HashMap<Integer, SocketAddress> loadTafelAdressenFromFile() {
+		HashMap<Integer, SocketAddress> adressen = new HashMap<Integer, SocketAddress>();
+		FileInputStream fileInput = null;
+		ObjectInputStream objinput = null;
+		try {
+			fileInput = new FileInputStream("./tafelAdressen");
+			objinput = new ObjectInputStream(fileInput);
+			Object obj = objinput.readObject();
+			adressen = (HashMap<Integer, SocketAddress>) obj;
+		} catch (FileNotFoundException e) {
+			print("Kein Adressen-Backup gefunden");
+		} catch (IOException | ClassNotFoundException e) {
+			print("Fehler beim lesen des Adressen-Backups");
+			e.printStackTrace();
+		}
+		return adressen;
 	}
 }
