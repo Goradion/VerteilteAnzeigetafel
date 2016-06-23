@@ -22,7 +22,7 @@ public class Client {
 		try {
 			Socket socket = new Socket(SERVER_HOSTNAME, SERVER_PORT);
 			//ServerRequest sr = ServerRequest.buildShowMyMessagesRequest(1);
-			ServerRequest sr = ServerRequest.buildCreateRequest("test", 1, 1,false);
+			ServerRequest sr = ServerRequest.buildCreateRequest("test", 1, 1);
 			ObjectOutputStream oout = new ObjectOutputStream(socket.getOutputStream());
 			// sr =
 			// ServerRequest.buildShowMyMessagesRequest(ServerRequestType.SHOW_MY_MESSAGES,

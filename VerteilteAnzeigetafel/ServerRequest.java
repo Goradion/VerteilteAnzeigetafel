@@ -58,8 +58,8 @@ public class ServerRequest implements Serializable {
 		return oeffentlich;
 	}
 
-	public static ServerRequest buildCreateRequest(String message, int userID, int abteilungsID, boolean oeffentlich) {
-		return new ServerRequest(ServerRequestType.CREATE, 0, message, userID, abteilungsID, oeffentlich);
+	public static ServerRequest buildCreateRequest(String message, int userID, int abteilungsID) {
+		return new ServerRequest(ServerRequestType.CREATE, 0, message, userID, abteilungsID, false);
 	}
 
 	public static ServerRequest buildDeleteRequest(int messageID, int userID) {

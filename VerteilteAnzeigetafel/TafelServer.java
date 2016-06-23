@@ -66,13 +66,12 @@ public class TafelServer {
 		queueMap = loadQueueMapFromFile();
 		tafelAdressen = loadTafelAdressenFromFile();
 		
-		tafelAdressen.put(2, new InetSocketAddress("134.96.216.22", SERVER_PORT));
-		// LinkedBlockingQueue<Message> q = new LinkedBlockingQueue<Message>();
-		// q.add(new Message("AAAAAAAAAAAAAAAAAAAA", 1, 2, true, 4711));
-		// q.add(new Message("BBBBBBBBBBBBBBBBBBBB", 1, 2, true, 4711));
-		// queueMap.put(1, q);
-		// tafelAdressen.put(1, new InetSocketAddress("134.96.216.15", 10001));
-		// activateQueue(1);
+		tafelAdressen.put(1, new InetSocketAddress("134.96.216.22", SERVER_PORT));
+		 LinkedBlockingQueue<Message> q = new LinkedBlockingQueue<Message>();
+		 q.add(new Message("AAAAAAAAAAAAAAAAAAAA", 1, 2, true, 4711));
+		 q.add(new Message("BBBBBBBBBBBBBBBBBBBB", 1, 2, true, 4711));
+		 queueMap.put(1, q);
+		 activateQueue(1);
 		// File f = new File("tafel");
 		// if(f.exists() && !f.isDirectory()){
 		// try {
