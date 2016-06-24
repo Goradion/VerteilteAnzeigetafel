@@ -26,8 +26,6 @@ public class OutboxThread extends Thread {
 				Message msg = messageQueue.take();
 				socket.connect(adress);
 				ObjectOutputStream oout = new ObjectOutputStream(socket.getOutputStream());
-				
-				//TODO rework ServerRequest
 				ServerRequest request = ServerRequest.buildReceiveRequest(msg);
 				oout.writeObject(request);
 				
