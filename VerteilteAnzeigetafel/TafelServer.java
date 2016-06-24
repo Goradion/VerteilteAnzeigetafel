@@ -66,12 +66,12 @@ public class TafelServer {
 		queueMap = loadQueueMapFromFile();
 		tafelAdressen = loadTafelAdressenFromFile();
 		
-		tafelAdressen.put(1, new InetSocketAddress("134.96.216.22", SERVER_PORT));
-		 LinkedBlockingQueue<Message> q = new LinkedBlockingQueue<Message>();
-		 q.add(new Message("AAAAAAAAAAAAAAAAAAAA", 1, 2, true, 4711));
-		 q.add(new Message("BBBBBBBBBBBBBBBBBBBB", 1, 2, true, 4711));
-		 queueMap.put(1, q);
-		 activateQueue(1);
+		//tafelAdressen.put(1, new InetSocketAddress("localhost", SERVER_PORT));
+		// LinkedBlockingQueue<Message> q = new LinkedBlockingQueue<Message>();
+		// q.add(new Message("AAAAAAAAAAAAAAAAAAAA", 1, 2, true, 4711));
+		// q.add(new Message("BBBBBBBBBBBBBBBBBBBB", 1, 2, true, 4711));
+		// queueMap.put(1, q);
+		// activateQueue(1);
 		// File f = new File("tafel");
 		// if(f.exists() && !f.isDirectory()){
 		// try {
@@ -103,7 +103,13 @@ public class TafelServer {
 		anzeigetafel.saveStateToFile();
 		return msgID;
 	}
-
+	
+	public static synchronized void receiveMessage(Message msg) throws TafelException{
+		anzeigetafel.receiveMessage(msg);
+		print("Nachricht von Abteilung "+msg.getAbtNr()+" erhalten!");
+		anzeigetafel.saveStateToFile();
+	}
+	
 	public static synchronized void deleteMessage(int messageID, int userID) throws TafelException {
 		anzeigetafel.deleteMessage(messageID, userID);
 		print("User mit ID=" + userID + " hat Nachricht mit ID=" + messageID + " gelöscht!");
@@ -132,12 +138,20 @@ public class TafelServer {
 		print("Showing Messages to user " + userID);
 		return anzeigetafel.getMessagesByUserID(userID);
 	}
-	public static synchronized void registerTafel(int abteilungsID, SocketAddress address){
+	public static synchronized void registerTafel(int abteilungsID, SocketAddress address) throws TafelException{
+		if(abteilungsID==anzeigetafel.getAbteilungsID()){
+			throw new TafelException("Die eigene Abteilung wird nicht registriert");
+		}
 		if(tafelAdressen.containsKey(abteilungsID)){
-			tafelAdressen.replace(abteilungsID, address);
+			if(!tafelAdressen.get(abteilungsID).equals(address)){
+				tafelAdressen.replace(abteilungsID, address);
+			}
+						
 		}else {
 			tafelAdressen.put(abteilungsID, address);
+			queueMap.put(abteilungsID, new LinkedBlockingQueue<Message>());
 		}
+		activateQueue(abteilungsID);
 		saveTafelAdressenToFile();
 	}
 	public static synchronized void activateQueue(int abteilungsID) {

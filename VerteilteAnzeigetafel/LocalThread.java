@@ -1,6 +1,7 @@
 package VerteilteAnzeigetafel;
 
 import java.io.*;
+import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.LinkedList;
 
@@ -56,10 +57,15 @@ public class LocalThread extends Thread {
 				antwort = "Nachricht veröffentlicht!";
 				break;
 			case REGISTER:
-				TafelServer.activateQueue(request.getAbteilungsID());
+				TafelServer.registerTafel(request.getAbteilungsID(), client.getRemoteSocketAddress());
 				antwort = "Welcome!";
 				break;
+			case RECEIVE: TafelServer.receiveMessage(new Message(request.getMessage(), request.getUserID(), 
+					request.getAbteilungsID(), request.isOeffentlich(), request.getMessageID()));
+				antwort = "Nachricht erhalten!";
+				break;
 			default:
+				antwort = "Unrecognized ServerRequest!";
 				break;
 			}
 		} catch (TafelException te) {
@@ -71,7 +77,7 @@ public class LocalThread extends Thread {
 		}
 		output.write(antwort.getBytes());
 	}
-
+	
 	private void showMessagesToClient(int userID) throws TafelException {
 		LinkedList<Message> userMessages = TafelServer.getMessagesByUserID(userID);
 		// TafelServer.print(userMessages.toString());

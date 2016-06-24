@@ -81,4 +81,9 @@ public class ServerRequest implements Serializable {
 	public static ServerRequest buildRegisterRequest(int abteilungsID) {
 		return new ServerRequest(ServerRequestType.REGISTER, 0, null, 0, abteilungsID, false);
 	}
+	
+	public static ServerRequest buildReceiveRequest(Message msg){
+		return new ServerRequest(ServerRequestType.RECEIVE, msg.getMessageID(), msg.getInhalt(), 
+				msg.getUserID(), msg.getAbtNr(), msg.isOeffentlich());
+	}
 }
