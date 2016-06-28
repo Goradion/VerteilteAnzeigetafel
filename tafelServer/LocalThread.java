@@ -60,7 +60,7 @@ public class LocalThread extends Thread {
 				antwort = "Nachricht veröffentlicht!";
 				break;
 			case REGISTER:
-				TafelServer.registerTafel(request.getAbteilungsID(), client.getRemoteSocketAddress());
+				TafelServer.registerTafel(request.getAbteilungsID(), new InetSocketAddress(client.getInetAddress(), TafelServer.SERVER_PORT));
 				antwort = "Welcome!";
 				break;
 			case RECEIVE: TafelServer.receiveMessage(new Message(request.getMessage(), request.getUserID(), 

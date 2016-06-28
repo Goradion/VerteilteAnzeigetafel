@@ -21,6 +21,7 @@ public class Client {
 	public static void main(String[] args) {
 		try {
 			Socket socket = new Socket(SERVER_HOSTNAME, SERVER_PORT);
+			socket.connect(new InetSocketAddress(SERVER_HOSTNAME, SERVER_PORT));
 			//ServerRequest sr = ServerRequest.buildShowMyMessagesRequest(1);
 			//ServerRequest sr = ServerRequest.buildCreateRequest("test", 1, 1);
 			ServerRequest sr = ServerRequest.buildRegisterRequest(1);

@@ -21,22 +21,26 @@ public class OutboxThread extends Thread {
 	}
 
 	public void run() {
-		Socket socket = null; 
+		Socket socket = null;
+		Message msg = null;
 		try {
 			while (true) {
+				msg = null;
 				socket = new Socket();
-				Message msg = messageQueue.take();
+				msg = messageQueue.take();
 				socket.connect(adress);
 				ObjectOutputStream oout = new ObjectOutputStream(socket.getOutputStream());
 				ServerRequest request = ServerRequest.buildReceiveRequest(msg);
-				oout.writeObject(request);
-				
+				oout.writeObject(request);				
 			}
 		} catch (InterruptedException e) {
 			TafelServer.print("OutboxThread " + abteilungsID + " wurde unterbrochen!");
 		} catch (IOException e) {
 			TafelServer.print("OutboxThread " + abteilungsID+": "+adress.toString()+" nicht erreichbar! "+e.getMessage());
 		} finally {
+			if(msg != null){
+				messageQueue.add(msg);
+			}
 			try {
 				if (socket != null && !socket.isClosed()) {
 					socket.close();

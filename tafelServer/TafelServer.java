@@ -23,6 +23,7 @@ public class TafelServer {
 	private static HashMap<Integer, LinkedBlockingQueue<Message>> queueMap = new HashMap<Integer, LinkedBlockingQueue<Message>>();
 	private static HashMap<Integer, SocketAddress> tafelAdressen = new HashMap<Integer, SocketAddress>();
 	private static HashMap<Integer, OutboxThread> outboxThreads = new HashMap<Integer, OutboxThread>();
+	private static HashMap<Integer, HeartbeatThread> heartbeatThreads = new HashMap<Integer, HeartbeatThread>();
 	public static final int SERVER_PORT = 10001;
 	private static Anzeigetafel anzeigetafel;
 	private static int abteilungsID;
@@ -146,6 +147,7 @@ public class TafelServer {
 		if(abteilungsID==anzeigetafel.getAbteilungsID()){
 			throw new TafelException("Die eigene Abteilung wird nicht registriert");
 		}
+		
 		if(tafelAdressen.containsKey(abteilungsID)){
 			if(!tafelAdressen.get(abteilungsID).equals(address)){
 				tafelAdressen.replace(abteilungsID, address);
@@ -155,6 +157,7 @@ public class TafelServer {
 			tafelAdressen.put(abteilungsID, address);
 			queueMap.put(abteilungsID, new LinkedBlockingQueue<Message>());
 		}
+		activateHeartbeat(abteilungsID);
 		activateQueue(abteilungsID);
 		saveTafelAdressenToFile();
 	}
@@ -167,6 +170,13 @@ public class TafelServer {
 		} // else Queue already active
 	}
 	
+	public static synchronized void activateHeartbeat(int abteilungsID){
+		if (!heartbeatThreads.containsKey(abteilungsID) || !heartbeatThreads.get(abteilungsID).isAlive()) {
+			HeartbeatThread hbt = new HeartbeatThread(abteilungsID, tafelAdressen.get(abteilungsID));
+			heartbeatThreads.put(abteilungsID, hbt);
+			hbt.start();
+		}
+	}
 	
 	public static synchronized void saveQueueMapToFile() {
 		FileOutputStream fileoutput = null;

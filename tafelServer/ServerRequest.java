@@ -88,4 +88,8 @@ public class ServerRequest implements Serializable {
 		return new ServerRequest(ServerRequestType.RECEIVE, msg.getMessageID(), msg.getInhalt(), 
 				msg.getUserID(), msg.getAbtNr(), msg.isOeffentlich());
 	}
+	
+	public static ServerRequest buildHeartbeatRequest(){
+		return new ServerRequest(ServerRequestType.HEARTBEAT, 0, "", 0, 0, false);
+	}
 }
