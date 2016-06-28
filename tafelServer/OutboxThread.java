@@ -6,18 +6,20 @@ import java.net.Socket;
 import java.net.SocketAddress;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import serverRequests.ServerRequest;
 import verteilteAnzeigetafel.Message;
 
 public class OutboxThread extends Thread {
 	int abteilungsID;
 	SocketAddress adress;
 	LinkedBlockingQueue<Message> messageQueue;
-
-	public OutboxThread(int abteilungsID, SocketAddress adress, LinkedBlockingQueue<Message> messageQueue) {
+	TafelServer tafelServer;
+	public OutboxThread(int abteilungsID, SocketAddress adress, LinkedBlockingQueue<Message> messageQueue, TafelServer tafelServer) {
 		super();
 		this.abteilungsID = abteilungsID;
 		this.adress = adress;
 		this.messageQueue = messageQueue;
+		this.tafelServer =tafelServer;
 	}
 
 	public void run() {
@@ -34,9 +36,9 @@ public class OutboxThread extends Thread {
 				oout.writeObject(request);				
 			}
 		} catch (InterruptedException e) {
-			TafelServer.print("OutboxThread " + abteilungsID + " wurde unterbrochen!");
+			tafelServer.print("OutboxThread " + abteilungsID + " wurde unterbrochen!");
 		} catch (IOException e) {
-			TafelServer.print("OutboxThread " + abteilungsID+": "+adress.toString()+" nicht erreichbar! "+e.getMessage());
+			tafelServer.print("OutboxThread " + abteilungsID+": "+adress.toString()+" nicht erreichbar! "+e.getMessage());
 		} finally {
 			if(msg != null){
 				messageQueue.add(msg);

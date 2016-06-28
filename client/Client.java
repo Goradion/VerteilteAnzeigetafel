@@ -16,7 +16,7 @@ import java.net.*;
 import java.util.LinkedList;
 import java.util.Scanner;
 
-import tafelServer.ServerRequest;
+import serverRequests.ServerRequest;
 import verteilteAnzeigetafel.Message;
 
 import java.io.*;
@@ -27,7 +27,7 @@ public class Client implements Serializable {
     private static final long serialVersionUID = -1466790708777017802L;
     public static final int ENDE = 0;
     public static final int SERVER_PORT = 10001;
-    public static final String SERVER_HOSTNAME = "10.9.41.4";
+    public static final String SERVER_HOSTNAME = "localhost";
 
     private String benutzerName;
     private int userID;
@@ -195,6 +195,7 @@ public class Client implements Serializable {
              
  		
     			// Empfangen der Nachricht 
+             //TODO antwort ist jetzt ein String
     			ObjectInputStream input = new ObjectInputStream(socketServer.getInputStream());
     			LinkedList<Message> userMessages = (LinkedList<Message>) input.readObject();
 //    			System.out.println(userMessages.toString());

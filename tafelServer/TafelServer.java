@@ -19,30 +19,36 @@ import verteilteAnzeigetafel.TafelException;
  *
  * @author Simon Bastian
  */
-public class TafelServer {
-	private static HashMap<Integer, LinkedBlockingQueue<Message>> queueMap = new HashMap<Integer, LinkedBlockingQueue<Message>>();
-	private static HashMap<Integer, SocketAddress> tafelAdressen = new HashMap<Integer, SocketAddress>();
-	private static HashMap<Integer, OutboxThread> outboxThreads = new HashMap<Integer, OutboxThread>();
-	private static HashMap<Integer, HeartbeatThread> heartbeatThreads = new HashMap<Integer, HeartbeatThread>();
+public class TafelServer extends Thread{
+	private  HashMap<Integer, LinkedBlockingQueue<Message>> queueMap = new HashMap<Integer, LinkedBlockingQueue<Message>>();
+	private  HashMap<Integer, SocketAddress> tafelAdressen = new HashMap<Integer, SocketAddress>();
+	private  HashMap<Integer, OutboxThread> outboxThreads = new HashMap<Integer, OutboxThread>();
+	private  HashMap<Integer, HeartbeatThread> heartbeatThreads = new HashMap<Integer, HeartbeatThread>();
 	public static final int SERVER_PORT = 10001;
-	private static Anzeigetafel anzeigetafel;
-	private static int abteilungsID;
+	private  Anzeigetafel anzeigetafel;
+	private  int abteilungsID;
 
 	/**
 	 * @param args
 	 *            the command line arguments
 	 */
 	public static void main(String[] args) {
+		TafelServer tafelServer = new TafelServer();
 		if (args.length >=1){
 			try{
-			abteilungsID = Integer.parseInt(args[0]);
-			print("AbteilungsID="+abteilungsID);
+			tafelServer.abteilungsID = Integer.parseInt(args[0]);
 			} catch (NumberFormatException nfe){
-				print(args[0]+ "ist keine Integerzahl");
+				System.out.println(args[0]+ "ist keine Integerzahl");
 			}
 		} else {
-			abteilungsID = 1;
+			tafelServer.abteilungsID = 1;
 		}
+		
+		tafelServer.start();
+		
+	}
+	@Override
+	public void run() {
 		init();
 		ServerSocket socket;
 		try {
@@ -51,15 +57,14 @@ public class TafelServer {
 				// print("accept...");
 				Socket client = socket.accept();
 				// print("Starte LocalThread...");
-				new LocalThread(client).start();
+				new LocalThread(client,this).start();
 			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
-
-	private static void init() {
+	private  void init() {
 		anzeigetafel = Anzeigetafel.loadStateFromFile();
 		if(anzeigetafel != null){
 			print("Anzeigetafel aus Datei geladen!");
@@ -101,49 +106,26 @@ public class TafelServer {
 		// }
 	}
 
-	public static synchronized int createMessage(String msg, int userID, int abtNr, boolean oeffentlich)
-			throws TafelException, InterruptedException {
-		int msgID = anzeigetafel.createMessage(msg, userID, abtNr, oeffentlich);
-		print("Nachricht erstellt:\n" + anzeigetafel.getMessages().get(msgID));
-		anzeigetafel.saveStateToFile();
-		return msgID;
-	}
-	
-	public static synchronized void receiveMessage(Message msg) throws TafelException{
-		anzeigetafel.receiveMessage(msg);
-		print("Nachricht von Abteilung "+msg.getAbtNr()+" erhalten!");
-		anzeigetafel.saveStateToFile();
-	}
-	
-	public static synchronized void deleteMessage(int messageID, int userID) throws TafelException {
-		anzeigetafel.deleteMessage(messageID, userID);
-		print("User mit ID=" + userID + " hat Nachricht mit ID=" + messageID + " gelöscht!");
-		anzeigetafel.saveStateToFile();
-	}
 
-	public static synchronized void publishMessage(int messageID, int userID)
-			throws InterruptedException, TafelException {
+	public synchronized void publishMessage(int messageID, int userID) throws InterruptedException, TafelException {
 		anzeigetafel.publishMessage(messageID, userID);
 		for (LinkedBlockingQueue<Message> q : queueMap.values()) {
 			q.put(anzeigetafel.getMessages().get(messageID));
 		}
 		anzeigetafel.saveStateToFile();
-
 	}
 
-	
-
-	public static synchronized void modifyMessage(int messageID, String inhalt, int userID) throws TafelException {
+	public  synchronized void modifyMessage(int messageID, String inhalt, int userID) throws TafelException {
 		anzeigetafel.modifyMessage(messageID, inhalt, userID);
 		print("User mit ID=" + userID + " hatNachricht mit ID=" + messageID + " geändert!");
 		anzeigetafel.saveStateToFile();
 	}
 	
-	public static synchronized LinkedList<Message> getMessagesByUserID(int userID) throws TafelException {
+	public  synchronized LinkedList<Message> getMessagesByUserID(int userID) throws TafelException {
 		print("Showing Messages to user " + userID);
 		return anzeigetafel.getMessagesByUserID(userID);
 	}
-	public static synchronized void registerTafel(int abteilungsID, SocketAddress address) throws TafelException{
+	public  synchronized void registerTafel(int abteilungsID, SocketAddress address) throws TafelException{
 		if(abteilungsID==anzeigetafel.getAbteilungsID()){
 			throw new TafelException("Die eigene Abteilung wird nicht registriert");
 		}
@@ -161,24 +143,24 @@ public class TafelServer {
 		activateQueue(abteilungsID);
 		saveTafelAdressenToFile();
 	}
-	public static synchronized void activateQueue(int abteilungsID) {
+	public synchronized void activateQueue(int abteilungsID) {
 		if (!outboxThreads.containsKey(abteilungsID) || !outboxThreads.get(abteilungsID).isAlive()) {
 			OutboxThread obt = new OutboxThread(abteilungsID, tafelAdressen.get(abteilungsID),
-					queueMap.get(abteilungsID));
+					queueMap.get(abteilungsID), this);
 			outboxThreads.put(abteilungsID, obt);
 			obt.start();
 		} // else Queue already active
 	}
 	
-	public static synchronized void activateHeartbeat(int abteilungsID){
+	public  synchronized void activateHeartbeat(int abteilungsID){
 		if (!heartbeatThreads.containsKey(abteilungsID) || !heartbeatThreads.get(abteilungsID).isAlive()) {
-			HeartbeatThread hbt = new HeartbeatThread(abteilungsID, tafelAdressen.get(abteilungsID));
+			HeartbeatThread hbt = new HeartbeatThread(abteilungsID, tafelAdressen.get(abteilungsID), this);
 			heartbeatThreads.put(abteilungsID, hbt);
 			hbt.start();
 		}
 	}
 	
-	public static synchronized void saveQueueMapToFile() {
+	public synchronized void saveQueueMapToFile() {
 		FileOutputStream fileoutput = null;
 		ObjectOutputStream objoutput = null;
 		try {
@@ -199,7 +181,7 @@ public class TafelServer {
 	}
 
 	@SuppressWarnings("unchecked")
-	private static HashMap<Integer, LinkedBlockingQueue<Message>> loadQueueMapFromFile() {
+	private  HashMap<Integer, LinkedBlockingQueue<Message>> loadQueueMapFromFile() {
 		HashMap<Integer, LinkedBlockingQueue<Message>> qMap = new HashMap<Integer, LinkedBlockingQueue<Message>>();
 		FileInputStream fileInput = null;
 		ObjectInputStream objinput = null;
@@ -217,7 +199,7 @@ public class TafelServer {
 		return qMap;
 	}
 	
-	public static synchronized void saveTafelAdressenToFile(){
+	public synchronized void saveTafelAdressenToFile(){
 		FileOutputStream fileoutput = null;
 		ObjectOutputStream objoutput = null;
 		try {
@@ -237,7 +219,7 @@ public class TafelServer {
 		}
 	}
 	@SuppressWarnings("unchecked")
-	private static HashMap<Integer, SocketAddress> loadTafelAdressenFromFile() {
+	private  HashMap<Integer, SocketAddress> loadTafelAdressenFromFile() {
 		HashMap<Integer, SocketAddress> adressen = new HashMap<Integer, SocketAddress>();
 		FileInputStream fileInput = null;
 		ObjectInputStream objinput = null;
@@ -256,12 +238,26 @@ public class TafelServer {
 	}
 
 
-	public static synchronized void print(String nachricht) {
+	public synchronized void print(String nachricht) {
 		System.out.println(nachricht);
 	}
 
-	public static synchronized void printMessages() {
+	public  synchronized void printMessages() {
 		System.out.println(anzeigetafel.toString());
 	}
+	
+	public Anzeigetafel getAnzeigetafel(){
+		return anzeigetafel;
+	}
+	public HashMap<Integer, SocketAddress> getTafelAdressen() {
+		return tafelAdressen;
+	}
+	public HashMap<Integer, OutboxThread> getOutboxThreads() {
+		return outboxThreads;
+	}
+	public HashMap<Integer, LinkedBlockingQueue<Message>> getQueueMap() {
+		return queueMap;
+	}
+	
 
 }

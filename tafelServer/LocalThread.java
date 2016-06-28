@@ -5,14 +5,18 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.LinkedList;
 
+import serverRequests.ServerRequest;
 import verteilteAnzeigetafel.Message;
 import verteilteAnzeigetafel.TafelException;
 
 public class LocalThread extends Thread {
 	private Socket client;
-
-	public LocalThread(Socket client) {
+	private TafelServer tafelServer;
+	private ServerRequestHandler handler;
+	public LocalThread(Socket client, TafelServer tafelServer) {
 		this.client = client;
+		this.tafelServer = tafelServer;
+		this.handler = new ServerRequestHandler(tafelServer, tafelServer.getAnzeigetafel());
 	}
 
 	public void run() {
@@ -38,39 +42,40 @@ public class LocalThread extends Thread {
 		String antwort = "";
 		try {
 
-			switch (request.getType()) {
-			case CREATE:
-				int msgID = TafelServer.createMessage(request.getMessage(), request.getUserID(),
-						request.getAbteilungsID(), request.isOeffentlich());
-				antwort = "Nachricht erstellt! msgID=" + msgID;
-				break;
-			case DELETE:
-				TafelServer.deleteMessage(request.getMessageID(), request.getUserID());
-				antwort = "Nachricht gelöscht!";
-				break;
-			case MODIFY:
-				TafelServer.modifyMessage(request.getMessageID(), request.getMessage(), request.getUserID());
-				antwort = "Nachricht geändert!";
-				break;
-			case SHOW_MY_MESSAGES:
-				showMessagesToClient(request.getUserID());
-				break;
-			case PUBLISH:
-				TafelServer.publishMessage(request.getMessageID(), request.getUserID());
-				antwort = "Nachricht veröffentlicht!";
-				break;
-			case REGISTER:
-				TafelServer.registerTafel(request.getAbteilungsID(), new InetSocketAddress(client.getInetAddress(), TafelServer.SERVER_PORT));
-				antwort = "Welcome!";
-				break;
-			case RECEIVE: TafelServer.receiveMessage(new Message(request.getMessage(), request.getUserID(), 
-					request.getAbteilungsID(), request.isOeffentlich(), request.getMessageID()));
-				antwort = "Nachricht erhalten!";
-				break;
-			default:
-				antwort = "Unrecognized ServerRequest!";
-				break;
-			}
+//			switch (request.getType()) {
+//			case CREATE:
+//				int msgID = TafelServer.createMessage(request.getMessage(), request.getUserID(),
+//						request.getAbteilungsID(), request.isOeffentlich());
+//				antwort = "Nachricht erstellt! msgID=" + msgID;
+//				break;
+//			case DELETE:
+//				TafelServer.deleteMessage(request.getMessageID(), request.getUserID());
+//				antwort = "Nachricht gelöscht!";
+//				break;
+//			case MODIFY:
+//				TafelServer.modifyMessage(request.getMessageID(), request.getMessage(), request.getUserID());
+//				antwort = "Nachricht geändert!";
+//				break;
+//			case SHOW_MY_MESSAGES:
+//				showMessagesToClient(request.getUserID());
+//				break;
+//			case PUBLISH:
+//				TafelServer.publishMessage(request.getMessageID(), request.getUserID());
+//				antwort = "Nachricht veröffentlicht!";
+//				break;
+//			case REGISTER:
+//				TafelServer.registerTafel(request.getAbteilungsID(), new InetSocketAddress(client.getInetAddress(), TafelServer.SERVER_PORT));
+//				antwort = "Welcome!";
+//				break;
+//			case RECEIVE: TafelServer.receiveMessage(new Message(request.getMessage(), request.getUserID(), 
+//					request.getAbteilungsID(), request.isOeffentlich(), request.getMessageID()));
+//				antwort = "Nachricht erhalten!";
+//				break;
+//			default:
+//				antwort = "Unrecognized ServerRequest!";
+//				break;
+//			}
+			antwort = handler.handle(request);
 		} catch (TafelException te) {
 			te.printStackTrace();
 			antwort = te.getMessage();
@@ -78,19 +83,7 @@ public class LocalThread extends Thread {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		tafelServer.print(antwort);
 		output.write(antwort.getBytes());
-	}
-	
-	private void showMessagesToClient(int userID) throws TafelException {
-		LinkedList<Message> userMessages = TafelServer.getMessagesByUserID(userID);
-		// TafelServer.print(userMessages.toString());
-		try {
-			ObjectOutputStream oout = new ObjectOutputStream(client.getOutputStream());
-			oout.writeObject(userMessages);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
 	}
 }
