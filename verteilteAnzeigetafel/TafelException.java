@@ -3,14 +3,14 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package VerteilteAnzeigetafel;
+package verteilteAnzeigetafel;
 
 /**
  *
  * @author am
  */
 public class TafelException extends Exception{
-    TafelException(String message){
+    public TafelException(String message){
         super(message);
     }
 }

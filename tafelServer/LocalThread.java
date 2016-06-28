@@ -1,9 +1,12 @@
-package VerteilteAnzeigetafel;
+package tafelServer;
 
 import java.io.*;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.LinkedList;
+
+import verteilteAnzeigetafel.Message;
+import verteilteAnzeigetafel.TafelException;
 
 public class LocalThread extends Thread {
 	private Socket client;

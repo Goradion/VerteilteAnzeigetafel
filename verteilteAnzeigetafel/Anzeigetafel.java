@@ -1,4 +1,4 @@
-package VerteilteAnzeigetafel;
+package verteilteAnzeigetafel;
 //vsemenishch, Git funktioniert!
 
 import java.io.*;
@@ -191,7 +191,7 @@ public class Anzeigetafel implements Serializable {
      * Ermöglicht das Laden des Zustandes aus einer Datei.
      *
      * @return
-     * @throws VerteilteAnzeigetafel.TafelException
+     * @throws verteilteAnzeigetafel.TafelException
      */
     public static Anzeigetafel loadStateFromFile(){
         Anzeigetafel at = null;

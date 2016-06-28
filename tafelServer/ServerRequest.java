@@ -1,6 +1,8 @@
-package VerteilteAnzeigetafel;
+package tafelServer;
 
 import java.io.Serializable;
+
+import verteilteAnzeigetafel.Message;
 
 public class ServerRequest implements Serializable {
 	/**

@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package VerteilteAnzeigetafel;
+package verteilteAnzeigetafel;
 
 import java.io.Serializable; // importiert Libarys
 import java.sql.Time;
