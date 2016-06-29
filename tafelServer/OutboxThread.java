@@ -23,17 +23,17 @@ public class OutboxThread extends Thread {
 	}
 
 	public void run() {
-		Socket socket = null;
+		Socket socket = new Socket();
+		
 		Message msg = null;
 		try {
+			socket.connect(adress);
+			ObjectOutputStream oout = new ObjectOutputStream(socket.getOutputStream());
 			while (true) {
 				msg = null;
-				socket = new Socket();
 				msg = messageQueue.take();
-				socket.connect(adress);
-				ObjectOutputStream oout = new ObjectOutputStream(socket.getOutputStream());
 				ServerRequest request = ServerRequest.buildReceiveRequest(msg);
-				oout.writeObject(request);				
+				oout.writeObject(request);
 			}
 		} catch (InterruptedException e) {
 			tafelServer.print("OutboxThread " + abteilungsID + " wurde unterbrochen!");
@@ -44,12 +44,15 @@ public class OutboxThread extends Thread {
 				messageQueue.add(msg);
 			}
 			try {
+				
 				if (socket != null && !socket.isClosed()) {
+					ObjectOutputStream oout = new ObjectOutputStream(socket.getOutputStream());
+					oout.writeObject(null);		
 					socket.close();
 				}
 			} catch (IOException e) {
 				System.err.println(
-						"Socket in OutboxThread der Abteilung " + abteilungsID + " konnte nicht geschlossen werden!");
+						"Fehler beim Schließen der Verbindung zu Abteilung "+ abteilungsID+"! "+e.getMessage());
 				e.printStackTrace();
 			}
 		}

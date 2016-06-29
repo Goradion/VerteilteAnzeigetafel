@@ -45,11 +45,11 @@ public class TafelServer extends Thread{
 		}
 		
 		tafelServer.start();
-		
 	}
 	@Override
 	public void run() {
 		init();
+		printMessages();
 		ServerSocket socket;
 		try {
 			socket = new ServerSocket(SERVER_PORT);

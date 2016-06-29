@@ -24,16 +24,31 @@ public class LocalThread extends Thread {
 		try {
 
 			ObjectInputStream input = new ObjectInputStream(client.getInputStream());
-			ServerRequest request = (ServerRequest) input.readObject();
-			handleServerRequest(request);
+			Object o = null;
+			ServerRequest request;
+			while((o = input.readObject()) != null){
+				if (o instanceof ServerRequest){
+					request = (ServerRequest) o;
+					handleServerRequest(request);
+				}
+			}
 			// input.close();
-			client.close();
+			
+		} catch (EOFException eofe){
+			tafelServer.print("Client "+client.getRemoteSocketAddress()+" hang up!");
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		} finally {
+			try {
+				client.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 
