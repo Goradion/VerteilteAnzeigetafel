@@ -44,11 +44,11 @@ public class TafelServer extends Thread{
 			tafelServer.abteilungsID = 1;
 		}
 		try {
-			if(tafelServer.abteilungsID!=1){
-				tafelServer.registerTafel(1, new InetSocketAddress("192.168.178.2", SERVER_PORT));
-			}
 			if(tafelServer.abteilungsID!=2){
-				tafelServer.registerTafel(2, new InetSocketAddress("192.168.178.100", SERVER_PORT));
+				tafelServer.registerTafel(2, new InetSocketAddress("192.168.178.2", SERVER_PORT));
+			}
+			if(tafelServer.abteilungsID!=1){
+				tafelServer.registerTafel(1, new InetSocketAddress("192.168.178.100", SERVER_PORT));
 			}
 			} catch (TafelException e) {
 				tafelServer.print("Idiot");
