@@ -44,15 +44,15 @@ public class TafelServer extends Thread{
 			tafelServer.abteilungsID = 1;
 		}
 		try {
-		if(tafelServer.abteilungsID!=1){
-			tafelServer.registerTafel(1, new InetSocketAddress("192.168.178.2", SERVER_PORT));
-		}
-		if(tafelServer.abteilungsID!=2){
-			tafelServer.registerTafel(2, new InetSocketAddress("192.168.178.100", SERVER_PORT));
-		}
-		} catch (TafelException e) {
-			tafelServer.print("Idiot");
-		}
+			if(tafelServer.abteilungsID!=1){
+				tafelServer.registerTafel(1, new InetSocketAddress("192.168.178.2", SERVER_PORT));
+			}
+			if(tafelServer.abteilungsID!=2){
+				tafelServer.registerTafel(2, new InetSocketAddress("192.168.178.100", SERVER_PORT));
+			}
+			} catch (TafelException e) {
+				tafelServer.print("Idiot");
+			}
 		
 		tafelServer.start();
 	}
@@ -136,7 +136,7 @@ public class TafelServer extends Thread{
 		return anzeigetafel.getMessagesByUserID(userID);
 	}
 	public  synchronized void registerTafel(int abteilungsID, SocketAddress address) throws TafelException{
-		if(abteilungsID==abteilungsID){
+		if(this.abteilungsID==abteilungsID){
 			throw new TafelException("Die eigene Abteilung wird nicht registriert");
 		}
 		
