@@ -196,11 +196,8 @@ public class Client implements Serializable {
  		
     			// Empfangen der Nachricht 
              //TODO antwort ist jetzt ein String
-             byte[] b = new byte [1024];
- 			 InputStream stream = socketServer.getInputStream();
-			 while (stream.available() == 0);
-			 stream.read (b);
-			 System.out.println(new String(b));
+ 			 ObjectInputStream input = new ObjectInputStream(socketServer.getInputStream());
+			 System.out.println(input.readObject());
              /*           for(Message m : userMessages){
                             System.out.println(m.toString());
                         }*/
@@ -216,7 +213,10 @@ public class Client implements Serializable {
         {
           // Wenn die Kommunikation fehlschlaegt
      	   System.out.println ("Fehler waehrend der Kommunikation:\n" + e.getMessage());
-        }
+        } catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
     	
     }

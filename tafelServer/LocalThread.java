@@ -53,7 +53,7 @@ public class LocalThread extends Thread {
 	}
 
 	private void handleServerRequest(ServerRequest request) throws IOException {
-		OutputStream output = client.getOutputStream();
+		ObjectOutputStream output = new ObjectOutputStream(client.getOutputStream());
 		String antwort = "";
 		try {
 
@@ -99,6 +99,6 @@ public class LocalThread extends Thread {
 			e.printStackTrace();
 		}
 		tafelServer.print(antwort);
-		output.write(antwort.getBytes());
+		output.writeObject(antwort);
 	}
 }
