@@ -136,7 +136,7 @@ public class TafelServer extends Thread{
 		return anzeigetafel.getMessagesByUserID(userID);
 	}
 	public  synchronized void registerTafel(int abteilungsID, SocketAddress address) throws TafelException{
-		if(abteilungsID==anzeigetafel.getAbteilungsID()){
+		if(abteilungsID==abteilungsID){
 			throw new TafelException("Die eigene Abteilung wird nicht registriert");
 		}
 		
