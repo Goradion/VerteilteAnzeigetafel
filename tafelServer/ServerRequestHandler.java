@@ -4,8 +4,6 @@ import java.net.SocketAddress;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.concurrent.LinkedBlockingDeque;
-import java.util.concurrent.LinkedBlockingQueue;
-
 import serverRequests.*;
 import verteilteAnzeigetafel.Anzeigetafel;
 import verteilteAnzeigetafel.Message;

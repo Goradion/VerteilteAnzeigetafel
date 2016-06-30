@@ -10,8 +10,6 @@ import java.net.*;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.concurrent.LinkedBlockingDeque;
-import java.util.concurrent.LinkedBlockingQueue;
-
 import verteilteAnzeigetafel.Anzeigetafel;
 import verteilteAnzeigetafel.Message;
 import verteilteAnzeigetafel.TafelException;
@@ -44,18 +42,23 @@ public class TafelServer extends Thread{
 		} else {
 			tafelServer.abteilungsID = 1;
 		}
+		
+		
+		tafelServer.start();
 		try {
+			if(tafelServer.abteilungsID!=1){
+				tafelServer.registerTafel(1, new InetSocketAddress("134.96.216.16", SERVER_PORT));
+			}
 			if(tafelServer.abteilungsID!=2){
 				tafelServer.registerTafel(2, new InetSocketAddress("134.96.216.17", SERVER_PORT));
 			}
-			if(tafelServer.abteilungsID!=1){
-				tafelServer.registerTafel(1, new InetSocketAddress("134.96.216.16", SERVER_PORT));
+			
+			if(tafelServer.abteilungsID!=3){
+				tafelServer.registerTafel(3, new InetSocketAddress("134.96.216.15", SERVER_PORT));
 			}
 			} catch (TafelException e) {
 				tafelServer.print("Idiot");
 			}
-		
-		tafelServer.start();
 	}
 	@Override
 	public void run() {
@@ -162,7 +165,6 @@ public class TafelServer extends Thread{
 			outboxThreads.put(abteilungsID, obt);
 			obt.start();
 		} // else Queue already active
-		print(""+outboxThreads.get(abteilungsID).isAlive());
 	}
 	
 	public  synchronized void activateHeartbeat(int abteilungsID){

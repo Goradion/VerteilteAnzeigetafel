@@ -6,7 +6,6 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketAddress;
-import java.net.SocketException;
 
 import serverRequests.ServerRequest;
 
@@ -15,13 +14,11 @@ public class HeartbeatThread extends Thread {
 	private int abteilungsID;
 	private SocketAddress adress;
 	private TafelServer tafelServer;
-	private String name;
 	public HeartbeatThread(int abteilungsID, SocketAddress adress, TafelServer tafelServer) {
 		super();
 		this.abteilungsID = abteilungsID;
 		this.adress = adress;
 		this.tafelServer = tafelServer;
-		name = "OutboxThread-"+abteilungsID;
 	}
 
 	public void run() {
