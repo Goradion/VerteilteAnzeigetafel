@@ -125,6 +125,7 @@ public class Anzeigetafel implements Serializable {
 			userMsgs.put(user, new LinkedList<Integer>());
 		}
 		userMsgs.get(user).add(msgID);
+		System.out.println(userMsgs.toString());
 		messageAnzahl++;
 		msgLaufNr++;
 
@@ -223,7 +224,7 @@ public class Anzeigetafel implements Serializable {
 	// }
 	public synchronized LinkedList<Message> getMessagesByUserID(int userID) throws TafelException {
 		if (!userMsgs.containsKey(userID)) {
-			throw new TafelException("Kein User gefunden!");
+			throw new TafelException("Kein User gefunden! "+userID);
 		}
 		LinkedList<Integer> umsgIDs = userMsgs.get(userID);
 		LinkedList<Message> uMsgs = new LinkedList<Message>();

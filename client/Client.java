@@ -27,7 +27,7 @@ public class Client implements Serializable {
     private static final long serialVersionUID = -1466790708777017802L;
     public static final int ENDE = 0;
     public static final int SERVER_PORT = 10001;
-    public static final String SERVER_HOSTNAME = "localhost";
+    public static final String SERVER_HOSTNAME = "192.168.178.2";
 
     private String benutzerName;
     private int userID;
@@ -97,7 +97,7 @@ public class Client implements Serializable {
             ObjectOutputStream oout = new ObjectOutputStream(socket.getOutputStream());
            
             oout.writeObject(sr);
-            
+            oout.writeObject(null);
             oout.close();
             //ms.close();
             socket.close();
@@ -196,12 +196,14 @@ public class Client implements Serializable {
  		
     			// Empfangen der Nachricht 
              //TODO antwort ist jetzt ein String
-    			ObjectInputStream input = new ObjectInputStream(socketServer.getInputStream());
-    			LinkedList<Message> userMessages = (LinkedList<Message>) input.readObject();
-//    			System.out.println(userMessages.toString());
-                        for(Message m : userMessages){
+             byte[] b = new byte [1024];
+ 			 InputStream stream = socketServer.getInputStream();
+			 while (stream.available() == 0);
+			 stream.read (b);
+			 System.out.println(new String(b));
+             /*           for(Message m : userMessages){
                             System.out.println(m.toString());
-                        }
+                        }*/
                         oout.close();
     			socketServer.close();
     	}
@@ -215,10 +217,6 @@ public class Client implements Serializable {
           // Wenn die Kommunikation fehlschlaegt
      	   System.out.println ("Fehler waehrend der Kommunikation:\n" + e.getMessage());
         }
-    	 catch (ClassNotFoundException e) {
- 			// TODO Auto-generated catch block
- 			e.printStackTrace();
- 		}
 
     	
     }
