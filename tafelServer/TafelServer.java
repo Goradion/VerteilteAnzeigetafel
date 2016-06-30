@@ -43,6 +43,12 @@ public class TafelServer extends Thread{
 		} else {
 			tafelServer.abteilungsID = 1;
 		}
+		try {
+			tafelServer.registerTafel(1, new InetSocketAddress("192.168.178.2", SERVER_PORT));
+			tafelServer.registerTafel(2, new InetSocketAddress("192.168.178.100", SERVER_PORT));
+		} catch (TafelException e) {
+			tafelServer.print("Idiot");
+		}
 		
 		tafelServer.start();
 	}
