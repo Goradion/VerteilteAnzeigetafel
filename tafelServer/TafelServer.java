@@ -9,6 +9,7 @@ import java.io.*;
 import java.net.*;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import verteilteAnzeigetafel.Anzeigetafel;
@@ -20,7 +21,7 @@ import verteilteAnzeigetafel.TafelException;
  * @author Simon Bastian
  */
 public class TafelServer extends Thread{
-	private  HashMap<Integer, LinkedBlockingQueue<Message>> queueMap = new HashMap<Integer, LinkedBlockingQueue<Message>>();
+	private  HashMap<Integer, LinkedBlockingDeque<Message>> queueMap = new HashMap<Integer, LinkedBlockingDeque<Message>>();
 	private  HashMap<Integer, SocketAddress> tafelAdressen = new HashMap<Integer, SocketAddress>();
 	private  HashMap<Integer, OutboxThread> outboxThreads = new HashMap<Integer, OutboxThread>();
 	private  HashMap<Integer, HeartbeatThread> heartbeatThreads = new HashMap<Integer, HeartbeatThread>();
@@ -45,10 +46,10 @@ public class TafelServer extends Thread{
 		}
 		try {
 			if(tafelServer.abteilungsID!=2){
-				tafelServer.registerTafel(2, new InetSocketAddress("192.168.178.2", SERVER_PORT));
+				tafelServer.registerTafel(2, new InetSocketAddress("134.96.216.17", SERVER_PORT));
 			}
 			if(tafelServer.abteilungsID!=1){
-				tafelServer.registerTafel(1, new InetSocketAddress("192.168.178.100", SERVER_PORT));
+				tafelServer.registerTafel(1, new InetSocketAddress("134.96.216.16", SERVER_PORT));
 			}
 			} catch (TafelException e) {
 				tafelServer.print("Idiot");
@@ -119,7 +120,7 @@ public class TafelServer extends Thread{
 
 	public synchronized void publishMessage(int messageID, int userID) throws InterruptedException, TafelException {
 		anzeigetafel.publishMessage(messageID, userID);
-		for (LinkedBlockingQueue<Message> q : queueMap.values()) {
+		for (LinkedBlockingDeque<Message> q : queueMap.values()) {
 			q.put(anzeigetafel.getMessages().get(messageID));
 		}
 		anzeigetafel.saveStateToFile();
@@ -147,19 +148,21 @@ public class TafelServer extends Thread{
 						
 		}else {
 			tafelAdressen.put(abteilungsID, address);
-			queueMap.put(abteilungsID, new LinkedBlockingQueue<Message>());
+			queueMap.put(abteilungsID, new LinkedBlockingDeque<Message>());
 		}
 		activateHeartbeat(abteilungsID);
 		activateQueue(abteilungsID);
 		saveTafelAdressenToFile();
 	}
 	public synchronized void activateQueue(int abteilungsID) {
+		
 		if (!outboxThreads.containsKey(abteilungsID) || !outboxThreads.get(abteilungsID).isAlive()) {
 			OutboxThread obt = new OutboxThread(abteilungsID, tafelAdressen.get(abteilungsID),
 					queueMap.get(abteilungsID), this);
 			outboxThreads.put(abteilungsID, obt);
 			obt.start();
 		} // else Queue already active
+		print(""+outboxThreads.get(abteilungsID).isAlive());
 	}
 	
 	public  synchronized void activateHeartbeat(int abteilungsID){
@@ -191,15 +194,15 @@ public class TafelServer extends Thread{
 	}
 
 	@SuppressWarnings("unchecked")
-	private  HashMap<Integer, LinkedBlockingQueue<Message>> loadQueueMapFromFile() {
-		HashMap<Integer, LinkedBlockingQueue<Message>> qMap = new HashMap<Integer, LinkedBlockingQueue<Message>>();
+	private  HashMap<Integer, LinkedBlockingDeque<Message>> loadQueueMapFromFile() {
+		HashMap<Integer, LinkedBlockingDeque<Message>> qMap = new HashMap<Integer, LinkedBlockingDeque<Message>>();
 		FileInputStream fileInput = null;
 		ObjectInputStream objinput = null;
 		try {
 			fileInput = new FileInputStream("./queueMap");
 			objinput = new ObjectInputStream(fileInput);
 			Object obj = objinput.readObject();
-			qMap = (HashMap<Integer, LinkedBlockingQueue<Message>>) obj;
+			qMap = (HashMap<Integer, LinkedBlockingDeque<Message>>) obj;
 		} catch (FileNotFoundException e) {
 			print("Kein Queue-Backup gefunden");
 		} catch (IOException | ClassNotFoundException e) {
@@ -256,8 +259,11 @@ public class TafelServer extends Thread{
 		System.out.println(anzeigetafel.toString());
 	}
 	
-	public Anzeigetafel getAnzeigetafel(){
+	public synchronized Anzeigetafel getAnzeigetafel(){
 		return anzeigetafel;
+	}
+	public synchronized int getAbteilungsID() {
+		return abteilungsID;
 	}
 	public HashMap<Integer, SocketAddress> getTafelAdressen() {
 		return tafelAdressen;
@@ -265,7 +271,7 @@ public class TafelServer extends Thread{
 	public HashMap<Integer, OutboxThread> getOutboxThreads() {
 		return outboxThreads;
 	}
-	public HashMap<Integer, LinkedBlockingQueue<Message>> getQueueMap() {
+	public HashMap<Integer, LinkedBlockingDeque<Message>> getQueueMap() {
 		return queueMap;
 	}
 	

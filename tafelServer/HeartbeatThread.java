@@ -6,37 +6,46 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketAddress;
+import java.net.SocketException;
 
 import serverRequests.ServerRequest;
 
 public class HeartbeatThread extends Thread {
 	private static final int sleepTime = 5000;
-	int abteilungsID;
-	SocketAddress adress;
-	TafelServer tafelServer;
+	private int abteilungsID;
+	private SocketAddress adress;
+	private TafelServer tafelServer;
+	private String name;
 	public HeartbeatThread(int abteilungsID, SocketAddress adress, TafelServer tafelServer) {
 		super();
 		this.abteilungsID = abteilungsID;
 		this.adress = adress;
 		this.tafelServer = tafelServer;
+		name = "OutboxThread-"+abteilungsID;
 	}
 
 	public void run() {
-		Socket socket = new Socket();
+		Socket socket = null;
 		ServerRequest heartbeat;
 		try {
 			while (true) {
 				try{
-					if(!socket.isConnected()){
+					if (socket == null || socket.isClosed()) {
+						socket = new Socket();
 						socket.connect(adress);
 					}
 					InetAddress myAddress = socket.getLocalAddress(); 
-					heartbeat = ServerRequest.buildRegisterRequest(abteilungsID, new InetSocketAddress(myAddress, TafelServer.SERVER_PORT));
+					heartbeat = ServerRequest.buildRegisterRequest(tafelServer.getAbteilungsID(), new InetSocketAddress(myAddress, TafelServer.SERVER_PORT));
 					ObjectOutputStream oout = new ObjectOutputStream(socket.getOutputStream());
 					oout.writeObject(heartbeat);
-					
 				} catch (IOException e) {
 					tafelServer.print("HeartbeatThread " + abteilungsID+": "+adress.toString()+" nicht erreichbar! "+e.getMessage());
+					try {
+						socket.close();
+					} catch (IOException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
 				}
 				Thread.sleep(sleepTime);
 			}
@@ -54,4 +63,5 @@ public class HeartbeatThread extends Thread {
 			}
 		}
 	}
+	
 }

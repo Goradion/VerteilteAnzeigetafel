@@ -3,6 +3,7 @@ package tafelServer;
 import java.net.SocketAddress;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import serverRequests.*;
@@ -57,7 +58,7 @@ public class ServerRequestHandler {
 	}
 
 	public String handle(RegisterRequest registerRequest) throws TafelException {
-		if(registerRequest.getAbteilungsID()==anzeigetafel.getAbteilungsID()){
+		if(registerRequest.getAbteilungsID()==tafelServer.getAbteilungsID()){
 			throw new TafelException("Die eigene Abteilung wird nicht registriert");
 		}
 		
@@ -71,7 +72,7 @@ public class ServerRequestHandler {
 						
 		}else {
 			tafelAdressen.put(abteilungsID, address);
-			tafelServer.getQueueMap().put(abteilungsID, new LinkedBlockingQueue<Message>());
+			tafelServer.getQueueMap().put(abteilungsID, new LinkedBlockingDeque<Message>());
 		}
 		tafelServer.activateHeartbeat(abteilungsID);
 		tafelServer.activateQueue(abteilungsID);

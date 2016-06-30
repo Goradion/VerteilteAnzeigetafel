@@ -1,12 +1,8 @@
 package tafelServer;
 
 import java.io.*;
-import java.net.InetSocketAddress;
 import java.net.Socket;
-import java.util.LinkedList;
-
 import serverRequests.ServerRequest;
-import verteilteAnzeigetafel.Message;
 import verteilteAnzeigetafel.TafelException;
 
 public class LocalThread extends Thread {
@@ -30,6 +26,9 @@ public class LocalThread extends Thread {
 				if (o instanceof ServerRequest){
 					request = (ServerRequest) o;
 					handleServerRequest(request);
+					input = new ObjectInputStream(client.getInputStream());
+				} else {
+					break;
 				}
 			}
 			// input.close();
@@ -42,7 +41,8 @@ public class LocalThread extends Thread {
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} finally {
+		} 
+			finally {
 			try {
 				client.close();
 			} catch (IOException e) {

@@ -27,7 +27,7 @@ public class Client implements Serializable {
     private static final long serialVersionUID = -1466790708777017802L;
     public static final int ENDE = 0;
     public static final int SERVER_PORT = 10001;
-    public static final String SERVER_HOSTNAME = "192.168.178.2";
+    public static final String SERVER_HOSTNAME = "localhost";
 
     private String benutzerName;
     private int userID;
