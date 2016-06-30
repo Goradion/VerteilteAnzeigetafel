@@ -11,7 +11,7 @@ public class Anzeigetafel implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = 4032175286694659532L;
-	private static final String TAFELNAME = "tafel";
+	private String TAFELNAME;
 	private String lastID;
 	private final int abteilungsID;
 	private int messageAnzahl;
@@ -30,6 +30,7 @@ public class Anzeigetafel implements Serializable {
 									// Programm
 		// eine neue Nummer festlegen
 		this.koordinatorID = 1;
+                this.TAFELNAME="tafel"+abtNr;
 		this.messageAnzahl = 0;
 		lastID = null;
 		this.messages = new LinkedHashMap<Integer, Message>();
@@ -197,13 +198,13 @@ public class Anzeigetafel implements Serializable {
 	 * @return
 	 * @throws verteilteAnzeigetafel.TafelException
 	 */
-	public synchronized static Anzeigetafel loadStateFromFile() {
+	public synchronized static Anzeigetafel loadStateFromFile(int abtNr) {
 		Anzeigetafel at = null;
-
+                
 		FileInputStream fileinput = null;
 		ObjectInputStream objinput = null;
 		try {
-			fileinput = new FileInputStream("./" + TAFELNAME);
+			fileinput = new FileInputStream("./"+"tafel"+abtNr);
 			objinput = new ObjectInputStream(fileinput);
 			at = (Anzeigetafel) objinput.readObject();
 		} catch (FileNotFoundException ex) {
