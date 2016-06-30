@@ -65,7 +65,7 @@ public class TafelServer extends Thread{
 		}
 	}
 	private  void init() {
-		anzeigetafel = Anzeigetafel.loadStateFromFile();
+		anzeigetafel = Anzeigetafel.loadStateFromFile(abteilungsID);
 		if(anzeigetafel != null){
 			print("Anzeigetafel aus Datei geladen!");
 		} else {
