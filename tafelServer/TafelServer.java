@@ -28,8 +28,8 @@ public class TafelServer extends Thread{
 	private  int abteilungsID;
 
 	/**
-	 * @param args
-	 *            the command line arguments
+	 * Processes command line arguments, configures and starts a new TafelServer.
+	 * @param args command line arguments
 	 */
 	public static void main(String[] args) {
 		TafelServer tafelServer = new TafelServer();
@@ -60,6 +60,9 @@ public class TafelServer extends Thread{
 				tafelServer.print("Idiot");
 		}
 	}
+	/**
+	 * Initializiation and running of the TafelServer.
+	 */
 	@Override
 	public void run() {
 		init();
@@ -78,6 +81,9 @@ public class TafelServer extends Thread{
 			e.printStackTrace();
 		}
 	}
+	/**
+	 * Initializes the TafelServer.
+	 */
 	private  void init() {
 		anzeigetafel = Anzeigetafel.loadStateFromFile(abteilungsID);
 		if(anzeigetafel != null){
@@ -89,38 +95,16 @@ public class TafelServer extends Thread{
 		}
 		queueMap = loadQueueMapFromFile();
 		tafelAdressen = loadTafelAdressenFromFile();
-		
-		//tafelAdressen.put(1, new InetSocketAddress("localhost", SERVER_PORT));
-		// LinkedBlockingQueue<Message> q = new LinkedBlockingQueue<Message>();
-		// q.add(new Message("AAAAAAAAAAAAAAAAAAAA", 1, 2, true, 4711));
-		// q.add(new Message("BBBBBBBBBBBBBBBBBBBB", 1, 2, true, 4711));
-		// queueMap.put(1, q);
-		// activateQueue(1);
-		// File f = new File("tafel");
-		// if(f.exists() && !f.isDirectory()){
-		// try {
-		// anzeigetafel = Anzeigetafel.loadStateFromFile();
-		// print("Anzeigetafel geladen!");
-		// //anzeigetafel.saveStateToFile();
-		// printMessages();
-		// } catch (TafelException e) {
-		// // TODO Auto-generated catch block
-		// e.printStackTrace();
-		// }
-		// } else {
-		// anzeigetafel = new Anzeigetafel();
-		// try {
-		// f.createNewFile();
-		// print("Anzeigetafel erstellt!");
-		//
-		// } catch (IOException e) {
-		// // TODO Auto-generated catch block
-		// e.printStackTrace();
-		// }
-		// }
 	}
 
-
+	/**
+	 * Publishes a message if possible.
+	 * Set the message to public and try to deliver it to other TafelServers.
+	 * @param messageID
+	 * @param userID
+	 * @throws InterruptedException if a Message Queue was interrupted.
+	 * @throws TafelException if the Anzeigetafel rejects the publication.
+	 */
 	public synchronized void publishMessage(int messageID, int userID) throws InterruptedException, TafelException {
 		anzeigetafel.publishMessage(messageID, userID);
 		for (LinkedBlockingDeque<Message> q : queueMap.values()) {
@@ -128,17 +112,34 @@ public class TafelServer extends Thread{
 		}
 		anzeigetafel.saveStateToFile();
 	}
-
+	/**
+	 * Modifies a message if possible.
+	 * @param messageID
+	 * @param inhalt
+	 * @param userID
+	 * @throws TafelException if the Anzeigetafel rejects the modification.
+	 */
 	public  synchronized void modifyMessage(int messageID, String inhalt, int userID) throws TafelException {
 		anzeigetafel.modifyMessage(messageID, inhalt, userID);
 		print("User mit ID=" + userID + " hatNachricht mit ID=" + messageID + " geändert!");
 		anzeigetafel.saveStateToFile();
 	}
-	
+	/**
+	 * Gets the messages of a given userID if possible.
+	 * @param userID
+	 * @return the messages of the given userID
+	 * @throws TafelException if Anzeigetafel does not recognize the userID.
+	 */
 	public  synchronized LinkedList<Message> getMessagesByUserID(int userID) throws TafelException {
 		print("Showing Messages to user " + userID);
 		return anzeigetafel.getMessagesByUserID(userID);
 	}
+	/**
+	 * Registers a TafelServer if possible.
+	 * @param abteilungsID
+	 * @param address
+	 * @throws TafelException if the given abteilungsID is the own abteilungsID
+	 */
 	public  synchronized void registerTafel(int abteilungsID, SocketAddress address) throws TafelException{
 		if(this.abteilungsID==abteilungsID){
 			throw new TafelException("Die eigene Abteilung wird nicht registriert");
@@ -157,6 +158,10 @@ public class TafelServer extends Thread{
 		activateQueue(abteilungsID);
 		saveTafelAdressenToFile();
 	}
+	/**
+	 * Activated the message queue for the given abteilungID.
+	 * @param abteilungsID
+	 */
 	public synchronized void activateQueue(int abteilungsID) {
 		
 		if (!outboxThreads.containsKey(abteilungsID) || !outboxThreads.get(abteilungsID).isAlive()) {
@@ -166,7 +171,10 @@ public class TafelServer extends Thread{
 			obt.start();
 		} // else Queue already active
 	}
-	
+	/**
+	 * Activates a Heartbeat for the given abteilungsID. 
+	 * @param abteilungsID
+	 */
 	public  synchronized void activateHeartbeat(int abteilungsID){
 		if (!heartbeatThreads.containsKey(abteilungsID) || !heartbeatThreads.get(abteilungsID).isAlive()) {
 			HeartbeatThread hbt = new HeartbeatThread(abteilungsID, tafelAdressen.get(abteilungsID), this);
@@ -174,12 +182,14 @@ public class TafelServer extends Thread{
 			hbt.start();
 		}
 	}
-	
+	/**
+	 * Writes the message queues for each Abteilung to a file.
+	 */
 	public synchronized void saveQueueMapToFile() {
 		FileOutputStream fileoutput = null;
 		ObjectOutputStream objoutput = null;
 		try {
-			fileoutput = new FileOutputStream("./QueueMap");
+			fileoutput = new FileOutputStream("./QueueMap"+abteilungsID);
 			objoutput = new ObjectOutputStream(fileoutput);
 			objoutput.writeObject(queueMap);
 		} catch (FileNotFoundException e) {
@@ -195,6 +205,10 @@ public class TafelServer extends Thread{
 		}
 	}
 
+	/**
+	 * Loads the message queues for each Abteilung from a file.
+	 * @return queueMap
+	 */
 	@SuppressWarnings("unchecked")
 	private  HashMap<Integer, LinkedBlockingDeque<Message>> loadQueueMapFromFile() {
 		HashMap<Integer, LinkedBlockingDeque<Message>> qMap = new HashMap<Integer, LinkedBlockingDeque<Message>>();
@@ -213,7 +227,9 @@ public class TafelServer extends Thread{
 		}
 		return qMap;
 	}
-	
+	/**
+	 * Writes the addresses of the registered TafelServers to a file.
+	 */
 	public synchronized void saveTafelAdressenToFile(){
 		FileOutputStream fileoutput = null;
 		ObjectOutputStream objoutput = null;
@@ -233,6 +249,10 @@ public class TafelServer extends Thread{
 			}
 		}
 	}
+	/**
+	 * Loads the addresses of registered TafelServers from a file.
+	 * @return tafelAddressen
+	 */
 	@SuppressWarnings("unchecked")
 	private  HashMap<Integer, SocketAddress> loadTafelAdressenFromFile() {
 		HashMap<Integer, SocketAddress> adressen = new HashMap<Integer, SocketAddress>();
@@ -252,27 +272,51 @@ public class TafelServer extends Thread{
 		return adressen;
 	}
 
-
+	/**
+	 * Outputs a message on the TafelSever.
+	 * @param nachricht the message
+	 */
 	public synchronized void print(String nachricht) {
 		System.out.println(nachricht);
 	}
-
+	/**
+	 * Outputs all messages of the Anzeigetafel.
+	 */
 	public  synchronized void printMessages() {
 		System.out.println(anzeigetafel.toString());
 	}
-	
+	/**
+	 * Returns the anzeigetafel data of the TafelServer
+	 * @return anzeigetafel 
+	 */
 	public synchronized Anzeigetafel getAnzeigetafel(){
 		return anzeigetafel;
 	}
+	/**
+	 * Returns the abteilungsID of the TafelServer
+	 * @return abteilungsID
+	 */
 	public synchronized int getAbteilungsID() {
 		return abteilungsID;
 	}
+	/**
+	 * Returns the addresses of the registered TafelServers.
+	 * @return tafelAdressen
+	 */
 	public HashMap<Integer, SocketAddress> getTafelAdressen() {
 		return tafelAdressen;
 	}
+	/**
+	 * Returns the assigned outboxThread by abteilungsID.
+	 * @return outboxThreads
+	 */
 	public HashMap<Integer, OutboxThread> getOutboxThreads() {
 		return outboxThreads;
 	}
+	/**
+	 * Retunrs the message queues by abteilungsID.
+	 * @return queueMap
+	 */
 	public HashMap<Integer, LinkedBlockingDeque<Message>> getQueueMap() {
 		return queueMap;
 	}

@@ -14,7 +14,13 @@ public class OutboxThread extends Thread {
 	SocketAddress adress;
 	LinkedBlockingDeque<Message> messageQueue;
 	TafelServer tafelServer;
-
+	/**
+	 * Constructs a new OutboxThread
+	 * @param abteilungsID Who I deliver to.
+	 * @param adress Where to deliver.
+	 * @param messageQueue Here are the messages to deliver.
+	 * @param tafelServer The tafelServer where status messages are sent.
+	 */
 	public OutboxThread(int abteilungsID, SocketAddress adress, LinkedBlockingDeque<Message> messageQueue,
 			TafelServer tafelServer) {
 		super();
@@ -23,9 +29,11 @@ public class OutboxThread extends Thread {
 		this.messageQueue = messageQueue;
 		this.tafelServer = tafelServer;
 	}
-
+	/**
+	 * Attempts to deliver the messages from the messageQueue.
+	 */
 	public void run() {
-		tafelServer.print("OutboxThread " + abteilungsID + " läuft!");
+		tafelServer.print(getName() + " läuft!");
 		Socket socket = new Socket();
 		Message msg = null;
 		try {
@@ -75,7 +83,10 @@ public class OutboxThread extends Thread {
 		}
 
 	}
-
+	/**
+	 * Return a name to distinguish which OutboxThread is talking.
+	 * @return a name
+	 */
 	private String getMyName() {
 		return "OutboxThread " + abteilungsID;
 	}

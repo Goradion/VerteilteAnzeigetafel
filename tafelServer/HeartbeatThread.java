@@ -14,13 +14,22 @@ public class HeartbeatThread extends Thread {
 	private int abteilungsID;
 	private SocketAddress adress;
 	private TafelServer tafelServer;
+	/**
+	 * Construcs a new HeartbeatThread
+	 * @param abteilungsID
+	 * @param adress
+	 * @param tafelServer
+	 */
 	public HeartbeatThread(int abteilungsID, SocketAddress adress, TafelServer tafelServer) {
 		super();
 		this.abteilungsID = abteilungsID;
 		this.adress = adress;
 		this.tafelServer = tafelServer;
 	}
-
+	/**
+	 * The HeartbeatThread tries to contact its assigned TafelServer via the given adress in intervals 
+	 * given in \var sleepTime;
+	 */
 	public void run() {
 		Socket socket = null;
 		ServerRequest heartbeat;

@@ -9,12 +9,19 @@ public class LocalThread extends Thread {
 	private Socket client;
 	private TafelServer tafelServer;
 	private ServerRequestHandler handler;
+	/**
+	 * Constructs a new LocalThread.
+	 * @param client the Socket where requests come from
+	 * @param tafelServer the Server on which to execute requests.
+	 */
 	public LocalThread(Socket client, TafelServer tafelServer) {
 		this.client = client;
 		this.tafelServer = tafelServer;
 		this.handler = new ServerRequestHandler(tafelServer, tafelServer.getAnzeigetafel());
 	}
-
+	/**
+	 * Reads ServerRequests from the client Socket and invokes the handleServerRequest method.
+	 */
 	public void run() {
 
 		try {
@@ -51,48 +58,17 @@ public class LocalThread extends Thread {
 			}
 		}
 	}
-
+	/**
+	 * Handles a ServerRequest via the handler.
+	 * @param request
+	 * @throws IOException if something went wrong the output stream.
+	 */
 	private void handleServerRequest(ServerRequest request) throws IOException {
 		ObjectOutputStream output = new ObjectOutputStream(client.getOutputStream());
 		String antwort = "";
 		try {
-
-//			switch (request.getType()) {
-//			case CREATE:
-//				int msgID = TafelServer.createMessage(request.getMessage(), request.getUserID(),
-//						request.getAbteilungsID(), request.isOeffentlich());
-//				antwort = "Nachricht erstellt! msgID=" + msgID;
-//				break;
-//			case DELETE:
-//				TafelServer.deleteMessage(request.getMessageID(), request.getUserID());
-//				antwort = "Nachricht gelöscht!";
-//				break;
-//			case MODIFY:
-//				TafelServer.modifyMessage(request.getMessageID(), request.getMessage(), request.getUserID());
-//				antwort = "Nachricht geändert!";
-//				break;
-//			case SHOW_MY_MESSAGES:
-//				showMessagesToClient(request.getUserID());
-//				break;
-//			case PUBLISH:
-//				TafelServer.publishMessage(request.getMessageID(), request.getUserID());
-//				antwort = "Nachricht veröffentlicht!";
-//				break;
-//			case REGISTER:
-//				TafelServer.registerTafel(request.getAbteilungsID(), new InetSocketAddress(client.getInetAddress(), TafelServer.SERVER_PORT));
-//				antwort = "Welcome!";
-//				break;
-//			case RECEIVE: TafelServer.receiveMessage(new Message(request.getMessage(), request.getUserID(), 
-//					request.getAbteilungsID(), request.isOeffentlich(), request.getMessageID()));
-//				antwort = "Nachricht erhalten!";
-//				break;
-//			default:
-//				antwort = "Unrecognized ServerRequest!";
-//				break;
-//			}
 			antwort = handler.handle(request);
 		} catch (TafelException te) {
-			te.printStackTrace();
 			antwort = te.getMessage();
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
