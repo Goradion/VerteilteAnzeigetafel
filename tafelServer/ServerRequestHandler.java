@@ -107,7 +107,7 @@ public class ServerRequestHandler {
 	 */
 	public String handle(RegisterRequest registerRequest) throws TafelException {
 		if(registerRequest.getAbteilungsID()==tafelServer.getAbteilungsID()){
-			throw new TafelException("Die eigene Abteilung wird nicht registriert");
+			throw new TafelException("Die eigene Abteilung wird nicht registriert!");
 		}
 		
 		HashMap<Integer, SocketAddress> tafelAdressen = tafelServer.getTafelAdressen();

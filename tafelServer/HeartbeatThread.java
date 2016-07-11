@@ -14,8 +14,10 @@ public class HeartbeatThread extends Thread {
 	private int abteilungsID;
 	private SocketAddress adress;
 	private TafelServer tafelServer;
+
 	/**
 	 * Construcs a new HeartbeatThread
+	 * 
 	 * @param abteilungsID
 	 * @param adress
 	 * @param tafelServer
@@ -26,26 +28,29 @@ public class HeartbeatThread extends Thread {
 		this.adress = adress;
 		this.tafelServer = tafelServer;
 	}
+
 	/**
-	 * The HeartbeatThread tries to contact its assigned TafelServer via the given adress in intervals 
-	 * given in \var sleepTime;
+	 * The HeartbeatThread tries to contact its assigned TafelServer via the
+	 * given adress in intervals given in \var sleepTime;
 	 */
 	public void run() {
 		Socket socket = null;
 		ServerRequest heartbeat;
 		try {
 			while (true) {
-				try{
+				try {
 					if (socket == null || socket.isClosed()) {
 						socket = new Socket();
 						socket.connect(adress);
 					}
-					InetAddress myAddress = socket.getLocalAddress(); 
-					heartbeat = ServerRequest.buildRegisterRequest(tafelServer.getAbteilungsID(), new InetSocketAddress(myAddress, TafelServer.SERVER_PORT));
+					InetAddress myAddress = socket.getLocalAddress();
+					heartbeat = ServerRequest.buildRegisterRequest(tafelServer.getAbteilungsID(),
+							new InetSocketAddress(myAddress, TafelServer.SERVER_PORT));
 					ObjectOutputStream oout = new ObjectOutputStream(socket.getOutputStream());
 					oout.writeObject(heartbeat);
 				} catch (IOException e) {
-					tafelServer.print("HeartbeatThread " + abteilungsID+": "+adress.toString()+" nicht erreichbar! "+e.getMessage());
+					tafelServer.print("HeartbeatThread " + abteilungsID + ": " + adress.toString()
+							+ " nicht erreichbar! " + e.getMessage());
 					try {
 						socket.close();
 					} catch (IOException e1) {
@@ -55,7 +60,7 @@ public class HeartbeatThread extends Thread {
 				}
 				Thread.sleep(sleepTime);
 			}
-		}catch(	InterruptedException e)	{
+		} catch (InterruptedException e) {
 			tafelServer.print("HeartbeatThread " + abteilungsID + " wurde unterbrochen!");
 		} finally {
 			try {
@@ -63,11 +68,10 @@ public class HeartbeatThread extends Thread {
 					socket.close();
 				}
 			} catch (IOException e) {
-				System.err.println(
-						"Socket in HeartbeatThread der Abteilung " + abteilungsID + " konnte nicht geschlossen werden!");
-				e.printStackTrace();
+				tafelServer.print("Socket in HeartbeatThread " + abteilungsID + " konnte nicht geschlossen werden!");
+				tafelServer.printStackTrace(e);
 			}
 		}
 	}
-	
+
 }

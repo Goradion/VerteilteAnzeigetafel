@@ -33,7 +33,7 @@ public class OutboxThread extends Thread {
 	 * Attempts to deliver the messages from the messageQueue.
 	 */
 	public void run() {
-		tafelServer.print(getName() + " läuft!");
+		tafelServer.print(getMyName() + " läuft!");
 		Socket socket = new Socket();
 		Message msg = null;
 		try {
@@ -61,7 +61,7 @@ public class OutboxThread extends Thread {
 			}
 
 		} catch (IOException e) {
-			tafelServer.print(getMyName() + " : " + adress.toString() + " nicht erreichbar! " + e.getMessage());
+			tafelServer.print(getMyName() + ": " + adress.toString() + " nicht erreichbar! " + e.getMessage());
 		} finally {
 			if (msg != null) {
 				try {
