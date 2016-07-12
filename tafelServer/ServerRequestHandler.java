@@ -113,7 +113,7 @@ public class ServerRequestHandler {
 		HashMap<Integer, SocketAddress> tafelAdressen = tafelServer.getTafelAdressen();
 		int abteilungsID = registerRequest.getAbteilungsID();
 		SocketAddress address = registerRequest.getAddress();
-		if(tafelAdressen .containsKey(abteilungsID)){
+		if(tafelAdressen.containsKey(abteilungsID)){
 			if(!tafelAdressen.get(abteilungsID).equals(address)){
 				tafelAdressen.replace(abteilungsID, address);
 			}

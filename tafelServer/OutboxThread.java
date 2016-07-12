@@ -33,12 +33,10 @@ public class OutboxThread extends Thread {
 	 * Attempts to deliver the messages from the messageQueue.
 	 */
 	public void run() {
-		tafelServer.print(getMyName() + " läuft!");
-		Socket socket = new Socket();
+		tafelServer.print(getMyName() + " läuft!\n"+messageQueue.toString());
+		Socket socket = null;
 		Message msg = null;
 		try {
-			socket.connect(adress);
-			ObjectOutputStream oout = new ObjectOutputStream(socket.getOutputStream());
 			while (true) {
 				if (socket == null || socket.isClosed()) {
 					socket = new Socket();
@@ -46,8 +44,11 @@ public class OutboxThread extends Thread {
 				}
 
 				msg = messageQueue.take();
+				tafelServer.saveQueueMapToFile();
 				ServerRequest request = ServerRequest.buildReceiveRequest(msg);
+				ObjectOutputStream oout = new ObjectOutputStream(socket.getOutputStream());
 				oout.writeObject(request);
+				//oout.flush();
 				msg = null;
 			}
 		} catch (InterruptedException e) {
@@ -66,6 +67,7 @@ public class OutboxThread extends Thread {
 			if (msg != null) {
 				try {
 					messageQueue.putFirst(msg);
+					tafelServer.saveQueueMapToFile();
 				} catch (InterruptedException e) {
 					tafelServer.print("Nachricht ID=" + msg.getMessageID() + " ging auf dem Weg zu Abteilung "
 							+ abteilungsID + " verloren");

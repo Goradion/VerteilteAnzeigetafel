@@ -7,6 +7,7 @@ package tafelServer;
 
 import java.net.*;
 import java.util.LinkedList;
+import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import serverRequests.ServerRequest;
@@ -26,12 +27,13 @@ public class Client {
 	public static final String SERVER_HOSTNAME = "localhost";
 
 	public static void main(String[] args) {
-		LinkedBlockingQueue<Message> q = new LinkedBlockingQueue<Message>();
+		LinkedBlockingDeque<Message> q = new LinkedBlockingDeque<Message>();
 		TafelServer ts = new TafelServer();
-//		q.add(new Message("qq", 7, 4, true, 4711));
-//		q.add(new Message("qq", 7, 7, true, 4712));
-//		new OutboxThread(1, new InetSocketAddress(SERVER_HOSTNAME, SERVER_PORT), q, ts).start();;
-		new HeartbeatThread(2, new InetSocketAddress(SERVER_HOSTNAME, SERVER_PORT), ts).start();
+		q.add(new Message("qq", 1, 2, true, 4711));
+		q.add(new Message("qqq", 1, 2, true, 4712));
+		new OutboxThread(1, new InetSocketAddress(SERVER_HOSTNAME, SERVER_PORT), q, ts).start();;
+		q.add(new Message("qqqq", 1, 2, true, 4713));
+//		new HeartbeatThread(2, new InetSocketAddress(SERVER_HOSTNAME, SERVER_PORT), ts).start();
 		
 //		try {
 //			Socket socket = new Socket(SERVER_HOSTNAME, SERVER_PORT);

@@ -120,6 +120,7 @@ public class TafelServer extends Thread {
 		for (LinkedBlockingDeque<Message> q : queueMap.values()) {
 			q.put(anzeigetafel.getMessages().get(messageID));
 		}
+		saveQueueMapToFile();
 		anzeigetafel.saveStateToFile();
 	}
 
@@ -171,6 +172,9 @@ public class TafelServer extends Thread {
 
 		} else {
 			tafelAdressen.put(abteilungsID, address);
+			saveQueueMapToFile();
+		}
+		if (!queueMap.containsKey(abteilungsID)){
 			queueMap.put(abteilungsID, new LinkedBlockingDeque<Message>());
 		}
 		activateHeartbeat(abteilungsID);
@@ -188,6 +192,7 @@ public class TafelServer extends Thread {
 		if (!outboxThreads.containsKey(abteilungsID) || !outboxThreads.get(abteilungsID).isAlive()) {
 			OutboxThread obt = new OutboxThread(abteilungsID, tafelAdressen.get(abteilungsID),
 					queueMap.get(abteilungsID), this);
+			
 			outboxThreads.put(abteilungsID, obt);
 			obt.start();
 		} // else Queue already active
@@ -213,18 +218,18 @@ public class TafelServer extends Thread {
 		FileOutputStream fileoutput = null;
 		ObjectOutputStream objoutput = null;
 		try {
-			fileoutput = new FileOutputStream("./QueueMap" + abteilungsID);
+			fileoutput = new FileOutputStream("./queueMap" + abteilungsID);
 			objoutput = new ObjectOutputStream(fileoutput);
 			objoutput.writeObject(queueMap);
 		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+			printStackTrace(e);
 		} catch (IOException e) {
-			e.printStackTrace();
+			printStackTrace(e);
 		} finally {
 			try {
 				objoutput.close();
 			} catch (IOException e) {
-				e.printStackTrace();
+				printStackTrace(e);
 			}
 		}
 	}
@@ -240,15 +245,17 @@ public class TafelServer extends Thread {
 		FileInputStream fileInput = null;
 		ObjectInputStream objinput = null;
 		try {
-			fileInput = new FileInputStream("./queueMap");
+			fileInput = new FileInputStream("./queueMap" + abteilungsID);
 			objinput = new ObjectInputStream(fileInput);
 			Object obj = objinput.readObject();
 			qMap = (HashMap<Integer, LinkedBlockingDeque<Message>>) obj;
+			print("Queue-Backup geladen!");
 		} catch (FileNotFoundException e) {
-			print("Kein Queue-Backup gefunden");
+			print("Kein Queue-Backup gefunden. Erstelle neues Backup...");
+			saveQueueMapToFile();
 		} catch (IOException | ClassNotFoundException e) {
 			print("Fehler beim lesen des Queue-Backups");
-			e.printStackTrace();
+			printStackTrace(e);
 		}
 		return qMap;
 	}
@@ -257,10 +264,10 @@ public class TafelServer extends Thread {
 	 * Writes the addresses of the registered TafelServers to a file.
 	 */
 	public synchronized void saveTafelAdressenToFile() {
-		try (BufferedWriter writer = new BufferedWriter(new FileWriter("./TafelAdressen" + abteilungsID))) {
+		try (BufferedWriter writer = new BufferedWriter(new FileWriter("./tafelAdressen" + abteilungsID))) {
 			for (int i : tafelAdressen.keySet()) {
 				InetSocketAddress address = (InetSocketAddress) tafelAdressen.get(i);
-				writer.write(i + ":" + address.getHostName() + ":" + address.getPort());
+				writer.write(i + ":" + address.getHostName() + ":" + address.getPort() + "\n");
 			}
 		} catch (IOException e) {
 			printStackTrace(e);
