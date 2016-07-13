@@ -161,47 +161,48 @@ public class ClientWindow extends javax.swing.JFrame implements Runnable{
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
+                .addGap(10, 10, 10)
+                .addComponent(newMessageRB)
+                .addContainerGap(448, Short.MAX_VALUE))
+            .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
+                        .addGap(20, 20, 20)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(userIDTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(userIDlabel, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(abteilungTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(showMessagesButton, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(abteilungLabel)
+                                .addGap(0, 0, Short.MAX_VALUE))))
+                    .addGroup(layout.createSequentialGroup()
                         .addContainerGap()
-                        .addComponent(messageIDTextField)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(sendQueryButton, javax.swing.GroupLayout.PREFERRED_SIZE, 122, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(10, 10, 10)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(publishMessageRB, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(deleteMessageRB))
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
-                                .addGap(10, 10, 10)
-                                .addComponent(changeMessageRB))
+                                .addComponent(changeMessageRB)
+                                .addGap(0, 413, Short.MAX_VALUE))
                             .addGroup(layout.createSequentialGroup()
-                                .addGap(10, 10, 10)
-                                .addComponent(newMessageRB))
-                            .addGroup(layout.createSequentialGroup()
-                                .addContainerGap()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 411, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addGroup(layout.createSequentialGroup()
-                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                            .addComponent(userIDlabel, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                            .addComponent(userIDTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                        .addGap(18, 18, 18)
-                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addGroup(layout.createSequentialGroup()
-                                                .addComponent(abteilungTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                                .addComponent(showMessagesButton, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                            .addComponent(abteilungLabel))))))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 10, Short.MAX_VALUE)))
+                                        .addGap(2, 2, 2)
+                                        .addComponent(messageIDlabel))
+                                    .addComponent(publishMessageRB, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(deleteMessageRB))
+                                .addGap(0, 413, Short.MAX_VALUE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 2, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(messageIDTextField)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(sendQueryButton, javax.swing.GroupLayout.PREFERRED_SIZE, 122, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jScrollPane1)))
                 .addContainerGap())
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(messageIDlabel)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {changeMessageRB, deleteMessageRB, messageIDTextField, publishMessageRB});
@@ -215,8 +216,8 @@ public class ClientWindow extends javax.swing.JFrame implements Runnable{
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(userIDlabel, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(abteilungLabel))
+                    .addComponent(abteilungLabel)
+                    .addComponent(userIDlabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(userIDTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -224,8 +225,8 @@ public class ClientWindow extends javax.swing.JFrame implements Runnable{
                     .addComponent(abteilungTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(27, 27, 27)
                 .addComponent(newMessageRB)
-                .addGap(18, 18, 18)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 239, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(deleteMessageRB)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -238,7 +239,7 @@ public class ClientWindow extends javax.swing.JFrame implements Runnable{
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(sendQueryButton)
                     .addComponent(messageIDTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(22, 22, 22))
+                .addContainerGap())
         );
 
         layout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {sendQueryButton, showMessagesButton});
@@ -278,6 +279,7 @@ public class ClientWindow extends javax.swing.JFrame implements Runnable{
         if (deleteMessageRB.isSelected()){
             messageTextArea.setEnabled(false);
             messageIDTextField.setEnabled(true);
+            messageTextArea.setCaretPosition(0);
         }
     }//GEN-LAST:event_deleteMessageRBItemStateChanged
 
@@ -286,6 +288,7 @@ public class ClientWindow extends javax.swing.JFrame implements Runnable{
         if (changeMessageRB.isSelected()){
             messageTextArea.setEnabled(true);
             messageIDTextField.setEnabled(true);
+           
         }
     }//GEN-LAST:event_changeMessageRBItemStateChanged
 
@@ -294,32 +297,41 @@ public class ClientWindow extends javax.swing.JFrame implements Runnable{
         if (publishMessageRB.isSelected()){
             messageTextArea.setEnabled(false);
             messageIDTextField.setEnabled(true);
+            messageTextArea.setCaretPosition(0);
         }
     }//GEN-LAST:event_publishMessageRBItemStateChanged
 
     private void userIDTextFieldMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_userIDTextFieldMouseClicked
         // TODO add your handling code here:
-        userIDTextField.selectAll();
+        userIDTextField.setText("");
+//        userIDTextField.selectAll();
     }//GEN-LAST:event_userIDTextFieldMouseClicked
 
     private void messageTextAreaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_messageTextAreaMouseClicked
         // TODO add your handling code here:
         messageTextArea.selectAll();
+        if(!changeMessageRB.isSelected())
+            newMessageRB.setSelected(true);
     }//GEN-LAST:event_messageTextAreaMouseClicked
 
     private void messageIDTextFieldMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_messageIDTextFieldMouseClicked
         // TODO add your handling code here:
-        messageIDTextField.selectAll();
+        messageIDTextField.setText("");
+//        messageIDTextField.selectAll();
     }//GEN-LAST:event_messageIDTextFieldMouseClicked
 
     private void showMessagesButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_showMessagesButtonMouseClicked
         // TODO add your handling code here:
         System.out.println("Mouse clicked!");
         
+        messageTextArea.setText(client.showMessagesWithGui(Integer.parseInt(abteilungTextField.getText()),
+                Integer.parseInt(userIDTextField.getText())));
+        
     }//GEN-LAST:event_showMessagesButtonMouseClicked
 
     private void abteilungTextFieldMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_abteilungTextFieldMouseClicked
-        abteilungTextField.selectAll();
+       abteilungTextField.setText("");
+//        abteilungTextField.selectAll();
     }//GEN-LAST:event_abteilungTextFieldMouseClicked
 
     private void sendQueryButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_sendQueryButtonMouseClicked
@@ -339,9 +351,10 @@ public class ClientWindow extends javax.swing.JFrame implements Runnable{
         
         if(changeMessageRB.isSelected() && !abteilungTextField.getText().isEmpty() 
                 && !userIDTextField.getText().isEmpty() && !messageIDTextField.getText().isEmpty()){
-            messageTextArea.setText(client.changeMessageWithGui(Integer.parseInt(abteilungTextField.getText()),
+            String neueMessage = client.changeMessageWithGui(Integer.parseInt(abteilungTextField.getText()),
                     Integer.parseInt(userIDTextField.getText()),
-                    Integer.parseInt(messageIDTextField.getText()), messageTextArea.getText()));
+                    Integer.parseInt(messageIDTextField.getText()), messageTextArea.getText());
+            messageTextArea.setText(neueMessage);
         }
        
         if(publishMessageRB.isSelected() && !abteilungTextField.getText().isEmpty() 

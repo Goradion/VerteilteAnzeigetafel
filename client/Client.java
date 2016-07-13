@@ -14,10 +14,9 @@ package client;
 import java.net.*;
 import java.util.Scanner;
 
-import serverRequests.ServerRequest;
-
+import serverRequests.*;
+import tafelServer.*;
 import java.io.*;
-import verteilteAnzeigetafel.Message;
 
 public class Client implements Serializable {
 
@@ -46,6 +45,7 @@ public class Client implements Serializable {
         this.userID = 0;
         this.abtNr = 0;
         this.mainWindow = new ClientWindow("Client", this);
+        mainWindow.setResizable(false);
     }
 
     public void startClient() {
@@ -229,13 +229,15 @@ public class Client implements Serializable {
 
     public String changeMessageWithGui(int abt, int userID, int msgID, String neueNachricht) {
         setAbteilung(abt);
-        String rueckmeldung = "";
+        String rueckmeldung = "Aenderung erfolgreich abgeschickt";
 
         try {
             Socket socketServer = new Socket(SERVER_HOSTNAME, SERVER_PORT);
             ServerRequest serverR = ServerRequest.buildModifyRequest(msgID, neueNachricht, userID);
             ObjectOutputStream oout = new ObjectOutputStream(socketServer.getOutputStream());
-
+            
+            oout.writeObject(serverR);
+            
             oout.close();
             socketServer.close();
 
@@ -295,7 +297,7 @@ public class Client implements Serializable {
 
     public String showMessagesWithGui(int abt, int userID) {
         setAbteilung(abt);
-        String str = "";
+        String str = "abrakatabra";
         try {
 
             Socket socketServer = new Socket(SERVER_HOSTNAME, SERVER_PORT);           
@@ -447,6 +449,6 @@ public class Client implements Serializable {
     public static void main(String[] args) {
         Client client = new Client();
         client.startClient();
-//        client.hauptschleife();
+        client.hauptschleife();
     }
 }
