@@ -58,7 +58,7 @@ public class Message implements Serializable {
     @Override
     public String toString() {
         return "Message [messageID=" + messageID + ", userID=" + userID + ", abtNr=" + abtNr + ", inhalt=" + inhalt
-                + ", oeffentlich=" + oeffentlich + ", time=" + time + "]";
+                + ", oeffentlich=" + oeffentlich + ", time=" + time + "]"+"\n";
     }
 
     public int getAbtNr() {

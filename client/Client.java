@@ -12,25 +12,23 @@
 package client;
 
 import java.net.*;
-import java.util.LinkedList;
 import java.util.Scanner;
 
 import serverRequests.ServerRequest;
-import verteilteAnzeigetafel.Message;
 
 import java.io.*;
+import verteilteAnzeigetafel.Message;
 
 public class Client implements Serializable {
 
     private final long serialVersionUID = -1466790708777017802L;
     private final int ENDE = 0;
     private final int SERVER_PORT = 10001;
-    private final String SERVER_HOSTNAME = "localhost";
+    private String SERVER_HOSTNAME = "localhost";
     private final String ABTEILUNG_1 = "192.168.1.20";
     private final String ABTEILUNG_2 = "192.168.1.21";
     private final String ABTEILUNG_3 = "192.168.1.22";
-
-    private String benutzerName;
+    private ClientWindow mainWindow;
     private int userID;
     private int abtNr;//Abteilungsnummer
 
@@ -44,29 +42,48 @@ public class Client implements Serializable {
      * @param administrator
      * @param userID
      */
-    public Client(String benutzerName, int userID, int abtNr) {
-
-        this.benutzerName = benutzerName;
-        this.userID = userID;
-        this.abtNr = abtNr;
-
+    public Client() {
+        this.userID = 0;
+        this.abtNr = 0;
+        this.mainWindow = new ClientWindow("Client", this);
     }
 
-    public String getbenutzername() {
-        return benutzerName;
+    public void startClient() {
+        mainWindow.run();
+    }
+
+    private void setAbteilung(int abt) {
+        switch (abt) {
+            case 1:
+                SERVER_HOSTNAME = ABTEILUNG_1;
+                break;
+            case 2:
+                SERVER_HOSTNAME = ABTEILUNG_2;
+                break;
+            case 3:
+                SERVER_HOSTNAME = ABTEILUNG_3;
+                break;
+            default:
+                break;
+        }
     }
 
     public int getabtNr() {
         return abtNr;
     }
 
+    public void setAbtNr(int abtNr) {
+        this.abtNr = abtNr;
+    }
+
     public int getUserID() {
         return userID;
     }
 
-    public void setBenutzerName(String benutzerName) {
-        this.benutzerName = benutzerName;
+    public void setUserID(int userID) {
+        this.userID = userID;
     }
+
 
     /*
      * Methode zum senden der Nachricht Die Methode ist nur fuer das senden der
@@ -106,6 +123,32 @@ public class Client implements Serializable {
 
     }
 
+    public void sendeMessageWithGui(int abt, String message, int userID) {
+        setAbteilung(abt);
+        try {
+            // Eroeffnen eines neuen Sockets um die Nachricht zu uebermitteln
+            Socket socket = new Socket(SERVER_HOSTNAME, SERVER_PORT);
+            // Senden der Nachricht ueber einen Stream
+            ServerRequest sr = ServerRequest.buildCreateRequest(message, userID, abt);
+
+            // Bauen eines Objektes 
+            ObjectOutputStream oout = new ObjectOutputStream(socket.getOutputStream());
+
+            oout.writeObject(sr);
+            oout.writeObject(null);
+            oout.close();
+            //ms.close();
+            socket.close();
+        } catch (UnknownHostException e) {
+            // Wenn Rechnername nicht bekannt ist.
+            System.out.println("Rechnername unbekannt:\n" + e.getMessage());
+        } catch (IOException e) {
+            // Wenn die Kommunikation fehlschlaegt
+            System.out.println("Fehler waehrend der Kommunikation:\n" + e.getMessage());
+
+        }
+    }
+
     public void removemsg(int abteilungNr, int userIdClient) {
         try {
 
@@ -117,6 +160,27 @@ public class Client implements Serializable {
             Socket socketServer = new Socket(SERVER_HOSTNAME, SERVER_PORT);
             System.out.println("Verbunden mit Server: " + socketServer.getRemoteSocketAddress());
             ServerRequest serverR = ServerRequest.buildDeleteRequest(nachrichtId, userIdClient);
+            ObjectOutputStream oout = new ObjectOutputStream(socketServer.getOutputStream());
+
+            oout.writeObject(serverR);
+
+            oout.close();
+            socketServer.close();
+
+        } catch (UnknownHostException e) {
+            // Wenn Rechnername nicht bekannt ist.
+            System.out.println("Rechnername unbekannt:\n" + e.getMessage());
+        } catch (IOException e) {
+            // Wenn die Kommunikation fehlschlaegt
+            System.out.println("Fehler waehrend der Kommunikation:\n" + e.getMessage());
+        }
+    }
+
+    public void removeMessageWithGui(int abt, int userID, int msgID) {
+        setAbteilung(abt);
+        try {
+            Socket socketServer = new Socket(SERVER_HOSTNAME, SERVER_PORT);
+            ServerRequest serverR = ServerRequest.buildDeleteRequest(msgID, userID);
             ObjectOutputStream oout = new ObjectOutputStream(socketServer.getOutputStream());
 
             oout.writeObject(serverR);
@@ -163,8 +227,32 @@ public class Client implements Serializable {
         }
     }
 
-    public void showMsg(int userId) {
+    public String changeMessageWithGui(int abt, int userID, int msgID, String neueNachricht) {
+        setAbteilung(abt);
+        String rueckmeldung = "";
 
+        try {
+            Socket socketServer = new Socket(SERVER_HOSTNAME, SERVER_PORT);
+            ServerRequest serverR = ServerRequest.buildModifyRequest(msgID, neueNachricht, userID);
+            ObjectOutputStream oout = new ObjectOutputStream(socketServer.getOutputStream());
+
+            oout.close();
+            socketServer.close();
+
+        } catch (UnknownHostException e) {
+            // Wenn Rechnername nicht bekannt ist.
+            System.out.println("Rechnername unbekannt:\n" + e.getMessage());
+            rueckmeldung = "Rechnername unbekannt:\n" + e.getMessage();
+        } catch (IOException e) {
+            // Wenn die Kommunikation fehlschlaegt
+            System.out.println("Fehler waehrend der Kommunikation:\n" + e.getMessage());
+            rueckmeldung = "Fehler waehrend der Kommunikation:\n" + e.getMessage();
+        }
+        return rueckmeldung;
+    }
+
+    public String showMsg(int userId) {
+        String str = null;
         try {
 
             Socket socketServer = new Socket(SERVER_HOSTNAME, SERVER_PORT);
@@ -178,23 +266,71 @@ public class Client implements Serializable {
             // Empfangen der Nachricht 
             //TODO antwort ist jetzt ein String
             ObjectInputStream input = new ObjectInputStream(socketServer.getInputStream());
-            System.out.println(input.readObject());
+            str = input.readObject().toString();
+            System.out.println(str);
+
             /*           for(Message m : userMessages){
                             System.out.println(m.toString());
                         }*/
             oout.close();
             socketServer.close();
+
         } catch (UnknownHostException e) {
             // Wenn Rechnername nicht bekannt ist.
+            str = "Rechnername unbekannt:\n";
             System.out.println("Rechnername unbekannt:\n" + e.getMessage());
         } catch (IOException e) {
             // Wenn die Kommunikation fehlschlaegt
+            str = "Fehler waehrend der Kommunikation:\n";
             System.out.println("Fehler waehrend der Kommunikation:\n" + e.getMessage());
         } catch (ClassNotFoundException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
+        if (str == null) {
+            str = "";
+        }
+        return str;
+    }
 
+    public String showMessagesWithGui(int abt, int userID) {
+        setAbteilung(abt);
+        String str = "";
+        try {
+
+            Socket socketServer = new Socket(SERVER_HOSTNAME, SERVER_PORT);           
+            ServerRequest serverR = ServerRequest.buildShowMyMessagesRequest(userID);
+            ObjectOutputStream oout = new ObjectOutputStream(socketServer.getOutputStream());          
+            oout.writeObject(serverR);
+           
+            // Empfangen der Nachricht 
+            //TODO antwort ist jetzt ein String
+            ObjectInputStream input = new ObjectInputStream(socketServer.getInputStream());
+            str = input.readObject().toString();
+            System.out.println(str);
+
+            /*           for(Message m : userMessages){
+                            System.out.println(m.toString());
+                        }*/
+            oout.close();
+            socketServer.close();
+
+        } catch (UnknownHostException e) {
+            // Wenn Rechnername nicht bekannt ist.
+            str = "Rechnername unbekannt:\n";
+            System.out.println("Rechnername unbekannt:\n" + e.getMessage());
+        } catch (IOException e) {
+            // Wenn die Kommunikation fehlschlaegt
+            str = "Fehler waehrend der Kommunikation:\n";
+            System.out.println("Fehler waehrend der Kommunikation:\n" + e.getMessage());
+        } catch (ClassNotFoundException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        if (str == null) {
+            str = "";
+        }
+        return str;
     }
 
     public void publicMsg(int userId) {
@@ -230,11 +366,22 @@ public class Client implements Serializable {
 //            System.out.println("Geben Sie ihren Namen ein: ");
 //            String name = sc.nextLine();
 //            //              System.out.println("\n");
-
             System.out.println("Geben Sie Ihre Abteilungsnummer ein: ");
             int abteilung = sc.nextInt();
             //              System.out.println("\n");
-
+            switch (abteilung) {
+                case 1:
+                    SERVER_HOSTNAME = ABTEILUNG_1;
+                    break;
+                case 2:
+                    SERVER_HOSTNAME = ABTEILUNG_2;
+                    break;
+                case 3:
+                    SERVER_HOSTNAME = ABTEILUNG_3;
+                    break;
+                default:
+                    break;
+            }
             System.out.println("Geben Sie ihre userID ein :");
             int userID = sc.nextInt();
             boolean inMenu = true;
@@ -298,7 +445,8 @@ public class Client implements Serializable {
     }
 
     public static void main(String[] args) {
-        Client client = new Client("",0,0);
-        client.hauptschleife();
+        Client client = new Client();
+        client.startClient();
+//        client.hauptschleife();
     }
 }
