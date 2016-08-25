@@ -24,9 +24,9 @@ public class Client implements Serializable {
     private final int ENDE = 0;
     private final int SERVER_PORT = 10001;
     private String SERVER_HOSTNAME = "localhost";
-    private final String ABTEILUNG_1 = "192.168.1.20";
-    private final String ABTEILUNG_2 = "192.168.1.21";
-    private final String ABTEILUNG_3 = "192.168.1.22";
+    private final String ABTEILUNG_1 = "192.168.1.77";
+    private final String ABTEILUNG_2 = "192.168.1.78";
+    private final String ABTEILUNG_3 = "192.168.1.79";
     private ClientWindow mainWindow;
     private int userID;
     private int abtNr;//Abteilungsnummer
@@ -98,6 +98,7 @@ public class Client implements Serializable {
             String message = eingabe.readLine();
 
             // Eroeffnen eines neuen Sockets um die Nachricht zu uebermitteln
+            System.out.println("Verbinde mit Server");
             Socket socket = new Socket(SERVER_HOSTNAME, SERVER_PORT);
             System.out.println("Verbunden mit Server: " + socket.getRemoteSocketAddress());
             boolean oeffentlich = true;
@@ -335,6 +336,25 @@ public class Client implements Serializable {
         return str;
     }
 
+    public void publishMessage(int messageId, int userId){
+    	
+    		try {
+				Socket serverSocket = new Socket(SERVER_HOSTNAME,SERVER_PORT);
+				ServerRequest serverRequest = ServerRequest.buildPublishRequest(messageId, userId);
+				ObjectOutputStream oout = new ObjectOutputStream(serverSocket.getOutputStream());
+				oout.writeObject(serverRequest);
+				serverSocket.close();
+			} catch (UnknownHostException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+    		
+    	
+    }
+    
     public void publicMsg(int userId) {
         try {
             BufferedReader messegID = new BufferedReader(new InputStreamReader(System.in));

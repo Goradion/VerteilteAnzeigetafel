@@ -7,9 +7,6 @@ import java.util.logging.*;
 
 public class Anzeigetafel implements Serializable {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 4032175286694659532L;
 	private String TAFELNAME;
 	private String lastID;
