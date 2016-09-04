@@ -26,7 +26,7 @@ public class TafelServer extends Thread {
 	public static final int SERVER_PORT = 10001;
 	private Anzeigetafel anzeigetafel;
 	private int abteilungsID;
-
+        private TafelGUI gui;
 	/**
 	 * Processes command line arguments, configures and starts a new
 	 * TafelServer.
@@ -72,7 +72,7 @@ public class TafelServer extends Thread {
 	@Override
 	public void run() {
 		init();
-		printMessages();
+                printMessages();
 		ServerSocket socket;
 		try {
 			socket = new ServerSocket(SERVER_PORT);
@@ -100,6 +100,15 @@ public class TafelServer extends Thread {
 			anzeigetafel.saveStateToFile();
 			print("Neue Anzeigetafel erstellt!");
 		}
+                 // hier habe ich den Gui-Part hinzugefügt
+                
+                gui = new TafelGUI(anzeigetafel);
+                gui.setVisible(true);
+                anzeigetafel.addObserver(gui);
+                anzeigetafel.notifyObservers();
+                // ende 
+               
+                
 		queueMap = loadQueueMapFromFile();
 		loadTafelAdressenFromFile();
 	}

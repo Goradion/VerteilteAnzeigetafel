@@ -5,7 +5,7 @@ import java.io.*;
 import java.util.*;
 import java.util.logging.*;
 
-public class Anzeigetafel implements Serializable {
+public class Anzeigetafel extends Observable implements Serializable {
 
 	private static final long serialVersionUID = 4032175286694659532L;
 	private String TAFELNAME;
@@ -18,7 +18,7 @@ public class Anzeigetafel implements Serializable {
 	/* msgID, msg */
 	private HashSet<Integer> userIDs;
 	private HashMap<Integer, LinkedList<Integer>> userMsgs;
-
+        
 	/* userID, List<msgID> */
 
 	public Anzeigetafel(int abtNr) {
@@ -38,7 +38,7 @@ public class Anzeigetafel implements Serializable {
 			userIDs.add(i);
 		}
 	}
-
+        
 	public synchronized boolean isUser(int userID) {
 		return userIDs.contains(userID);
 	}
@@ -66,7 +66,8 @@ public class Anzeigetafel implements Serializable {
 		System.out.println("######  Anzeigetafel ######");
 		System.out.println(this.toString());
 		System.out.println("###########################");
-
+                setChanged();
+                notifyObservers();
 	}
 
 	public synchronized void publishMessage(int messageID, int user) throws TafelException {
@@ -83,7 +84,8 @@ public class Anzeigetafel implements Serializable {
 		System.out.println("######  Anzeigetafel ######");
 		System.out.println(this.toString());
 		System.out.println("###########################");
-
+                setChanged();
+                notifyObservers();
 	}
 
 	public synchronized void deleteMessage(int messageID, int user) throws TafelException {
@@ -106,7 +108,8 @@ public class Anzeigetafel implements Serializable {
 		System.out.println("######  Anzeigetafel ######");
 		System.out.println(this.toString());
 		System.out.println("###########################");
-
+                setChanged();
+                notifyObservers();             
 	}
 
 	public synchronized int createMessage(String inhalt, int user, int abtNr, boolean oeffentlich)
@@ -130,7 +133,8 @@ public class Anzeigetafel implements Serializable {
 		System.out.println("######  Anzeigetafel ######");
 		System.out.println(this.toString());
 		System.out.println("###########################");
-
+                setChanged();
+                notifyObservers();
 		return msgID;
 	}
 
@@ -210,6 +214,7 @@ public class Anzeigetafel implements Serializable {
 		} catch (IOException | ClassNotFoundException ex) {
 			Logger.getLogger(Anzeigetafel.class.getName()).log(Level.SEVERE, null, ex);
 		}
+
 		return at;
 	}
 
@@ -247,7 +252,38 @@ public class Anzeigetafel implements Serializable {
 			throw new TafelException("msg.getAbtNr()==abteilungsID");
 		}
 		messages.put(msg.getMessageID(), msg);
-
+                setChanged();
+                notifyObservers();
+                for (Message m : getLocalMsgs()){
+                    m.toString();
+                }
+                for (Message m : getGlobalMsgs()){
+                    m.toString();
+                }
 	}
-
+        
+        public synchronized LinkedList<Message> getLocalMsgs(){
+           LinkedList<Message> pm = new LinkedList<Message>();
+           for(HashMap.Entry<Integer, Message> entry : messages.entrySet()){
+               if(!entry.getValue().isOeffentlich()){
+                   pm.add(entry.getValue());
+               }
+           }
+           return pm;
+        }
+        
+        public synchronized LinkedList<Message> getGlobalMsgs(){
+           LinkedList<Message> lm = new LinkedList<Message>();
+           for(HashMap.Entry<Integer, Message> entry : messages.entrySet()){
+               if(entry.getValue().isOeffentlich()){
+                   lm.add(entry.getValue());
+               }
+           }
+           return lm;
+        }
+        public void setStateChanged(){
+            setChanged();
+            notifyObservers();
+        }
+        
 }
