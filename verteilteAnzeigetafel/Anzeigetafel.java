@@ -1,5 +1,4 @@
 package verteilteAnzeigetafel;
-//vsemenishch, Git funktioniert!
 
 import java.io.*;
 import java.util.*;
@@ -22,10 +21,7 @@ public class Anzeigetafel extends Observable implements Serializable {
 	/* userID, List<msgID> */
 
 	public Anzeigetafel(int abtNr) {
-		/* welche Nummern sollen die einzelnen Anzeigetafeln bekommen? */
-		this.abteilungsID = abtNr; // hier muss man fuer jedes kompilierte
-									// Programm
-		// eine neue Nummer festlegen
+		this.abteilungsID = abtNr; 
 		this.koordinatorID = 1;
                 this.TAFELNAME="tafel"+abtNr;
 		this.messageAnzahl = 0;
@@ -46,7 +42,14 @@ public class Anzeigetafel extends Observable implements Serializable {
 	public synchronized boolean isCoordinator(int userID) {
 		return userID == koordinatorID;
 	}
-
+        /**
+         * Changes the content of a message if the enquirer is a valid user and
+         * has the needed permissions.
+         * @param messageID
+         * @param inhalt
+         * @param user
+         * @throws TafelException 
+         */
 	public synchronized void modifyMessage(int messageID, String inhalt, int user) throws TafelException {
 
 		if (messages.containsKey(messageID)) {
@@ -62,14 +65,16 @@ public class Anzeigetafel extends Observable implements Serializable {
 		} else {
 			throw new TafelException("Keine Message mit ID " + messageID + " gefunden!");
 		}
-		/* Delete after debugging */
-		System.out.println("######  Anzeigetafel ######");
-		System.out.println(this.toString());
-		System.out.println("###########################");
                 setChanged();
                 notifyObservers();
 	}
-
+        /**
+         * Sets a message from "non-public" to "public" if it's a valid message
+         * and the enquirer is the coordinator.
+         * @param messageID
+         * @param user
+         * @throws TafelException 
+         */
 	public synchronized void publishMessage(int messageID, int user) throws TafelException {
 		if (!messages.containsKey(messageID)) {
 			throw new TafelException("Keine Message mit ID " + messageID + " gefunden!");
@@ -79,15 +84,16 @@ public class Anzeigetafel extends Observable implements Serializable {
 		} else {
 			throw new TafelException("Keine Berechtigung zum Publizieren!");
 		}
-
-		/* Delete after debugging */
-		System.out.println("######  Anzeigetafel ######");
-		System.out.println(this.toString());
-		System.out.println("###########################");
                 setChanged();
                 notifyObservers();
 	}
-
+        /**
+         * Deletes a message if it's a valid message and the enquirer has needed
+         * permissions.
+         * @param messageID
+         * @param user
+         * @throws TafelException 
+         */
 	public synchronized void deleteMessage(int messageID, int user) throws TafelException {
 
 		if (messages.containsKey(messageID)) {
@@ -103,15 +109,19 @@ public class Anzeigetafel extends Observable implements Serializable {
 		} else {
 			throw new TafelException("Keine Message mit ID " + messageID + " gefunden!");
 		}
-
-		/* Delete after debugging */
-		System.out.println("######  Anzeigetafel ######");
-		System.out.println(this.toString());
-		System.out.println("###########################");
                 setChanged();
                 notifyObservers();             
 	}
-
+        /**
+         * Creates a new Message if the enquirer is a valid user and has needed
+         * permissions.
+         * @param inhalt
+         * @param user
+         * @param abtNr
+         * @param oeffentlich
+         * @return id of the created message
+         * @throws TafelException 
+         */
 	public synchronized int createMessage(String inhalt, int user, int abtNr, boolean oeffentlich)
 			throws TafelException {
 		if (!userIDs.contains(user)) {
@@ -129,10 +139,6 @@ public class Anzeigetafel extends Observable implements Serializable {
 		messageAnzahl++;
 		msgLaufNr++;
 
-		/* Delete after debugging */
-		System.out.println("######  Anzeigetafel ######");
-		System.out.println(this.toString());
-		System.out.println("###########################");
                 setChanged();
                 notifyObservers();
 		return msgID;
@@ -171,9 +177,8 @@ public class Anzeigetafel extends Observable implements Serializable {
 	}
 
 	/**
-	 * Ermöglicht das Speichern des aktuellen Zustandes der Anzeigetafel in eine
-	 * Datei.
-	 */
+         * Saves Anzeigetafel to a file.
+         */
 	public synchronized void saveStateToFile() {
 		FileOutputStream fileoutput = null;
 		ObjectOutputStream objoutput = null;
@@ -195,9 +200,8 @@ public class Anzeigetafel extends Observable implements Serializable {
 	}
 
 	/**
-	 * Ermöglicht das Laden des Zustandes aus einer Datei.
-	 *
-	 * @return
+	 * Loads an instance of Anzeigetafel from file if it's available.
+	 * @return Anzeigetafel
 	 * @throws verteilteAnzeigetafel.TafelException
 	 */
 	public synchronized static Anzeigetafel loadStateFromFile(int abtNr) {
@@ -217,13 +221,12 @@ public class Anzeigetafel extends Observable implements Serializable {
 
 		return at;
 	}
-
-	// public LinkedList<Integer> getMessagesByUserID(int userID) throws
-	// TafelException{
-	// if(!userMsgs.containsKey(userID))
-	// throw new TafelException("Kein User gefunden!");
-	// return userMsgs.get(userID);
-	// }
+        /**
+         * Returns a list of messages to the provided user id.
+         * @param userID
+         * @return list of messages
+         * @throws TafelException 
+         */
 	public synchronized LinkedList<Message> getMessagesByUserID(int userID) throws TafelException {
 		if (!userMsgs.containsKey(userID)) {
 			throw new TafelException("Kein User gefunden! "+userID);
@@ -235,7 +238,10 @@ public class Anzeigetafel extends Observable implements Serializable {
 		}
 		return uMsgs;
 	}
-
+        /**
+         * Returns the state of Anzeigetafel in a string-form.
+         * @return 
+         */
 	@Override
 	public synchronized String toString() {
 		String str = "";
@@ -246,7 +252,11 @@ public class Anzeigetafel extends Observable implements Serializable {
 		}
 		return str;
 	}
-
+        /**
+         * Receives a message and puts it into the messages-list.
+         * @param msg
+         * @throws TafelException 
+         */
 	public synchronized void receiveMessage(Message msg) throws TafelException {
 		if (msg.getAbtNr() == abteilungsID) {
 			throw new TafelException("msg.getAbtNr()==abteilungsID");
@@ -254,14 +264,12 @@ public class Anzeigetafel extends Observable implements Serializable {
 		messages.put(msg.getMessageID(), msg);
                 setChanged();
                 notifyObservers();
-                for (Message m : getLocalMsgs()){
-                    m.toString();
-                }
-                for (Message m : getGlobalMsgs()){
-                    m.toString();
-                }
 	}
         
+        /**
+         * Returns a list of local messages.
+         * @return 
+         */
         public synchronized LinkedList<Message> getLocalMsgs(){
            LinkedList<Message> pm = new LinkedList<Message>();
            for(HashMap.Entry<Integer, Message> entry : messages.entrySet()){
@@ -272,6 +280,10 @@ public class Anzeigetafel extends Observable implements Serializable {
            return pm;
         }
         
+        /**
+         * Returns a list of global (published) messages.
+         * @return 
+         */
         public synchronized LinkedList<Message> getGlobalMsgs(){
            LinkedList<Message> lm = new LinkedList<Message>();
            for(HashMap.Entry<Integer, Message> entry : messages.entrySet()){
@@ -280,10 +292,6 @@ public class Anzeigetafel extends Observable implements Serializable {
                }
            }
            return lm;
-        }
-        public void setStateChanged(){
-            setChanged();
-            notifyObservers();
         }
         
 }
