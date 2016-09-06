@@ -24,9 +24,10 @@ public class Client implements Serializable {
     private final int ENDE = 0;
     private final int SERVER_PORT = 10001;
     private String SERVER_HOSTNAME = "localhost";
-    private final String ABTEILUNG_1 = "192.168.1.21";
-    private final String ABTEILUNG_2 = "192.168.1.22";
-    private final String ABTEILUNG_3 = "192.168.1.23";
+    private final String ABTEILUNG_1 = "192.168.178.10";
+    private final String ABTEILUNG_2 = "192.168.178.11";
+    private final String ABTEILUNG_3 = "192.168.178.12";
+    private final String ABTEILUNG_4 = "192.168.178.13";
     private ClientWindow mainWindow;
     private int userID;
     private int abtNr;//Abteilungsnummer
@@ -62,6 +63,9 @@ public class Client implements Serializable {
                 break;
             case 3:
                 SERVER_HOSTNAME = ABTEILUNG_3;
+                break;
+            case 4:
+                SERVER_HOSTNAME = ABTEILUNG_4;
                 break;
             default:
                 break;
@@ -401,6 +405,8 @@ public class Client implements Serializable {
                 case 3:
                     SERVER_HOSTNAME = ABTEILUNG_3;
                     break;
+                case 4:
+                    SERVER_HOSTNAME = ABTEILUNG_4;
                 default:
                     break;
             }

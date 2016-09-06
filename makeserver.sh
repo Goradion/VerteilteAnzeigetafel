@@ -3,6 +3,6 @@ if test -f TafelServer.jar; then
 fi
 
 javac tafelServer/TafelServer.java 
-jar -cf TafelServer.jar tafelServer/*.class tafelServer/*.form serverRequests/*.class verteilteAnzeigetafel/*.class
+jar -cf TafelServer.jar tafelServer/*.class serverRequests/*.class verteilteAnzeigetafel/*.class
 jar -ufm TafelServer.jar ServerManifest
 

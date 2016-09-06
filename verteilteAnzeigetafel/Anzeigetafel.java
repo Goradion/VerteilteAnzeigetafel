@@ -65,8 +65,7 @@ public class Anzeigetafel extends Observable implements Serializable {
 		} else {
 			throw new TafelException("Keine Message mit ID " + messageID + " gefunden!");
 		}
-                setChanged();
-                notifyObservers();
+                updateState();
 	}
         /**
          * Sets a message from "non-public" to "public" if it's a valid message
@@ -84,8 +83,7 @@ public class Anzeigetafel extends Observable implements Serializable {
 		} else {
 			throw new TafelException("Keine Berechtigung zum Publizieren!");
 		}
-                setChanged();
-                notifyObservers();
+                updateState();
 	}
         /**
          * Deletes a message if it's a valid message and the enquirer has needed
@@ -109,8 +107,7 @@ public class Anzeigetafel extends Observable implements Serializable {
 		} else {
 			throw new TafelException("Keine Message mit ID " + messageID + " gefunden!");
 		}
-                setChanged();
-                notifyObservers();             
+                updateState();             
 	}
         /**
          * Creates a new Message if the enquirer is a valid user and has needed
@@ -139,8 +136,7 @@ public class Anzeigetafel extends Observable implements Serializable {
 		messageAnzahl++;
 		msgLaufNr++;
 
-                setChanged();
-                notifyObservers();
+                updateState();
 		return msgID;
 	}
 
@@ -180,6 +176,7 @@ public class Anzeigetafel extends Observable implements Serializable {
          * Saves Anzeigetafel to a file.
          */
 	public synchronized void saveStateToFile() {
+
 		FileOutputStream fileoutput = null;
 		ObjectOutputStream objoutput = null;
 		try {
@@ -262,8 +259,7 @@ public class Anzeigetafel extends Observable implements Serializable {
 			throw new TafelException("msg.getAbtNr()==abteilungsID");
 		}
 		messages.put(msg.getMessageID(), msg);
-                setChanged();
-                notifyObservers();
+                updateState();
 	}
         
         /**
@@ -294,4 +290,8 @@ public class Anzeigetafel extends Observable implements Serializable {
            return lm;
         }
         
+        public void updateState(){
+            setChanged();
+            notifyObservers();
+        }
 }

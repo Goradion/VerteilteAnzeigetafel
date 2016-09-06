@@ -101,11 +101,11 @@ public class TafelServer extends Thread {
 			print("Neue Anzeigetafel erstellt!");
 		}
                  // hier habe ich den Gui-Part hinzugefügt
-                
-                gui = new TafelGUI(anzeigetafel);
-                gui.setVisible(true);
-                anzeigetafel.addObserver(gui);
-                anzeigetafel.notifyObservers();
+
+                  gui = new TafelGUI(anzeigetafel.getAbteilungsID(),this);
+                  anzeigetafel.addObserver(gui);
+                  anzeigetafel.updateState();
+
                 // ende 
                
                 
