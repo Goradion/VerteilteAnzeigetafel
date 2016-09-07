@@ -41,32 +41,17 @@ public class TafelGUI implements Observer {
         window.setVisible(true);
        
     }
+    
     @Override
     public void update(Observable o, Object arg) {
-//        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         Anzeigetafel at = (Anzeigetafel)o;
         localMessages.setText(null);
         globalMessages.setText(null);
         for(Message m: at.getLocalMsgs()){
-            localMessages.append(m.toString());
+            localMessages.append(m.getUserID()+" : "+m.getInhalt()+'\n');
         }
         for(Message m: at.getGlobalMsgs()){
-            globalMessages.append(m.toString());
+            globalMessages.append(m.getUserID()+" : "+m.getInhalt()+'\n');
         }
-//        printUpdate(at);
-    }
-    
-    public void printUpdate(Anzeigetafel at){
-        System.out.println("++++++++++++++++++++++++++++");
-        System.out.println("Abteilung "+at.getAbteilungsID());
-        for(Message m : at.getLocalMsgs()){
-            System.out.println(m.toString());
-        }
-        System.out.println("++++++++++++++++++++++++++++");
-        for(Message m : at.getGlobalMsgs()){
-            System.out.println(m.toString());
-        }
-        System.out.println("++++++++++++++++++++++++++++");
-    }
-    
+    }    
 }
