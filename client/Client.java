@@ -17,6 +17,8 @@ import java.util.Scanner;
 import serverRequests.*;
 import tafelServer.*;
 import java.io.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class Client implements Serializable {
 
@@ -29,6 +31,7 @@ public class Client implements Serializable {
     private final String ABTEILUNG_3 = "192.168.178.12";
     private final String ABTEILUNG_4 = "192.168.178.13";
     private ClientWindow mainWindow;
+    private LoggingWindow logWin;
     private int userID;
     private int abtNr;//Abteilungsnummer
 
@@ -46,11 +49,13 @@ public class Client implements Serializable {
         this.userID = 0;
         this.abtNr = 0;
         this.mainWindow = new ClientWindow("Client", this);
+        this.logWin = new LoggingWindow(this);
         mainWindow.setResizable(false);
     }
 
     public void startClient() {
         mainWindow.run();
+        logWin.run();
     }
 
     private void setAbteilung(int abt) {
@@ -140,7 +145,8 @@ public class Client implements Serializable {
             ObjectOutputStream oout = new ObjectOutputStream(socket.getOutputStream());
 
             oout.writeObject(sr);
-            oout.writeObject(null);
+//            oout.writeObject(null);
+            log(socket);
             oout.close();
             //ms.close();
             socket.close();
@@ -168,7 +174,7 @@ public class Client implements Serializable {
             ObjectOutputStream oout = new ObjectOutputStream(socketServer.getOutputStream());
 
             oout.writeObject(serverR);
-
+            
             oout.close();
             socketServer.close();
 
@@ -184,14 +190,15 @@ public class Client implements Serializable {
     public void removeMessageWithGui(int abt, int userID, int msgID) {
         setAbteilung(abt);
         try {
-            Socket socketServer = new Socket(SERVER_HOSTNAME, SERVER_PORT);
+            Socket socket = new Socket(SERVER_HOSTNAME, SERVER_PORT);
             ServerRequest serverR = ServerRequest.buildDeleteRequest(msgID, userID);
-            ObjectOutputStream oout = new ObjectOutputStream(socketServer.getOutputStream());
+            ObjectOutputStream oout = new ObjectOutputStream(socket.getOutputStream());
 
             oout.writeObject(serverR);
-
+           
+            log(socket);
             oout.close();
-            socketServer.close();
+            socket.close();
 
         } catch (UnknownHostException e) {
             // Wenn Rechnername nicht bekannt ist.
@@ -237,14 +244,14 @@ public class Client implements Serializable {
         String rueckmeldung = "Aenderung erfolgreich abgeschickt";
 
         try {
-            Socket socketServer = new Socket(SERVER_HOSTNAME, SERVER_PORT);
+            Socket socket = new Socket(SERVER_HOSTNAME, SERVER_PORT);
             ServerRequest serverR = ServerRequest.buildModifyRequest(msgID, neueNachricht, userID);
-            ObjectOutputStream oout = new ObjectOutputStream(socketServer.getOutputStream());
+            ObjectOutputStream oout = new ObjectOutputStream(socket.getOutputStream());
             
             oout.writeObject(serverR);
-            
+            log(socket);
             oout.close();
-            socketServer.close();
+            socket.close();
 
         } catch (UnknownHostException e) {
             // Wenn Rechnername nicht bekannt ist.
@@ -302,7 +309,7 @@ public class Client implements Serializable {
 
     public String showMessagesWithGui(int abt, int userID) {
         setAbteilung(abt);
-        String str = "abrakatabra";
+        String str = null;
         try {
 
             Socket socketServer = new Socket(SERVER_HOSTNAME, SERVER_PORT);           
@@ -342,19 +349,20 @@ public class Client implements Serializable {
 
     public void publishMessage(int messageId, int userId){
     	
-    		try {
-				Socket serverSocket = new Socket(SERVER_HOSTNAME,SERVER_PORT);
-				ServerRequest serverRequest = ServerRequest.buildPublishRequest(messageId, userId);
-				ObjectOutputStream oout = new ObjectOutputStream(serverSocket.getOutputStream());
-				oout.writeObject(serverRequest);
-				serverSocket.close();
-			} catch (UnknownHostException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+    	try {
+            Socket socket = new Socket(SERVER_HOSTNAME,SERVER_PORT);
+            ServerRequest serverRequest = ServerRequest.buildPublishRequest(messageId, userId);
+            ObjectOutputStream oout = new ObjectOutputStream(socket.getOutputStream());
+            oout.writeObject(serverRequest);
+            log(socket);
+            socket.close();
+	} catch (UnknownHostException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+	} catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+	}
     		
     	
     }
@@ -471,10 +479,18 @@ public class Client implements Serializable {
         }
 
     }
-
+    private void log(Socket socket) throws IOException{
+        ObjectInputStream input = new ObjectInputStream(socket.getInputStream());
+            try {
+                logWin.addEntry(input.readObject().toString());
+            } catch (ClassNotFoundException ex) {
+                ex.printStackTrace();
+            }
+            input.close();
+    }
     public static void main(String[] args) {
         Client client = new Client();
         client.startClient();
-        client.hauptschleife();
+//        client.hauptschleife();
     }
 }

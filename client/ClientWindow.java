@@ -309,6 +309,9 @@ public class ClientWindow extends javax.swing.JFrame implements Runnable{
 
     private void messageTextAreaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_messageTextAreaMouseClicked
         // TODO add your handling code here:
+        if(newMessageRB.isEnabled()){
+            messageTextArea.setText(null);
+        }
         messageTextArea.selectAll();
         if(!changeMessageRB.isSelected())
             newMessageRB.setSelected(true);
