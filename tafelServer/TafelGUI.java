@@ -48,10 +48,13 @@ public class TafelGUI implements Observer {
         localMessages.setText(null);
         globalMessages.setText(null);
         for(Message m: at.getLocalMsgs()){
-            localMessages.append(m.getUserID()+" : "+m.getInhalt()+'\n');
+            localMessages.append("UserID: " + m.getUserID()+'\t'+"Zeit: "
+                    +m.getTime()+'\n'+m.getInhalt()+'\n'+'\n');
         }
         for(Message m: at.getGlobalMsgs()){
-            globalMessages.append(m.getUserID()+" : "+m.getInhalt()+'\n');
+            globalMessages.append("Abt: "+m.getAbtNr()+'\t'+"UserID: "
+                    + m.getUserID()+'\t'+"Zeit: "+m.getTime()+'\n'
+                    +m.getInhalt()+'\n'+'\n');
         }
     }    
 }
