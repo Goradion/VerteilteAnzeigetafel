@@ -5,6 +5,7 @@ import java.awt.GridLayout;
 import java.util.Observable;
 import java.util.Observer;
 import javax.swing.JFrame;
+import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.border.TitledBorder;
 import verteilteAnzeigetafel.Anzeigetafel;
@@ -15,6 +16,8 @@ public class TafelGUI implements Observer {
     private final JFrame window;
     private JTextArea localMessages;
     private JTextArea globalMessages;
+    private JScrollPane localScroll;
+    private JScrollPane globalScroll;
     
     TafelGUI(int abteilung, TafelServer ts){
         this.window = new JFrame("Abteilung "+Integer.toString(abteilung));
@@ -31,9 +34,18 @@ public class TafelGUI implements Observer {
         globalMessages.setBorder(new TitledBorder("Global messages"));
         globalMessages.setSize(new Dimension(200,150));
         
+        
+        this.localScroll = new JScrollPane(localMessages);
+        localScroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        localScroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+        
+        this.globalScroll = new JScrollPane(globalMessages);
+        globalScroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        globalScroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+        
         window.setLayout(new GridLayout(2,1));
-        window.add(localMessages);
-        window.add(globalMessages);
+        window.add(localScroll);
+        window.add(globalScroll);
         window.setPreferredSize(new Dimension(400,300));
         window.setSize(new Dimension(400,300));
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
