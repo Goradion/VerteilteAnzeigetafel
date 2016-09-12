@@ -4,6 +4,8 @@ import java.net.SocketAddress;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.concurrent.LinkedBlockingDeque;
+import java.util.logging.Logger;
+
 import serverRequests.*;
 import verteilteAnzeigetafel.Anzeigetafel;
 import verteilteAnzeigetafel.Message;
@@ -51,7 +53,7 @@ public class ServerRequestHandler {
 		int msgID = anzeigetafel.createMessage(createRequest.getMessage(), createRequest.getUserID(),
 				createRequest.getAbteilungsID(), false);
 		anzeigetafel.saveStateToFile();
-		return "Nachricht erstellt:\n" + anzeigetafel.getMessages().get(msgID);
+		return "Nachricht mit ID=" + msgID + "erstellt!";
 	}
 
 	/**

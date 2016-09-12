@@ -5,8 +5,21 @@
  */
 package tafelServer;
 
-import java.io.*;
-import java.net.*;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.InetSocketAddress;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.net.SocketAddress;
+import java.sql.Time;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.concurrent.LinkedBlockingDeque;
@@ -363,7 +376,7 @@ public class TafelServer extends Thread {
 	 *            the message
 	 */
 	public synchronized void print(String nachricht) {
-		System.out.println(nachricht);
+		System.out.println(new Time(System.currentTimeMillis()) + ": " + nachricht);
 	}
 
 	public synchronized void printStackTrace(Exception e) {
@@ -414,7 +427,7 @@ public class TafelServer extends Thread {
 	}
 
 	/**
-	 * Retunrs the message queues by abteilungsID.
+	 * Returns the message queues by abteilungsID.
 	 * 
 	 * @return queueMap
 	 */
@@ -427,7 +440,7 @@ public class TafelServer extends Thread {
 			try {
 				q.put(new DeleteRequest(messageID, 1));
 			} catch (InterruptedException e) {
-				print("Message mit ID=" + messageID + " wird nicht überall gelöscht werden!");
+				print("Message mit ID=" + messageID + " wird nicht Ã¼berall gelÃ¶scht werden!");
 			}
 		}
 		saveQueueMapToFile();
@@ -438,7 +451,7 @@ public class TafelServer extends Thread {
 			try {
 				q.put(new ModifyRequest(messageID, newMessage, 1));
 			} catch (InterruptedException e) {
-				print("Message mit ID=" + messageID + " wird nicht überall geändert werden!");
+				print("Message mit ID=" + messageID + " wird nicht Ã¼berall geÃ¤ndert werden!");
 			}
 		}
 		saveQueueMapToFile();
