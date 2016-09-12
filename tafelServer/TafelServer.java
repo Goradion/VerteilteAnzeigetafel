@@ -10,6 +10,9 @@ import java.net.*;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.concurrent.LinkedBlockingDeque;
+
+import serverRequests.ReceiveRequest;
+import serverRequests.ServerRequest;
 import verteilteAnzeigetafel.Anzeigetafel;
 import verteilteAnzeigetafel.Message;
 import verteilteAnzeigetafel.TafelException;
@@ -19,7 +22,7 @@ import verteilteAnzeigetafel.TafelException;
  * @author Simon Bastian
  */
 public class TafelServer extends Thread {
-	private HashMap<Integer, LinkedBlockingDeque<Message>> queueMap = new HashMap<Integer, LinkedBlockingDeque<Message>>();
+	private HashMap<Integer, LinkedBlockingDeque<ServerRequest>> queueMap = new HashMap<Integer, LinkedBlockingDeque<ServerRequest>>();
 	private HashMap<Integer, SocketAddress> tafelAdressen = new HashMap<Integer, SocketAddress>();
 	private HashMap<Integer, OutboxThread> outboxThreads = new HashMap<Integer, OutboxThread>();
 	private HashMap<Integer, HeartbeatThread> heartbeatThreads = new HashMap<Integer, HeartbeatThread>();
@@ -126,8 +129,8 @@ public class TafelServer extends Thread {
 	 */
 	public synchronized void publishMessage(int messageID, int userID) throws InterruptedException, TafelException {
 		anzeigetafel.publishMessage(messageID, userID);
-		for (LinkedBlockingDeque<Message> q : queueMap.values()) {
-			q.put(anzeigetafel.getMessages().get(messageID));
+		for (LinkedBlockingDeque<ServerRequest> q : queueMap.values()) {
+			q.put(new ReceiveRequest(anzeigetafel.getMessages().get(messageID)));
 		}
 		saveQueueMapToFile();
 		anzeigetafel.saveStateToFile();
@@ -184,7 +187,7 @@ public class TafelServer extends Thread {
 			saveQueueMapToFile();
 		}
 		if (!queueMap.containsKey(abteilungsID)){
-			queueMap.put(abteilungsID, new LinkedBlockingDeque<Message>());
+			queueMap.put(abteilungsID, new LinkedBlockingDeque<ServerRequest>());
 		}
 		activateHeartbeat(abteilungsID);
 		activateQueue(abteilungsID);
@@ -249,15 +252,15 @@ public class TafelServer extends Thread {
 	 * @return queueMap
 	 */
 	@SuppressWarnings("unchecked")
-	private HashMap<Integer, LinkedBlockingDeque<Message>> loadQueueMapFromFile() {
-		HashMap<Integer, LinkedBlockingDeque<Message>> qMap = new HashMap<Integer, LinkedBlockingDeque<Message>>();
+	private HashMap<Integer, LinkedBlockingDeque<ServerRequest>> loadQueueMapFromFile() {
+		HashMap<Integer, LinkedBlockingDeque<ServerRequest>> qMap = new HashMap<Integer, LinkedBlockingDeque<ServerRequest>>();
 		FileInputStream fileInput = null;
 		ObjectInputStream objinput = null;
 		try {
 			fileInput = new FileInputStream("./queueMap" + abteilungsID);
 			objinput = new ObjectInputStream(fileInput);
 			Object obj = objinput.readObject();
-			qMap = (HashMap<Integer, LinkedBlockingDeque<Message>>) obj;
+			qMap = (HashMap<Integer, LinkedBlockingDeque<ServerRequest>>) obj;
 			print("Queue-Backup geladen!");
 		} catch (FileNotFoundException e) {
 			print("Kein Queue-Backup gefunden. Erstelle neues Backup...");
@@ -413,7 +416,7 @@ public class TafelServer extends Thread {
 	 * 
 	 * @return queueMap
 	 */
-	public HashMap<Integer, LinkedBlockingDeque<Message>> getQueueMap() {
+	public HashMap<Integer, LinkedBlockingDeque<ServerRequest>> getQueueMap() {
 		return queueMap;
 	}
 

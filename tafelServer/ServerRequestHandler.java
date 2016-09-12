@@ -120,7 +120,7 @@ public class ServerRequestHandler {
 						
 		}else {
 			tafelAdressen.put(abteilungsID, address);
-			tafelServer.getQueueMap().put(abteilungsID, new LinkedBlockingDeque<Message>());
+			tafelServer.getQueueMap().put(abteilungsID, new LinkedBlockingDeque<ServerRequest>());
 		}
 		tafelServer.activateHeartbeat(abteilungsID);
 		tafelServer.activateQueue(abteilungsID);
