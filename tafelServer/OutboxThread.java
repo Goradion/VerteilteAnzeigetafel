@@ -12,7 +12,7 @@ import verteilteAnzeigetafel.Message;
 public class OutboxThread extends Thread {
 	int abteilungsID;
 	SocketAddress adress;
-	LinkedBlockingDeque<Message> messageQueue;
+	LinkedBlockingDeque<ServerRequest> messageQueue;
 	TafelServer tafelServer;
 	/**
 	 * Constructs a new OutboxThread
@@ -21,7 +21,7 @@ public class OutboxThread extends Thread {
 	 * @param messageQueue Here are the messages to deliver.
 	 * @param tafelServer The tafelServer where status messages are sent.
 	 */
-	public OutboxThread(int abteilungsID, SocketAddress adress, LinkedBlockingDeque<Message> messageQueue,
+	public OutboxThread(int abteilungsID, SocketAddress adress, LinkedBlockingDeque<ServerRequest> messageQueue,
 			TafelServer tafelServer) {
 		super();
 		this.abteilungsID = abteilungsID;
@@ -35,7 +35,7 @@ public class OutboxThread extends Thread {
 	public void run() {
 		tafelServer.print(getMyName() + " läuft!\n"+messageQueue.toString());
 		Socket socket = null;
-		Message msg = null;
+		ServerRequest request = null;
 		try {
 			while (true) {
 				if (socket == null || socket.isClosed()) {
@@ -43,13 +43,12 @@ public class OutboxThread extends Thread {
 					socket.connect(adress);
 				}
 
-				msg = messageQueue.take();
+				request = messageQueue.take();
 				tafelServer.saveQueueMapToFile();
-				ServerRequest request = ServerRequest.buildReceiveRequest(msg);
 				ObjectOutputStream oout = new ObjectOutputStream(socket.getOutputStream());
 				oout.writeObject(request);
 				//oout.flush();
-				msg = null;
+				request = null;
 			}
 		} catch (InterruptedException e) {
 			tafelServer.print(getMyName() + " wurde unterbrochen!");
@@ -64,12 +63,12 @@ public class OutboxThread extends Thread {
 		} catch (IOException e) {
 			tafelServer.print(getMyName() + ": " + adress.toString() + " nicht erreichbar! " + e.getMessage());
 		} finally {
-			if (msg != null) {
+			if (request != null) {
 				try {
-					messageQueue.putFirst(msg);
+					messageQueue.putFirst(request);
 					tafelServer.saveQueueMapToFile();
 				} catch (InterruptedException e) {
-					tafelServer.print("Nachricht ID=" + msg.getMessageID() + " ging auf dem Weg zu Abteilung "
+					tafelServer.print("Request " + request + " ging auf dem Weg zu Abteilung "
 							+ abteilungsID + " verloren");
 				}
 			}
