@@ -7,19 +7,24 @@ import java.net.SocketAddress;
 import java.util.concurrent.LinkedBlockingDeque;
 
 import serverRequests.ServerRequest;
-import verteilteAnzeigetafel.Message;
 
 public class OutboxThread extends Thread {
 	int abteilungsID;
 	SocketAddress adress;
 	LinkedBlockingDeque<ServerRequest> messageQueue;
 	TafelServer tafelServer;
+
 	/**
 	 * Constructs a new OutboxThread
-	 * @param abteilungsID Who I deliver to.
-	 * @param adress Where to deliver.
-	 * @param messageQueue Here are the messages to deliver.
-	 * @param tafelServer The tafelServer where status messages are sent.
+	 * 
+	 * @param abteilungsID
+	 *            Who I deliver to.
+	 * @param adress
+	 *            Where to deliver.
+	 * @param messageQueue
+	 *            Here are the messages to deliver.
+	 * @param tafelServer
+	 *            The tafelServer where status messages are sent.
 	 */
 	public OutboxThread(int abteilungsID, SocketAddress adress, LinkedBlockingDeque<ServerRequest> messageQueue,
 			TafelServer tafelServer) {
@@ -29,11 +34,12 @@ public class OutboxThread extends Thread {
 		this.messageQueue = messageQueue;
 		this.tafelServer = tafelServer;
 	}
+
 	/**
 	 * Attempts to deliver the messages from the messageQueue.
 	 */
 	public void run() {
-		tafelServer.print(getMyName() + " läuft!\n"+messageQueue.toString());
+		tafelServer.print(getMyName() + " läuft!\n" + messageQueue.toString());
 		Socket socket = null;
 		ServerRequest request = null;
 		try {
@@ -47,7 +53,7 @@ public class OutboxThread extends Thread {
 				tafelServer.saveQueueMapToFile();
 				ObjectOutputStream oout = new ObjectOutputStream(socket.getOutputStream());
 				oout.writeObject(request);
-				//oout.flush();
+				// oout.flush();
 				request = null;
 			}
 		} catch (InterruptedException e) {
@@ -68,8 +74,8 @@ public class OutboxThread extends Thread {
 					messageQueue.putFirst(request);
 					tafelServer.saveQueueMapToFile();
 				} catch (InterruptedException e) {
-					tafelServer.print("Request " + request + " ging auf dem Weg zu Abteilung "
-							+ abteilungsID + " verloren");
+					tafelServer.print(
+							"Request " + request + " ging auf dem Weg zu Abteilung " + abteilungsID + " verloren");
 				}
 			}
 			try {
@@ -84,8 +90,10 @@ public class OutboxThread extends Thread {
 		}
 
 	}
+
 	/**
 	 * Return a name to distinguish which OutboxThread is talking.
+	 * 
 	 * @return a name
 	 */
 	private String getMyName() {
