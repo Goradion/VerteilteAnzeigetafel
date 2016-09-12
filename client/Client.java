@@ -112,6 +112,7 @@ public class Client implements Serializable {
 				log(socket);
 				oout.close();
 			}
+			
 			socket.close();
 		} catch (UnknownHostException e) {
 			// Wenn Rechnername nicht bekannt ist.
