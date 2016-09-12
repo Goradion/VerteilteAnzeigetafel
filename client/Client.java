@@ -104,7 +104,7 @@ public class Client implements Serializable {
 			Socket socket = new Socket();
 			socket.connect(new InetSocketAddress(SERVER_HOSTNAME, SERVER_PORT), 1000);
 			if (!socket.isConnected()) {
-				logWin.addEntry("Keine Verbindung zum Server " + SERVER_HOSTNAME + " möglich! \n");
+				logWin.addEntry("Keine Verbindung zum Server " + SERVER_HOSTNAME + " moeglich! \n");
 			} else {
 				ServerRequest sr = ServerRequest.buildCreateRequest(message, userID, abt);
 				ObjectOutputStream oout = new ObjectOutputStream(socket.getOutputStream());
@@ -130,7 +130,7 @@ public class Client implements Serializable {
 			Socket socket = new Socket();
 			socket.connect(new InetSocketAddress(SERVER_HOSTNAME, SERVER_PORT), 1000);
 			if (!socket.isConnected()) {
-				logWin.addEntry("Keine Verbindung zum Server " + SERVER_HOSTNAME + " möglich! \n");
+				logWin.addEntry("Keine Verbindung zum Server " + SERVER_HOSTNAME + " moeglich! \n");
 			} else {
 				ServerRequest serverR = ServerRequest.buildDeleteRequest(msgID, userID);
 				ObjectOutputStream oout = new ObjectOutputStream(socket.getOutputStream());
@@ -157,7 +157,7 @@ public class Client implements Serializable {
 			Socket socket = new Socket();
 			socket.connect(new InetSocketAddress(SERVER_HOSTNAME, SERVER_PORT), 1000);
 			if (!socket.isConnected()) {
-				logWin.addEntry("Keine Verbindung zum Server " + SERVER_HOSTNAME + " möglich! \n");
+				logWin.addEntry("Keine Verbindung zum Server " + SERVER_HOSTNAME + " moeglich! \n");
 			} else {
 				ServerRequest serverR = ServerRequest.buildModifyRequest(msgID, neueNachricht, userID);
 				ObjectOutputStream oout = new ObjectOutputStream(socket.getOutputStream());
@@ -186,7 +186,7 @@ public class Client implements Serializable {
 			Socket socket = new Socket();
 			socket.connect(new InetSocketAddress(SERVER_HOSTNAME, SERVER_PORT), 1000);
 			if (!socket.isConnected()) {
-				logWin.addEntry("Keine Verbindung zum Server " + SERVER_HOSTNAME + " möglich! \n");
+				logWin.addEntry("Keine Verbindung zum Server " + SERVER_HOSTNAME + " moeglich! \n");
 			} else {
 				ServerRequest serverR = ServerRequest.buildShowMyMessagesRequest(userID);
 				ObjectOutputStream oout = new ObjectOutputStream(socket.getOutputStream());
@@ -223,7 +223,7 @@ public class Client implements Serializable {
 			Socket socket = new Socket();
 			socket.connect(new InetSocketAddress(SERVER_HOSTNAME, SERVER_PORT), 1000);
 			if (!socket.isConnected()) {
-				logWin.addEntry("Keine Verbindung zum Server " + SERVER_HOSTNAME + " möglich! \n");
+				logWin.addEntry("Keine Verbindung zum Server " + SERVER_HOSTNAME + " moeglich! \n");
 			} else {
 			ServerRequest serverRequest = ServerRequest.buildPublishRequest(messageId, userId);
 			ObjectOutputStream oout = new ObjectOutputStream(socket.getOutputStream());
