@@ -11,6 +11,8 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.concurrent.LinkedBlockingDeque;
 
+import serverRequests.DeleteRequest;
+import serverRequests.ModifyRequest;
 import serverRequests.ReceiveRequest;
 import serverRequests.ServerRequest;
 import verteilteAnzeigetafel.Anzeigetafel;
@@ -29,7 +31,8 @@ public class TafelServer extends Thread {
 	public static final int SERVER_PORT = 10001;
 	private Anzeigetafel anzeigetafel;
 	private int abteilungsID;
-        private TafelGUI gui;
+	private TafelGUI gui;
+
 	/**
 	 * Processes command line arguments, configures and starts a new
 	 * TafelServer.
@@ -75,7 +78,7 @@ public class TafelServer extends Thread {
 	@Override
 	public void run() {
 		init();
-                printMessages();
+		printMessages();
 		ServerSocket socket;
 		try {
 			socket = new ServerSocket(SERVER_PORT);
@@ -103,15 +106,14 @@ public class TafelServer extends Thread {
 			anzeigetafel.saveStateToFile();
 			print("Neue Anzeigetafel erstellt!");
 		}
-                 // hier habe ich den Gui-Part hinzugefÃ¼gt
+		// hier habe ich den Gui-Part hinzugefÃ¼gt
 
-                  gui = new TafelGUI(anzeigetafel.getAbteilungsID(),this);
-                  anzeigetafel.addObserver(gui);
-                  anzeigetafel.updateState();
+		gui = new TafelGUI(anzeigetafel.getAbteilungsID(), this);
+		anzeigetafel.addObserver(gui);
+		anzeigetafel.updateState();
 
-                // ende 
-               
-                
+		// ende
+
 		queueMap = loadQueueMapFromFile();
 		loadTafelAdressenFromFile();
 	}
@@ -186,7 +188,7 @@ public class TafelServer extends Thread {
 			tafelAdressen.put(abteilungsID, address);
 			saveQueueMapToFile();
 		}
-		if (!queueMap.containsKey(abteilungsID)){
+		if (!queueMap.containsKey(abteilungsID)) {
 			queueMap.put(abteilungsID, new LinkedBlockingDeque<ServerRequest>());
 		}
 		activateHeartbeat(abteilungsID);
@@ -204,7 +206,7 @@ public class TafelServer extends Thread {
 		if (!outboxThreads.containsKey(abteilungsID) || !outboxThreads.get(abteilungsID).isAlive()) {
 			OutboxThread obt = new OutboxThread(abteilungsID, tafelAdressen.get(abteilungsID),
 					queueMap.get(abteilungsID), this);
-			
+
 			outboxThreads.put(abteilungsID, obt);
 			obt.start();
 		} // else Queue already active
@@ -418,6 +420,28 @@ public class TafelServer extends Thread {
 	 */
 	public HashMap<Integer, LinkedBlockingDeque<ServerRequest>> getQueueMap() {
 		return queueMap;
+	}
+
+	public void deletePublicMessage(int messageID) {
+		for (LinkedBlockingDeque<ServerRequest> q : queueMap.values()) {
+			try {
+				q.put(new DeleteRequest(messageID, 1));
+			} catch (InterruptedException e) {
+				print("Message mit ID=" + messageID + " wird nicht überall gelöscht werden!");
+			}
+		}
+		saveQueueMapToFile();
+	}
+
+	public void modifyPublicMessage(int messageID, String newMessage) {
+		for (LinkedBlockingDeque<ServerRequest> q : queueMap.values()) {
+			try {
+				q.put(new ModifyRequest(messageID, newMessage, 1));
+			} catch (InterruptedException e) {
+				print("Message mit ID=" + messageID + " wird nicht überall geändert werden!");
+			}
+		}
+		saveQueueMapToFile();
 	}
 
 }
