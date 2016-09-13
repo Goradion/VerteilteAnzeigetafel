@@ -25,13 +25,13 @@ public class TafelGUI implements Observer {
         this.localMessages = new JTextArea();
         localMessages.setEditable(false);
 //        localMessages.setPreferredSize(new Dimension(200,150));
-//        localMessages.setBorder(new TitledBorder("Local messages"));
+        localMessages.setBorder(new TitledBorder("Local messages"));
 //        localMessages.setSize(new Dimension(200,150));
         
         this.globalMessages = new JTextArea();
         globalMessages.setEditable(false);
 //        globalMessages.setPreferredSize(new Dimension(200,150));
-//        globalMessages.setBorder(new TitledBorder("Global messages"));
+        globalMessages.setBorder(new TitledBorder("Global messages"));
 //        globalMessages.setSize(new Dimension(200,150));
         
         
