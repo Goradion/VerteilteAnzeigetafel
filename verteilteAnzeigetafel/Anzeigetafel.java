@@ -33,6 +33,9 @@ public class Anzeigetafel extends Observable implements Serializable {
 		for (int i = 1; i < 6; i++) {
 			userIDs.add(i);
 		}
+		for (int i = 1; i < 6; i++){
+			userMsgs.put(i, new LinkedList<Integer>());
+		}
 	}
         
 	public synchronized boolean isUser(int userID) {
@@ -259,6 +262,7 @@ public class Anzeigetafel extends Observable implements Serializable {
 			throw new TafelException("msg.getAbtNr()==abteilungsID");
 		}
 		messages.put(msg.getMessageID(), msg);
+		
                 updateState();
 	}
         
