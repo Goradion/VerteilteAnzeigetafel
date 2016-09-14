@@ -48,7 +48,7 @@ public class Client implements Serializable {
 		this.userID = 0;
 		this.abtNr = 0;
 		this.mainWindow = new ClientWindow("Client", this);
-		this.logWin = new LoggingWindow(this);
+		this.logWin = new LoggingWindow(this, mainWindow);
 		mainWindow.setResizable(false);
 	}
 

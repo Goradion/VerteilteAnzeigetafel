@@ -13,14 +13,15 @@ public class LoggingWindow extends javax.swing.JFrame implements Runnable{
     private JTextArea logtext;
     private Client client;
     private JScrollPane scroll;
-    public LoggingWindow(Client client){
+    public LoggingWindow(Client client, ClientWindow mainWindow){
         super("Log");
         this.client = client;
         this.logtext = new JTextArea();
         logtext.setEditable(false); 
         this.scroll = new JScrollPane(logtext);
+        this.setLocation(mainWindow.getX()+mainWindow.getWidth(),mainWindow.getY());
         scroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-          scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+        scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
     }
     public void clear(){
         logtext.setText(null);
