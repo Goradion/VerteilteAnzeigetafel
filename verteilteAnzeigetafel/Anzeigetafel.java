@@ -262,8 +262,8 @@ public class Anzeigetafel extends Observable implements Serializable {
 			throw new TafelException("msg.getAbtNr()==abteilungsID");
 		}
 		messages.put(msg.getMessageID(), msg);
-		
-                updateState();
+		userMsgs.get(msg.getUserID()).add(msg.getMessageID()); 
+        updateState();
 	}
         
         /**
@@ -292,6 +292,24 @@ public class Anzeigetafel extends Observable implements Serializable {
                }
            }
            return lm;
+        }
+        
+        public Message getMessageByID(int messageID){
+        	return messages.get(messageID);
+        }
+        public int getUserByMessage(int messageID) throws TafelException{
+        	int user = 0;
+        	for (Integer userID: userMsgs.keySet()){
+        		for (Integer message: userMsgs.get(userID)){
+        			if(message == messageID){
+        				user = userID;
+        				break;
+        			}
+        		}
+        	}
+        	if(user == 0)
+        		throw new TafelException("Kein User zu Message "+messageID+" gefunden!");
+        	return user;
         }
         
         public void updateState(){

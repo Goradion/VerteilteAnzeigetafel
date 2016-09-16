@@ -4,8 +4,6 @@ import java.net.SocketAddress;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.concurrent.LinkedBlockingDeque;
-import java.util.logging.Logger;
-
 import serverRequests.*;
 import verteilteAnzeigetafel.Anzeigetafel;
 import verteilteAnzeigetafel.Message;
@@ -82,27 +80,45 @@ public class ServerRequestHandler {
 
 	/**
 	 * Handles a request to modify a message.
-	 * 
+	 * Initiates the handle(ModifyPublicRequest) method in case the message is public.
 	 * @param modifyRequest
 	 * @return a answer
 	 * @throws TafelException
 	 *             if the anzeigetafel rejects the request.
 	 */
 	public String handle(ModifyRequest modifyRequest) throws TafelException {
-		LinkedList<Message> messagesByUserID = anzeigetafel.getMessagesByUserID(modifyRequest.getUserID());
-		int modID = modifyRequest.getMessageID();
-		for (Message m : messagesByUserID) {
-			if (m.getMessageID() == modID && m.isOeffentlich()) {
-				tafelServer.modifyPublicMessage(modID, modifyRequest.getNewMessage());
-				break;
-			}
-		}
-		anzeigetafel.modifyMessage(modifyRequest.getMessageID(), modifyRequest.getNewMessage(),
-				modifyRequest.getUserID());
-		anzeigetafel.saveStateToFile();
+//		LinkedList<Message> messagesByUserID = 
+//				anzeigetafel.getMessagesByUserID(anzeigetafel.getUserByMessage(modifyRequest.getMessageID()));
+//		int modID = modifyRequest.getMessageID(); 
+//		for (Message m : messagesByUserID) {
+//			if (m.getMessageID() == modID && m.isOeffentlich()) {
+//				tafelServer.modifyPublicMessage(modID, modifyRequest.getNewMessage());
+//				break;
+//			}
+//		}
+
+		Message message = anzeigetafel.getMessageByID(modifyRequest.getMessageID());
+		if(message.isOeffentlich())
+			tafelServer.modifyPublicMessage(modifyRequest.getMessageID(),
+					modifyRequest.getNewMessage());
+		
+		tafelServer.modifyMessage(modifyRequest.getMessageID(),
+				modifyRequest.getNewMessage(), modifyRequest.getUserID());
 		return "Nachricht mit ID=" + modifyRequest.getMessageID() + " geändert!";
 	}
-
+	/**
+	 * Handles a request to modify a public messages, usually initiated by the
+	 * handle(ModifyRequest) method.
+	 * @param modifyPublicRequest
+	 * @return an answer
+	 * @throws TafelException if anzeigetafel rejects the request
+	 */
+	public String handle(ModifyPublicRequest modifyPublicRequest)throws TafelException{
+		tafelServer.modifyMessage(modifyPublicRequest.getMessageID(),
+				modifyPublicRequest.getNewMessage(), modifyPublicRequest.getUserID());
+		return "Nachricht mit ID=" + modifyPublicRequest.getMessageID() + " geändert!";
+	}
+	
 	/**
 	 * Handles a request to publish a message.
 	 * 

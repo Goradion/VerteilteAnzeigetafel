@@ -25,6 +25,7 @@ import java.util.LinkedList;
 import java.util.concurrent.LinkedBlockingDeque;
 
 import serverRequests.DeleteRequest;
+import serverRequests.ModifyPublicRequest;
 import serverRequests.ModifyRequest;
 import serverRequests.ReceiveRequest;
 import serverRequests.ServerRequest;
@@ -449,7 +450,7 @@ public class TafelServer extends Thread {
 	public void modifyPublicMessage(int messageID, String newMessage) {
 		for (LinkedBlockingDeque<ServerRequest> q : queueMap.values()) {
 			try {
-				q.put(new ModifyRequest(messageID, newMessage, 1));
+				q.put(new ModifyPublicRequest(messageID, newMessage, 1));
 			} catch (InterruptedException e) {
 				print("Message mit ID=" + messageID + " wird nicht überall geändert werden!");
 			}
