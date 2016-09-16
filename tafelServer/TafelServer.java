@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.concurrent.LinkedBlockingDeque;
 
+import serverRequests.DeletePublicRequest;
 import serverRequests.DeleteRequest;
 import serverRequests.ModifyPublicRequest;
 import serverRequests.ModifyRequest;
@@ -435,11 +436,11 @@ public class TafelServer extends Thread {
 	public HashMap<Integer, LinkedBlockingDeque<ServerRequest>> getQueueMap() {
 		return queueMap;
 	}
-
+	
 	public void deletePublicMessage(int messageID) {
 		for (LinkedBlockingDeque<ServerRequest> q : queueMap.values()) {
 			try {
-				q.put(new DeleteRequest(messageID, 1));
+				q.put(new DeletePublicRequest(messageID, 1));
 			} catch (InterruptedException e) {
 				print("Message mit ID=" + messageID + " wird nicht überall gelöscht werden!");
 			}

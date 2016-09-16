@@ -63,19 +63,39 @@ public class ServerRequestHandler {
 	 *             if the anzeigetafel rejects the request.
 	 */
 	public String handle(DeleteRequest deleteRequest) throws TafelException {
-		// if (anzeigetafel.getMessagesByUserID(deleteRequest.getUserID()))
-		LinkedList<Message> messagesByUserID = anzeigetafel.getMessagesByUserID(deleteRequest.getUserID());
-		int deleteID = deleteRequest.getMessageID();
-		for (Message m : messagesByUserID) {
-			if (m.getMessageID() == deleteID && m.isOeffentlich()) {
-				tafelServer.deletePublicMessage(deleteID);
-				break;
-			}
-		}
+//		// if (anzeigetafel.getMessagesByUserID(deleteRequest.getUserID()))
+//		LinkedList<Message> messagesByUserID = anzeigetafel.getMessagesByUserID(deleteRequest.getUserID());
+//		int deleteID = deleteRequest.getMessageID();
+//		for (Message m : messagesByUserID) {
+//			if (m.getMessageID() == deleteID && m.isOeffentlich()) {
+//				tafelServer.deletePublicMessage(deleteID);
+//				break;
+//			}
+//		}
+		
+		Message message = anzeigetafel.getMessageByID(deleteRequest.getMessageID());
+		if(message.isOeffentlich())
+			tafelServer.deletePublicMessage(deleteRequest.getMessageID());
+		
 		anzeigetafel.deleteMessage(deleteRequest.getMessageID(), deleteRequest.getUserID());
 		// if ()
 		anzeigetafel.saveStateToFile();
 		return "Nachricht mit ID=" + deleteRequest.getMessageID() + " gelöscht!";
+	}
+	
+	/**
+	 * Handles a request to delete a public message.
+	 * 
+	 * @param deletePublicRequest
+	 * @return an answer
+	 * @throws TafelException
+	 *             if the anzeigetafel rejects the request.
+	 */
+	public String handle(DeletePublicRequest deletePublicRequest) throws TafelException{
+		anzeigetafel.deleteMessage(deletePublicRequest.getMessageID(), deletePublicRequest.getUserID());
+		// if ()
+		anzeigetafel.saveStateToFile();
+		return "Nachricht mit ID=" + deletePublicRequest.getMessageID() + " gelöscht!";
 	}
 
 	/**
@@ -106,6 +126,7 @@ public class ServerRequestHandler {
 				modifyRequest.getNewMessage(), modifyRequest.getUserID());
 		return "Nachricht mit ID=" + modifyRequest.getMessageID() + " geändert!";
 	}
+	
 	/**
 	 * Handles a request to modify a public messages, usually initiated by the
 	 * handle(ModifyRequest) method.
