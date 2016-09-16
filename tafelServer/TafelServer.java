@@ -440,7 +440,7 @@ public class TafelServer extends Thread {
 	public void deletePublicMessage(int messageID) {
 		for (LinkedBlockingDeque<ServerRequest> q : queueMap.values()) {
 			try {
-				q.put(new DeletePublicRequest(messageID, 1));
+				q.put(new DeletePublicRequest(messageID));
 			} catch (InterruptedException e) {
 				print("Message mit ID=" + messageID + " wird nicht überall gelöscht werden!");
 			}
@@ -451,7 +451,7 @@ public class TafelServer extends Thread {
 	public void modifyPublicMessage(int messageID, String newMessage) {
 		for (LinkedBlockingDeque<ServerRequest> q : queueMap.values()) {
 			try {
-				q.put(new ModifyPublicRequest(messageID, newMessage, 1));
+				q.put(new ModifyPublicRequest(messageID, newMessage));
 			} catch (InterruptedException e) {
 				print("Message mit ID=" + messageID + " wird nicht überall geändert werden!");
 			}

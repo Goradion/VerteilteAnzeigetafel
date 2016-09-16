@@ -12,8 +12,8 @@ public class DeletePublicRequest extends UserRequest {
 	 * @param messageID
 	 * @param userID
 	 */
-	public DeletePublicRequest(int messageID, int userID) {
-		super(userID);
+	public DeletePublicRequest(int messageID) {
+		super(1);
 		this.messageID = messageID;
 	}
 	/**

@@ -14,8 +14,8 @@ public class ModifyPublicRequest extends UserRequest {
 	 * @param newMessage
 	 * @param userID
 	 */
-	public ModifyPublicRequest(int messageID, String newMessage, int userID) {
-		super(userID);
+	public ModifyPublicRequest(int messageID, String newMessage) {
+		super(1);
 		this.messageID = messageID;
 		this.newMessage = newMessage;
 	}
