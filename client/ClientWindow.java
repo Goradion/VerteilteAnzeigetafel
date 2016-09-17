@@ -407,10 +407,8 @@ public class ClientWindow extends javax.swing.JFrame implements Runnable {
 	}// GEN-LAST:event_messageIDTextFieldMouseClicked
 
 	private void showMessagesButtonMouseClicked(java.awt.event.MouseEvent evt) {// GEN-FIRST:event_showMessagesButtonMouseClicked
-		// TODO add your handling code here:
-		System.out.println("Mouse clicked!");
 
-		messageTextArea.setText(client.showMessagesWithGui(Integer.parseInt(abteilungTextField.getText()),
+		messageTextArea.setText(client.showMessages(Integer.parseInt(abteilungTextField.getText()),
 				Integer.parseInt(userIDTextField.getText())));
 
 	}// GEN-LAST:event_showMessagesButtonMouseClicked
@@ -423,29 +421,27 @@ public class ClientWindow extends javax.swing.JFrame implements Runnable {
 	private void sendQueryButtonMouseClicked(java.awt.event.MouseEvent evt) {// GEN-FIRST:event_sendQueryButtonMouseClicked
 		if (newMessageRB.isSelected() && !abteilungTextField.getText().isEmpty() && !userIDTextField.getText().isEmpty()
 				&& !messageTextArea.getText().isEmpty()) {
-			client.sendeMessageWithGui(Integer.parseInt(abteilungTextField.getText()), messageTextArea.getText(),
+			client.sendMessage(Integer.parseInt(abteilungTextField.getText()), messageTextArea.getText(),
 					Integer.parseInt(userIDTextField.getText()));
 		}
 
 		if (deleteMessageRB.isSelected() && !abteilungTextField.getText().isEmpty()
 				&& !userIDTextField.getText().isEmpty() && !messageIDTextField.getText().isEmpty()) {
-			client.removeMessageWithGui(Integer.parseInt(abteilungTextField.getText()),
+			client.removeMessage(Integer.parseInt(abteilungTextField.getText()),
 					Integer.parseInt(userIDTextField.getText()), Integer.parseInt(messageIDTextField.getText()));
 		}
 
 		if (changeMessageRB.isSelected() && !abteilungTextField.getText().isEmpty()
 				&& !userIDTextField.getText().isEmpty() && !messageIDTextField.getText().isEmpty()) {
-			String neueMessage = client.changeMessageWithGui(Integer.parseInt(abteilungTextField.getText()),
+			client.changeMessage(Integer.parseInt(abteilungTextField.getText()),
 					Integer.parseInt(userIDTextField.getText()), Integer.parseInt(messageIDTextField.getText()),
 					messageTextArea.getText());
-			messageTextArea.setText(neueMessage);
 		}
 
 		if (publishMessageRB.isSelected() && !abteilungTextField.getText().isEmpty()
 				&& !userIDTextField.getText().isEmpty() && !messageIDTextField.getText().isEmpty()) {
-			client.publishMessageWithGui(Integer.parseInt(messageIDTextField.getText()),
+			client.publishMessage(Integer.parseInt(messageIDTextField.getText()),
 					Integer.parseInt(userIDTextField.getText()));
-			// TODO handle publishing failures
 		}
 
 	}// GEN-LAST:event_sendQueryButtonMouseClicked
