@@ -13,17 +13,13 @@
 package client;
 
 import java.net.*;
-import java.util.Scanner;
-
 import serverRequests.*;
-import tafelServer.*;
 import java.io.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class Client implements Serializable {
 
-	private final long serialVersionUID = -1466790708777017802L;
+	private static final long serialVersionUID = -6299053685373379874L;
+
 	private final int SERVER_PORT = 10001;
 	private String SERVER_HOSTNAME = "localhost";
 	private final String ABTEILUNG_1 = "192.168.178.10";
@@ -47,7 +43,7 @@ public class Client implements Serializable {
 		this.userID = 0;
 		this.abtNr = 0;
 		this.mainWindow = new ClientWindow("Client", this);
-		this.logWin = new LoggingWindow(this, mainWindow);
+		this.logWin = new LoggingWindow(mainWindow);
 		mainWindow.setResizable(false);
 	}
 
@@ -71,6 +67,7 @@ public class Client implements Serializable {
 			SERVER_HOSTNAME = ABTEILUNG_4;
 			break;
 		default:
+			SERVER_HOSTNAME = "Unknown Host";
 			break;
 		}
 	}
@@ -114,7 +111,7 @@ public class Client implements Serializable {
 			log("Sending failed:\n" + "Abteilung " + abt + " unknown or offline.\n");
 		} catch (IOException e) {
 			System.out.println("Fehler waehrend der Kommunikation:\n" + e.getMessage());
-			log("Sending failed:" + " I/O error while sending a message.\n" + SERVER_HOSTNAME + " might be offline.");
+			log("Sending failed:" + " I/O error while sending a message.\n" + "Abteilung "+abt + " might be offline.");
 		} finally {
 			try {
 				oout.close();
@@ -142,8 +139,7 @@ public class Client implements Serializable {
 			log("Deleting failed:\n" + "Abteilung " + abt + " unknown or offline.\n");
 		} catch (IOException e) {
 			System.out.println("Fehler waehrend der Kommunikation:\n" + e.getMessage());
-			log("Deleting failed:" + " I/O error while deleting a message.\n" + SERVER_HOSTNAME
-					+ " might be offline.");
+			log("Deleting failed:" + " I/O error while deleting a message.\n" +  "Abteilung "+abt + " might be offline.");
 		} finally {
 			try {
 				oout.close();
@@ -176,8 +172,7 @@ public class Client implements Serializable {
 			log("Changing failed:\n" + "Abteilung " + abt + " unknown or offline.\n");
 		} catch (IOException e) {
 			System.out.println("Fehler waehrend der Kommunikation:\n" + e.getMessage());
-			log("Changing failed:" + " I/O error while changing a message.\n" + SERVER_HOSTNAME
-					+ " might be offline.");
+			log("Changing failed:" + " I/O error while changing a message.\n" +  "Abteilung "+abt + " might be offline.");
 		} finally {
 			try {
 				oout.close();
@@ -213,7 +208,7 @@ public class Client implements Serializable {
 			log("Showing messages failed:\n" + "Abteilung " + abt + " unknown or offline.\n");
 		} catch (IOException e) {
 			System.out.println("Fehler waehrend der Kommunikation:\n" + e.getMessage());
-			log("Showing messages failed:" + " I/O error while showing messages.\n" + SERVER_HOSTNAME
+			log("Showing messages failed:" + " I/O error while showing messages.\n" +  "Abteilung "+abt 
 					+ " might be offline.");
 		} finally {
 			try {

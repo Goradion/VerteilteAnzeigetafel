@@ -6,6 +6,7 @@
 package client;
 
 import java.awt.Color;
+import java.awt.event.FocusEvent;
 
 import javax.swing.BorderFactory;
 import javax.swing.event.CaretEvent;
@@ -16,6 +17,7 @@ import javax.swing.event.CaretEvent;
  */
 public class ClientWindow extends javax.swing.JFrame implements Runnable {
 
+	private static final long serialVersionUID = 3025819315788826673L;
 	private Client client;
 
 	/**
@@ -114,6 +116,20 @@ public class ClientWindow extends javax.swing.JFrame implements Runnable {
 			}
 			
 		});
+		userIDTextField.addFocusListener(new java.awt.event.FocusListener(){
+
+			@Override
+			public void focusGained(FocusEvent e) {
+				userIDTextField.selectAll();				
+			}
+
+			@Override
+			public void focusLost(FocusEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+		});
 
 		showMessagesButton.setText("Show my messages");
 		showMessagesButton.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -148,6 +164,20 @@ public class ClientWindow extends javax.swing.JFrame implements Runnable {
 				messageTextAreaMouseClicked(evt);
 			}
 		});
+		messageTextArea.addFocusListener(new java.awt.event.FocusListener(){
+
+			@Override
+			public void focusGained(FocusEvent e) {
+				messageTextArea.selectAll();
+			}
+
+			@Override
+			public void focusLost(FocusEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+		});
 		jScrollPane1.setViewportView(messageTextArea);
 
 		sendQueryButton.setText("Send query");
@@ -176,6 +206,20 @@ public class ClientWindow extends javax.swing.JFrame implements Runnable {
 			}
 			
 		});
+		messageIDTextField.addFocusListener(new java.awt.event.FocusListener(){
+
+			@Override
+			public void focusGained(FocusEvent e) {
+				messageIDTextField.selectAll();
+			}
+
+			@Override
+			public void focusLost(FocusEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+		});
 
 		abteilungLabel.setText("Abteilung");
 
@@ -193,7 +237,20 @@ public class ClientWindow extends javax.swing.JFrame implements Runnable {
 			}
 			
 		});
+		abteilungTextField.addFocusListener(new java.awt.event.FocusListener(){
 
+			@Override
+			public void focusGained(FocusEvent e) {
+				abteilungTextField.selectAll();
+			}
+
+			@Override
+			public void focusLost(FocusEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+		});
 		messageIDlabel.setText("Message ID");
 
 		javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());

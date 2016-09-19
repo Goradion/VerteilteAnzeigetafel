@@ -10,12 +10,11 @@ import javax.swing.JTextArea;
 
 public class LoggingWindow extends javax.swing.JFrame implements Runnable{
 
-    private JTextArea logtext;
-    private Client client;
+	private static final long serialVersionUID = 200676197613299000L;
+	private JTextArea logtext;
     private JScrollPane scroll;
-    public LoggingWindow(Client client, ClientWindow mainWindow){
+    public LoggingWindow(ClientWindow mainWindow){
         super("Log");
-        this.client = client;
         this.logtext = new JTextArea();
         logtext.setEditable(false); 
         this.scroll = new JScrollPane(logtext);
