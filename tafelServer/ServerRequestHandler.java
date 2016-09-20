@@ -76,7 +76,8 @@ public class ServerRequestHandler {
 		String antwort = "Nachricht mit ID=" + deleteRequest.getMessageID() + " gelöscht!";
 		try {
 			Message message = anzeigetafel.getMessageByID(deleteRequest.getMessageID());
-			if (message.isOeffentlich())
+			if (message.isOeffentlich()
+					&& (message.getUserID() == deleteRequest.getUserID() || deleteRequest.getUserID() == 1))
 				tafelServer.deletePublicMessage(deleteRequest.getMessageID());
 
 			anzeigetafel.deleteMessage(deleteRequest.getMessageID(), deleteRequest.getUserID());
@@ -125,7 +126,8 @@ public class ServerRequestHandler {
 		String antwort = "Nachricht mit ID=" + modifyRequest.getMessageID() + " geändert!";
 		try {
 			Message message = anzeigetafel.getMessageByID(modifyRequest.getMessageID());
-			if (message.isOeffentlich())
+			if (message.isOeffentlich()
+					&& (message.getUserID() == modifyRequest.getUserID() || modifyRequest.getUserID() == 1))
 				tafelServer.modifyPublicMessage(modifyRequest.getMessageID(), modifyRequest.getNewMessage());
 
 			tafelServer.modifyMessage(modifyRequest.getMessageID(), modifyRequest.getNewMessage(),
