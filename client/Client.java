@@ -21,7 +21,7 @@ public class Client implements Serializable {
 	private static final long serialVersionUID = -6299053685373379874L;
 
 	private final int SERVER_PORT = 10001;
-	private String SERVER_HOSTNAME = "localhost";
+	private String serverHostname = "localhost";
 	private final String ABTEILUNG_1 = "192.168.178.10";
 	private final String ABTEILUNG_2 = "192.168.178.11";
 	private final String ABTEILUNG_3 = "192.168.178.12";
@@ -55,19 +55,19 @@ public class Client implements Serializable {
 	private void setAbteilung(int abt) {
 		switch (abt) {
 		case 1:
-			SERVER_HOSTNAME = ABTEILUNG_1;
+			serverHostname = ABTEILUNG_1;
 			break;
 		case 2:
-			SERVER_HOSTNAME = ABTEILUNG_2;
+			serverHostname = ABTEILUNG_2;
 			break;
 		case 3:
-			SERVER_HOSTNAME = ABTEILUNG_3;
+			serverHostname = ABTEILUNG_3;
 			break;
 		case 4:
-			SERVER_HOSTNAME = ABTEILUNG_4;
+			serverHostname = ABTEILUNG_4;
 			break;
 		default:
-			SERVER_HOSTNAME = "Unknown Host";
+			serverHostname = "Unknown Host";
 			break;
 		}
 	}
@@ -99,7 +99,7 @@ public class Client implements Serializable {
 		ObjectOutputStream oout = null;
 		try {
 
-			socket.connect(new InetSocketAddress(SERVER_HOSTNAME, SERVER_PORT), 1000);
+			socket.connect(new InetSocketAddress(serverHostname, SERVER_PORT), 1000);
 
 			ServerRequest sr = ServerRequest.buildCreateRequest(message, userID, abt);
 			oout = new ObjectOutputStream(socket.getOutputStream());
@@ -128,7 +128,7 @@ public class Client implements Serializable {
 		ObjectOutputStream oout = null;
 		try {
 
-			socket.connect(new InetSocketAddress(SERVER_HOSTNAME, SERVER_PORT), 1000);
+			socket.connect(new InetSocketAddress(serverHostname, SERVER_PORT), 1000);
 			ServerRequest serverR = ServerRequest.buildDeleteRequest(msgID, userID);
 			oout = new ObjectOutputStream(socket.getOutputStream());
 			oout.writeObject(serverR);
@@ -157,16 +157,14 @@ public class Client implements Serializable {
 		ObjectOutputStream oout = null;
 		try {
 
-			socket.connect(new InetSocketAddress(SERVER_HOSTNAME, SERVER_PORT), 1000);
+			socket.connect(new InetSocketAddress(serverHostname, SERVER_PORT), 1000);
 
 			ServerRequest serverR = ServerRequest.buildModifyRequest(msgID, neueNachricht, userID);
 			oout = new ObjectOutputStream(socket.getOutputStream());
 
 			oout.writeObject(serverR);
 			log(socket);
-			oout.close();
-
-			socket.close();
+			
 		} catch (UnknownHostException e) {
 			System.out.println("Rechnername unbekannt:\n" + e.getMessage());
 			log("Changing failed:\n" + "Abteilung " + abt + " unknown or offline.\n");
@@ -191,17 +189,13 @@ public class Client implements Serializable {
 		String str = null;
 		try {
 
-			socket.connect(new InetSocketAddress(SERVER_HOSTNAME, SERVER_PORT), 1000);
+			socket.connect(new InetSocketAddress(serverHostname, SERVER_PORT), 1000);
 
 			ServerRequest serverR = ServerRequest.buildShowMyMessagesRequest(userID);
 			oout = new ObjectOutputStream(socket.getOutputStream());
 			oout.writeObject(serverR);
 
 			log(socket);
-
-			oout.close();
-
-			socket.close();
 
 		} catch (UnknownHostException e) {
 			System.out.println("Rechnername unbekannt:\n" + e.getMessage());
@@ -225,25 +219,25 @@ public class Client implements Serializable {
 		return str;
 	}
 
-	public void publishMessage(int messageId, int userId) {
+	public void publishMessage(int abt, int messageId, int userId) {
+		setAbteilung(abt);
 		Socket socket = new Socket();
 		ObjectOutputStream oout = null;
 		try {
 
-			socket.connect(new InetSocketAddress(SERVER_HOSTNAME, SERVER_PORT), 1000);
+			socket.connect(new InetSocketAddress(serverHostname, SERVER_PORT), 1000);
 
 			ServerRequest serverRequest = ServerRequest.buildPublishRequest(messageId, userId);
 			oout = new ObjectOutputStream(socket.getOutputStream());
 			oout.writeObject(serverRequest);
 			log(socket);
 
-			socket.close();
 		} catch (UnknownHostException e) {
 			System.out.println("Rechnername unbekannt:\n" + e.getMessage());
-			log("Publishing failed.\n" + "Server " + SERVER_HOSTNAME + " unknown or offline.\n");
+			log("Publishing failed.\n" + "Server " + serverHostname + " unknown or offline.\n");
 		} catch (IOException e) {
 			System.out.println("Fehler waehrend der Kommunikation:\n" + e.getMessage());
-			log("Publishing failed:" + " I/O error while showing messages.\n" + SERVER_HOSTNAME
+			log("Publishing failed:" + " I/O error while showing messages.\n" + serverHostname
 					+ " might be offline.");
 		} finally {
 			try {

@@ -29,7 +29,7 @@ public class Anzeigetafel extends Observable implements Serializable {
 		this.messages = new LinkedHashMap<Integer, Message>();
 		this.userMsgs = new HashMap<Integer, LinkedList<Integer>>();
 		this.userIDs = new HashSet<Integer>();
-		/* FÃ¼ge 5 users ein, die zu dieser Anzeigetafel gehÃ¶ren */
+		/* Füge 5 users ein, die zu dieser Anzeigetafel gehören */
 		for (int i = 1; i < 6; i++) {
 			userIDs.add(i);
 		}
@@ -63,7 +63,7 @@ public class Anzeigetafel extends Observable implements Serializable {
 						messages.get(messageID).getMessageID());
 				messages.replace(messageID, msg);
 			} else {
-				throw new TafelException(user + " nicht berechtigt zum Modifizieren");
+				throw new TafelException("User "+user + " nicht berechtigt zum Modifizieren");
 			}
 		} else {
 			throw new TafelException("Keine Message mit ID " + messageID + " gefunden!");
@@ -98,14 +98,13 @@ public class Anzeigetafel extends Observable implements Serializable {
 	public synchronized void deleteMessage(int messageID, int user) throws TafelException {
 
 		if (messages.containsKey(messageID)) {
-			/* Autor oder Koordinator ? */
 			if (user == messages.get(messageID).getUserID() || isCoordinator(user)) {
 				messages.remove(messageID);
 				userMsgs.get(user).remove(new Integer(messageID));
 				// userMsgs.get(user).
 				// userMsgs.get(user).remove(messageID);
 			} else {
-				throw new TafelException(user + " nicht berechtigt zum LÃ¶schen");
+				throw new TafelException("User "+user + " nicht berechtigt zum Löschen");
 			}
 		} else {
 			throw new TafelException("Keine Message mit ID " + messageID + " gefunden!");
@@ -229,7 +228,7 @@ public class Anzeigetafel extends Observable implements Serializable {
          */
 	public synchronized LinkedList<Message> getMessagesByUserID(int userID) throws TafelException {
 		if (!userMsgs.containsKey(userID)) {
-			throw new TafelException("Kein User gefunden! "+userID);
+			throw new TafelException("Kein User"+ userID +"gefunden! ");
 		}
 		LinkedList<Integer> umsgIDs = userMsgs.get(userID);
 		LinkedList<Message> uMsgs = new LinkedList<Message>();

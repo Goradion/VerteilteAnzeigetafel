@@ -497,8 +497,8 @@ public class ClientWindow extends javax.swing.JFrame implements Runnable {
 
 		if (publishMessageRB.isSelected() && !abteilungTextField.getText().isEmpty()
 				&& !userIDTextField.getText().isEmpty() && !messageIDTextField.getText().isEmpty()) {
-			client.publishMessage(Integer.parseInt(messageIDTextField.getText()),
-					Integer.parseInt(userIDTextField.getText()));
+			client.publishMessage(Integer.parseInt(abteilungTextField.getText()),
+					Integer.parseInt(messageIDTextField.getText()), Integer.parseInt(userIDTextField.getText()));
 		}
 
 	}// GEN-LAST:event_sendQueryButtonMouseClicked
