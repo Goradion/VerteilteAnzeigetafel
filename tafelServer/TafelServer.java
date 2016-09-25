@@ -68,23 +68,6 @@ public class TafelServer extends Thread {
 		}
 
 		tafelServer.start();
-		// try {
-		// if (tafelServer.abteilungsID != 1) {
-		// tafelServer.registerTafel(1, new InetSocketAddress("134.96.216.24",
-		// SERVER_PORT));
-		// }
-		// if (tafelServer.abteilungsID != 2) {
-		// tafelServer.registerTafel(2, new InetSocketAddress("10.9.40.214",
-		// SERVER_PORT));
-		// }
-		//
-		// // if(tafelServer.abteilungsID!=3){
-		// // tafelServer.registerTafel(3, new
-		// // InetSocketAddress("134.96.216.15", SERVER_PORT));
-		// // }
-		// } catch (TafelException e) {
-		// tafelServer.print("Idiot");
-		// }
 	}
 
 	/**
@@ -153,20 +136,6 @@ public class TafelServer extends Thread {
 		anzeigetafel.saveStateToFile();
 	}
 
-	/**
-	 * Modifies a message if possible.
-	 * 
-	 * @param messageID
-	 * @param inhalt
-	 * @param userID
-	 * @throws TafelException
-	 *             if the Anzeigetafel rejects the modification.
-	 */
-	public synchronized void modifyMessage(int messageID, String inhalt, int userID) throws TafelException {
-		anzeigetafel.modifyMessage(messageID, inhalt, userID);
-		print("User mit ID=" + userID + " hatNachricht mit ID=" + messageID + " geändert!");
-		anzeigetafel.saveStateToFile();
-	}
 
 	/**
 	 * Gets the messages of a given userID if possible.
@@ -178,6 +147,7 @@ public class TafelServer extends Thread {
 	 */
 	public synchronized LinkedList<Message> getMessagesByUserID(int userID) throws TafelException {
 		print("Showing Messages to user " + userID);
+
 		return anzeigetafel.getMessagesByUserID(userID);
 	}
 
@@ -279,12 +249,19 @@ public class TafelServer extends Thread {
 			Object obj = objinput.readObject();
 			qMap = (HashMap<Integer, LinkedBlockingDeque<ServerRequest>>) obj;
 			print("Queue-Backup geladen!");
+			
 		} catch (FileNotFoundException e) {
 			print("Kein Queue-Backup gefunden. Erstelle neues Backup...");
 			saveQueueMapToFile();
 		} catch (IOException | ClassNotFoundException e) {
 			print("Fehler beim lesen des Queue-Backups");
 			printStackTrace(e);
+		} finally {
+			try {
+				objinput.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 		return qMap;
 	}
@@ -302,49 +279,8 @@ public class TafelServer extends Thread {
 			printStackTrace(e);
 		}
 
-		// FileOutputStream fileoutput = null;
-		// ObjectOutputStream objoutput = null;
-		// try {
-		// fileoutput = new FileOutputStream("./TafelAdressen");
-		// objoutput = new ObjectOutputStream(fileoutput);
-		// objoutput.writeObject(tafelAdressen);
-		// } catch (FileNotFoundException e) {
-		// e.printStackTrace();
-		// } catch (IOException e) {
-		// e.printStackTrace();
-		// } finally {
-		// try {
-		// objoutput.close();
-		// } catch (IOException e) {
-		// e.printStackTrace();
-		// }
-		// }
 	}
 
-	// /**
-	// * Loads the addresses of registered TafelServers from a file.
-	// *
-	// * @return tafelAddressen
-	// */
-	// @SuppressWarnings("unchecked")
-	// private HashMap<Integer, SocketAddress> loadTafelAdressenFromFile() {
-	// HashMap<Integer, SocketAddress> adressen = new HashMap<Integer,
-	// SocketAddress>();
-	// FileInputStream fileInput = null;
-	// ObjectInputStream objinput = null;
-	// try {
-	// fileInput = new FileInputStream("./tafelAdressen");
-	// objinput = new ObjectInputStream(fileInput);
-	// Object obj = objinput.readObject();
-	// adressen = (HashMap<Integer, SocketAddress>) obj;
-	// } catch (FileNotFoundException e) {
-	// print("Kein Adressen-Backup gefunden");
-	// } catch (IOException | ClassNotFoundException e) {
-	// print("Fehler beim lesen des Adressen-Backups");
-	// e.printStackTrace();
-	// }
-	// return adressen;
-	// }
 
 	private void loadTafelAdressenFromFile() {
 		int lines = 0;
