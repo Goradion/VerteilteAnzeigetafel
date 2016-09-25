@@ -54,6 +54,9 @@ public class Client implements Serializable {
 
 	private void setAbteilung(int abt) {
 		switch (abt) {
+		case 0:
+			serverHostname = "localhost";
+			break;
 		case 1:
 			serverHostname = ABTEILUNG_1;
 			break;

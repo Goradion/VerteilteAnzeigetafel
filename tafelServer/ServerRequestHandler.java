@@ -74,17 +74,16 @@ public class ServerRequestHandler {
 		// }
 		// }
 		String antwort = "Nachricht mit ID=" + deleteRequest.getMessageID() + " gelöscht!";
-		try {
-			Message message = anzeigetafel.getMessageByID(deleteRequest.getMessageID());
-			if ((message.isOeffentlich() &&  message.getAbtNr()==anzeigetafel.getAbteilungsID())
-					&& (message.getUserID() == deleteRequest.getUserID() || deleteRequest.getUserID() == 1))
-				tafelServer.deletePublicMessage(deleteRequest.getMessageID());
-
-			anzeigetafel.deleteMessage(deleteRequest.getMessageID(), deleteRequest.getUserID());
-			anzeigetafel.saveStateToFile();
-		} catch (NullPointerException exception) {
-			antwort = "Nachricht mit ID =" + deleteRequest.getMessageID() + " nicht gefunden";
+		Message message = anzeigetafel.getMessageByID(deleteRequest.getMessageID());
+		if (message == null) {
+			return "Nachricht mit ID =" + deleteRequest.getMessageID() + " nicht gefunden";
 		}
+
+		anzeigetafel.deleteMessage(deleteRequest.getMessageID(), deleteRequest.getUserID());
+		if ((message.isOeffentlich() && message.getAbtNr() == anzeigetafel.getAbteilungsID()))
+			tafelServer.deletePublicMessage(deleteRequest.getMessageID());
+
+		anzeigetafel.saveStateToFile();
 		return antwort;
 	}
 
@@ -98,7 +97,6 @@ public class ServerRequestHandler {
 	 */
 	public String handle(DeletePublicRequest deletePublicRequest) throws TafelException {
 		anzeigetafel.deleteMessage(deletePublicRequest.getMessageID(), deletePublicRequest.getUserID());
-		// if ()
 		anzeigetafel.saveStateToFile();
 		return "Nachricht mit ID=" + deletePublicRequest.getMessageID() + " gelöscht!";
 	}
@@ -124,17 +122,17 @@ public class ServerRequestHandler {
 		// }
 		// }
 		String antwort = "Nachricht mit ID=" + modifyRequest.getMessageID() + " geändert!";
-		try {
-			Message message = anzeigetafel.getMessageByID(modifyRequest.getMessageID());
-			if ((message.isOeffentlich() && message.getAbtNr()==anzeigetafel.getAbteilungsID())
-					&& (message.getUserID() == modifyRequest.getUserID() || modifyRequest.getUserID() == 1))
-				tafelServer.modifyPublicMessage(modifyRequest.getMessageID(), modifyRequest.getNewMessage());
-
-			tafelServer.modifyMessage(modifyRequest.getMessageID(), modifyRequest.getNewMessage(),
-					modifyRequest.getUserID());
-		} catch (NullPointerException exception) {
-			antwort = "Nachricth mit ID= " + modifyRequest.getMessageID() + " nicht gefunden!";
+		Message message = anzeigetafel.getMessageByID(modifyRequest.getMessageID());
+		if (message == null) {
+			return "Nachricth mit ID= " + modifyRequest.getMessageID() + " nicht gefunden!";
 		}
+		anzeigetafel.modifyMessage(modifyRequest.getMessageID(), modifyRequest.getNewMessage(),
+				modifyRequest.getUserID());
+		if ((message.isOeffentlich() && message.getAbtNr() == anzeigetafel.getAbteilungsID())) {
+			tafelServer.modifyPublicMessage(modifyRequest.getMessageID(), modifyRequest.getNewMessage());
+		}
+
+		anzeigetafel.saveStateToFile();
 		return antwort;
 	}
 
@@ -148,8 +146,9 @@ public class ServerRequestHandler {
 	 *             if anzeigetafel rejects the request
 	 */
 	public String handle(ModifyPublicRequest modifyPublicRequest) throws TafelException {
-		tafelServer.modifyMessage(modifyPublicRequest.getMessageID(), modifyPublicRequest.getNewMessage(),
+		anzeigetafel.modifyMessage(modifyPublicRequest.getMessageID(), modifyPublicRequest.getNewMessage(),
 				modifyPublicRequest.getUserID());
+		anzeigetafel.saveStateToFile();
 		return "Nachricht mit ID=" + modifyPublicRequest.getMessageID() + " geändert!";
 	}
 
