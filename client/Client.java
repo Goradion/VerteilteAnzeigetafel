@@ -189,7 +189,7 @@ public class Client implements Serializable {
 		setAbteilung(abt);
 		Socket socket = new Socket();
 		ObjectOutputStream oout = null;
-		String str = null;
+		String str = "";
 		try {
 
 			socket.connect(new InetSocketAddress(serverHostname, SERVER_PORT), 1000);
@@ -198,7 +198,7 @@ public class Client implements Serializable {
 			oout = new ObjectOutputStream(socket.getOutputStream());
 			oout.writeObject(serverR);
 
-			log(socket);
+			str = log(socket);
 
 		} catch (UnknownHostException e) {
 			System.out.println("Rechnername unbekannt:\n" + e.getMessage());
@@ -215,9 +215,6 @@ public class Client implements Serializable {
 				log("I/O error while showing messages.\n");
 			}
 
-		}
-		if (str == null) {
-			str = "";
 		}
 		return str;
 	}
@@ -253,14 +250,17 @@ public class Client implements Serializable {
 		}
 	}
 
-	private void log(Socket socket) throws IOException {
+	private String log(Socket socket) throws IOException {
+		String meldung = "";
 		ObjectInputStream input = new ObjectInputStream(socket.getInputStream());
 		try {
-			logWin.addEntry(input.readObject().toString());
+			meldung = input.readObject().toString();
+			logWin.addEntry(meldung);
 		} catch (ClassNotFoundException ex) {
 			ex.printStackTrace();
 		}
 		input.close();
+		return meldung;
 	}
 
 	private void log(String meldung) {
