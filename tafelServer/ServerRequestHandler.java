@@ -19,7 +19,8 @@ public class ServerRequestHandler {
 	 * @param tafelServer
 	 * @param anzeigetafel
 	 */
-	public ServerRequestHandler(TafelServer tafelServer, Anzeigetafel anzeigetafel) {
+	public ServerRequestHandler(TafelServer tafelServer,
+			Anzeigetafel anzeigetafel) {
 		super();
 		this.tafelServer = tafelServer;
 		this.anzeigetafel = anzeigetafel;
@@ -35,7 +36,8 @@ public class ServerRequestHandler {
 	 * @throws InterruptedException
 	 *             if the handling was interrupted
 	 */
-	public String handle(ServerRequest serverRequest) throws TafelException, InterruptedException {
+	public String handle(ServerRequest serverRequest) throws TafelException,
+			InterruptedException {
 		return serverRequest.handleMe(this);
 	}
 
@@ -48,8 +50,9 @@ public class ServerRequestHandler {
 	 *             if the anzeigetafel rejects the request.
 	 */
 	public String handle(CreateRequest createRequest) throws TafelException {
-		int msgID = anzeigetafel.createMessage(createRequest.getMessage(), createRequest.getUserID(),
-				createRequest.getAbteilungsID(), false);
+		int msgID = anzeigetafel.createMessage(createRequest.getMessage(),
+				createRequest.getUserID(), createRequest.getAbteilungsID(),
+				false);
 		anzeigetafel.saveStateToFile();
 		return "Nachricht mit ID=" + msgID + "erstellt!";
 	}
@@ -73,18 +76,23 @@ public class ServerRequestHandler {
 		// break;
 		// }
 		// }
-		String antwort = "Nachricht mit ID=" + deleteRequest.getMessageID() + " gelöscht!";
-		try {
-			Message message = anzeigetafel.getMessageByID(deleteRequest.getMessageID());
-			if ((message.isOeffentlich() &&  message.getAbtNr()==anzeigetafel.getAbteilungsID())
-					&& (message.getUserID() == deleteRequest.getUserID() || deleteRequest.getUserID() == 1))
-				tafelServer.deletePublicMessage(deleteRequest.getMessageID());
-
-			anzeigetafel.deleteMessage(deleteRequest.getMessageID(), deleteRequest.getUserID());
-			anzeigetafel.saveStateToFile();
-		} catch (NullPointerException exception) {
-			antwort = "Nachricht mit ID =" + deleteRequest.getMessageID() + " nicht gefunden";
+		String antwort = "Nachricht mit ID=" + deleteRequest.getMessageID()
+				+ " gelöscht!";
+		Message message = anzeigetafel.getMessageByID(deleteRequest
+				.getMessageID());
+		if (message == null) {
+			return "Nachricht mit ID =" + deleteRequest.getMessageID()
+					+ " nicht gefunden";
 		}
+		if ((message.isOeffentlich() && message.getAbtNr() == anzeigetafel
+				.getAbteilungsID())
+				&& (message.getUserID() == deleteRequest.getUserID() || deleteRequest
+						.getUserID() == 1))
+			tafelServer.deletePublicMessage(deleteRequest.getMessageID());
+
+		anzeigetafel.deleteMessage(deleteRequest.getMessageID(),
+				deleteRequest.getUserID());
+		anzeigetafel.saveStateToFile();
 		return antwort;
 	}
 
@@ -96,11 +104,13 @@ public class ServerRequestHandler {
 	 * @throws TafelException
 	 *             if the anzeigetafel rejects the request.
 	 */
-	public String handle(DeletePublicRequest deletePublicRequest) throws TafelException {
-		anzeigetafel.deleteMessage(deletePublicRequest.getMessageID(), deletePublicRequest.getUserID());
-		// if ()
+	public String handle(DeletePublicRequest deletePublicRequest)
+			throws TafelException {
+		anzeigetafel.deleteMessage(deletePublicRequest.getMessageID(),
+				deletePublicRequest.getUserID());
 		anzeigetafel.saveStateToFile();
-		return "Nachricht mit ID=" + deletePublicRequest.getMessageID() + " gelöscht!";
+		return "Nachricht mit ID=" + deletePublicRequest.getMessageID()
+				+ " gelöscht!";
 	}
 
 	/**
@@ -123,18 +133,23 @@ public class ServerRequestHandler {
 		// break;
 		// }
 		// }
-		String antwort = "Nachricht mit ID=" + modifyRequest.getMessageID() + " geändert!";
-		try {
-			Message message = anzeigetafel.getMessageByID(modifyRequest.getMessageID());
-			if ((message.isOeffentlich() && message.getAbtNr()==anzeigetafel.getAbteilungsID())
-					&& (message.getUserID() == modifyRequest.getUserID() || modifyRequest.getUserID() == 1))
-				tafelServer.modifyPublicMessage(modifyRequest.getMessageID(), modifyRequest.getNewMessage());
-
-			tafelServer.modifyMessage(modifyRequest.getMessageID(), modifyRequest.getNewMessage(),
-					modifyRequest.getUserID());
-		} catch (NullPointerException exception) {
-			antwort = "Nachricth mit ID= " + modifyRequest.getMessageID() + " nicht gefunden!";
+		String antwort = "Nachricht mit ID=" + modifyRequest.getMessageID()
+				+ " geändert!";
+		Message message = anzeigetafel.getMessageByID(modifyRequest
+				.getMessageID());
+		if (message == null) {
+			return "Nachricth mit ID= " + modifyRequest.getMessageID()
+					+ " nicht gefunden!";
 		}
+		if ((message.isOeffentlich() && message.getAbtNr() == anzeigetafel
+				.getAbteilungsID())
+				&& (message.getUserID() == modifyRequest.getUserID() || modifyRequest
+						.getUserID() == 1))
+			tafelServer.modifyPublicMessage(modifyRequest.getMessageID(),
+					modifyRequest.getNewMessage());
+
+		tafelServer.modifyMessage(modifyRequest.getMessageID(),
+				modifyRequest.getNewMessage(), modifyRequest.getUserID());
 		return antwort;
 	}
 
@@ -147,10 +162,13 @@ public class ServerRequestHandler {
 	 * @throws TafelException
 	 *             if anzeigetafel rejects the request
 	 */
-	public String handle(ModifyPublicRequest modifyPublicRequest) throws TafelException {
-		tafelServer.modifyMessage(modifyPublicRequest.getMessageID(), modifyPublicRequest.getNewMessage(),
+	public String handle(ModifyPublicRequest modifyPublicRequest)
+			throws TafelException {
+		tafelServer.modifyMessage(modifyPublicRequest.getMessageID(),
+				modifyPublicRequest.getNewMessage(),
 				modifyPublicRequest.getUserID());
-		return "Nachricht mit ID=" + modifyPublicRequest.getMessageID() + " geändert!";
+		return "Nachricht mit ID=" + modifyPublicRequest.getMessageID()
+				+ " geändert!";
 	}
 
 	/**
@@ -163,9 +181,12 @@ public class ServerRequestHandler {
 	 * @throws TafelException
 	 *             if the anzeigetafel rejects the request.
 	 */
-	public String handle(PublishRequest publishRequest) throws InterruptedException, TafelException {
-		tafelServer.publishMessage(publishRequest.getMessageID(), publishRequest.getUserID());
-		return "Nachricht mit ID=" + publishRequest.getMessageID() + " veröffentlicht!";
+	public String handle(PublishRequest publishRequest)
+			throws InterruptedException, TafelException {
+		tafelServer.publishMessage(publishRequest.getMessageID(),
+				publishRequest.getUserID());
+		return "Nachricht mit ID=" + publishRequest.getMessageID()
+				+ " veröffentlicht!";
 	}
 
 	/**
@@ -175,9 +196,11 @@ public class ServerRequestHandler {
 	 * @return the messages as a String
 	 * @throws TafelException
 	 */
-	public String handle(ShowMyMessagesRequest showMyMessagesRequest) throws TafelException {
+	public String handle(ShowMyMessagesRequest showMyMessagesRequest)
+			throws TafelException {
 		int userID = showMyMessagesRequest.getUserID();
-		LinkedList<Message> userMessages = anzeigetafel.getMessagesByUserID(userID);
+		LinkedList<Message> userMessages = anzeigetafel
+				.getMessagesByUserID(userID);
 		return "Messages of User " + userID + '\n' + userMessages.toString();
 	}
 
@@ -192,7 +215,8 @@ public class ServerRequestHandler {
 	public String handle(ReceiveRequest receiveRequest) throws TafelException {
 		anzeigetafel.receiveMessage(receiveRequest.getMessage());
 		anzeigetafel.saveStateToFile();
-		return "Nachricht von Abteilung " + receiveRequest.getMessage().getAbtNr() + " erhalten!";
+		return "Nachricht von Abteilung "
+				+ receiveRequest.getMessage().getAbtNr() + " erhalten!";
 	}
 
 	/**
@@ -205,10 +229,12 @@ public class ServerRequestHandler {
 	 */
 	public String handle(RegisterRequest registerRequest) throws TafelException {
 		if (registerRequest.getAbteilungsID() == tafelServer.getAbteilungsID()) {
-			throw new TafelException("Die eigene Abteilung wird nicht registriert!");
+			throw new TafelException(
+					"Die eigene Abteilung wird nicht registriert!");
 		}
 
-		HashMap<Integer, SocketAddress> tafelAdressen = tafelServer.getTafelAdressen();
+		HashMap<Integer, SocketAddress> tafelAdressen = tafelServer
+				.getTafelAdressen();
 		int abteilungsID = registerRequest.getAbteilungsID();
 		SocketAddress address = registerRequest.getAddress();
 		if (tafelAdressen.containsKey(abteilungsID)) {
@@ -218,12 +244,14 @@ public class ServerRequestHandler {
 
 		} else {
 			tafelAdressen.put(abteilungsID, address);
-			tafelServer.getQueueMap().put(abteilungsID, new LinkedBlockingDeque<ServerRequest>());
+			tafelServer.getQueueMap().put(abteilungsID,
+					new LinkedBlockingDeque<ServerRequest>());
 		}
 		tafelServer.activateHeartbeat(abteilungsID);
 		tafelServer.activateQueue(abteilungsID);
 		tafelServer.saveTafelAdressenToFile();
-		return "Tafel für Abteilung " + abteilungsID + " unter Adresse " + address + " registriert!";
+		return "Tafel für Abteilung " + abteilungsID + " unter Adresse "
+				+ address + " registriert!";
 
 	}
 
