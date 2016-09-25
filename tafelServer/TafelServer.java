@@ -258,7 +258,9 @@ public class TafelServer extends Thread {
 			printStackTrace(e);
 		} finally {
 			try {
-				objinput.close();
+				if (objinput != null){
+					objinput.close();
+				}
 			} catch (IOException e) {
 				e.printStackTrace();
 			}

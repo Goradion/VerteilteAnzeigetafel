@@ -51,7 +51,7 @@ public class ServerRequestHandler {
 		int msgID = anzeigetafel.createMessage(createRequest.getMessage(), createRequest.getUserID(),
 				createRequest.getAbteilungsID(), false);
 		anzeigetafel.saveStateToFile();
-		return "Nachricht mit ID=" + msgID + "erstellt!";
+		return "Nachricht mit ID=" + msgID + " erstellt!";
 	}
 
 	/**
