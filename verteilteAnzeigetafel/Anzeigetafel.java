@@ -213,7 +213,8 @@ public class Anzeigetafel extends Observable implements Serializable {
 			objinput = new ObjectInputStream(fileinput);
 			at = (Anzeigetafel) objinput.readObject();
 		} catch (FileNotFoundException ex) {
-			Logger.getLogger(Anzeigetafel.class.getName()).log(Level.SEVERE, null, ex);
+			System.out.println("keine tafeldatei gefunden!");
+//			Logger.getLogger(Anzeigetafel.class.getName()).log(Level.SEVERE, null, ex);
 		} catch (IOException | ClassNotFoundException ex) {
 			Logger.getLogger(Anzeigetafel.class.getName()).log(Level.SEVERE, null, ex);
 		}
@@ -229,6 +230,11 @@ public class Anzeigetafel extends Observable implements Serializable {
 	public synchronized LinkedList<Message> getMessagesByUserID(int userID) throws TafelException {
 		if (!userMsgs.containsKey(userID)) {
 			throw new TafelException("Kein User"+ userID +"gefunden! ");
+		}
+		if (isCoordinator(userID)){
+			LinkedList<Message> msgs =getLocalMsgs();
+			msgs.addAll(getGlobalMsgs());
+			return msgs;
 		}
 		LinkedList<Integer> umsgIDs = userMsgs.get(userID);
 		LinkedList<Message> uMsgs = new LinkedList<Message>();
