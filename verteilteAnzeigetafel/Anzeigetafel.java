@@ -29,7 +29,7 @@ public class Anzeigetafel extends Observable implements Serializable {
 		this.messages = new LinkedHashMap<Integer, Message>();
 		this.userMsgs = new HashMap<Integer, LinkedList<Integer>>();
 		this.userIDs = new HashSet<Integer>();
-		/* Füge 5 users ein, die zu dieser Anzeigetafel gehören */
+		/* Fuege 5 users ein, die zu dieser Anzeigetafel gehoeren */
 		for (int i = 1; i < 6; i++) {
 			userIDs.add(i);
 		}
@@ -104,7 +104,7 @@ public class Anzeigetafel extends Observable implements Serializable {
 				// userMsgs.get(user).
 				// userMsgs.get(user).remove(messageID);
 			} else {
-				throw new TafelException("User "+user + " nicht berechtigt zum Löschen");
+				throw new TafelException("User "+user + " nicht berechtigt zum Loeschen");
 			}
 		} else {
 			throw new TafelException("Keine Message mit ID " + messageID + " gefunden!");
