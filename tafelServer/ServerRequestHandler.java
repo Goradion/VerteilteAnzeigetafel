@@ -78,7 +78,9 @@ public class ServerRequestHandler {
 		if (message == null) {
 			return "Nachricht mit ID =" + deleteRequest.getMessageID() + " nicht gefunden";
 		}
-
+		if (message.getAbtNr() != anzeigetafel.getAbteilungsID()){
+			return "Nachricht gehört nicht zur Abteilung!";
+		}
 		anzeigetafel.deleteMessage(deleteRequest.getMessageID(), deleteRequest.getUserID());
 		if ((message.isOeffentlich() && message.getAbtNr() == anzeigetafel.getAbteilungsID()))
 			tafelServer.deletePublicMessage(deleteRequest.getMessageID());
@@ -125,6 +127,9 @@ public class ServerRequestHandler {
 		Message message = anzeigetafel.getMessageByID(modifyRequest.getMessageID());
 		if (message == null) {
 			return "Nachricth mit ID= " + modifyRequest.getMessageID() + " nicht gefunden!";
+		}
+		if (message.getAbtNr() != anzeigetafel.getAbteilungsID()){
+			return "Nachricht gehört nicht zur Abteilung!";
 		}
 		anzeigetafel.modifyMessage(modifyRequest.getMessageID(), modifyRequest.getNewMessage(),
 				modifyRequest.getUserID());
